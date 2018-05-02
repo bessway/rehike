@@ -1,0 +1,33 @@
+[
+  {
+    "name": "post data",
+    "regFunc": "post",
+    "target": true,
+    "response": true,
+    "paras": [
+      {
+        "pIndex": 0,
+        "pDesc": "header"
+      },
+      {
+        "pIndex": 1,
+        "pDesc": "body"
+      }
+    ]
+  },
+  {
+    "name": "open browser",
+    "regFunc": "openSite",
+    "target": false,
+    "response": true,
+    "paras": [
+      {
+        "pIndex": 0,
+        "pDesc": "url"
+      },{
+        "pIndex": 1,
+        "pDesc": "browser type"
+      }
+    ]
+  }
+]

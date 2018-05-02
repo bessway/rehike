@@ -1,0 +1,67 @@
+.el-tree-node__expand-icon {
+    color: #333;
+}
+
+.el-select {
+    padding-top: 3px;
+    height: 40px;
+}
+
+.el-option {
+    height: 40px;
+}
+
+.el-input--suffix {
+    padding-right: 5px;
+}
+
+.el-input--suffix .el-input__inner {
+    padding-right: 5px;
+}
+
+.el-select .el-input__inner {
+    height: 40px;
+    line-height: 40px;
+    padding-left: 5px;
+}
+
+.el-table .cell,
+.el-table th div,
+.el-table--border td:first-child .cell,
+.el-table--border th:first-child .cell {
+    padding-left: 0px;
+}
+
+.el-table td,
+.el-table th {
+    vertical-align: top;
+}
+
+.el-button+.el-button {
+    margin-left: 0px;
+}
+
+.el-button {
+    padding: 4px;
+    margin-left: 0px;
+}
+
+.el-button.is-circle {
+    padding: 5px;
+}
+
+.el-table td,
+.el-table th {
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.el-select .el-input.is-disabled .el-input__inner {
+    height: 40px;
+    line-height: 40px;
+    padding-left: 5px;
+}
+
+.el-input.is-disabled {
+    height: 40px;
+}

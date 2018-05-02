@@ -1,0 +1,12 @@
+[{
+	"caseId": "c001",
+	"caseDesc": "test",
+	"steps": [{
+		"index": 0,
+		"key": "post data"
+	},
+	{
+		"index": 1,
+		"key": "open browser"
+	}]
+}]
