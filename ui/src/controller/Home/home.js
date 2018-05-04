@@ -14,18 +14,21 @@ export default {
   getNodeLabel,
   getExecuteNodes
 };
-
-function getProjects() {
-  return [
-    {
-      refId: 1,
-      label: "project1"
-    },
-    {
-      refId: 2,
-      label: "project2"
-    }
-  ];
+import axios from "axios";
+var host = "http://127.0.0.1:8081";
+function getProjects(resolve) {
+  axios({
+    method: "get",
+    url: host + "/1/test/projects"
+  })
+    .then(response => {
+      let _data = response.data;
+      console.log(_data);
+      resolve(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
 }
 
 function getNodes(level, refId) {

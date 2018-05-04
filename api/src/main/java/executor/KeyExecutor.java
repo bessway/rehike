@@ -3,11 +3,11 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
-import pojo.KeyPojo;
-import pojo.ParaPojo;
+import core.pojo.KeyPojo;
+import core.pojo.ParaPojo;
 import utils.SeleniumUtils;
 import java.lang.reflect.Method;
-import pojo.StepDataPojo;
+import core.pojo.StepDataPojo;
 
 public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
     private KeyPojo test=null;

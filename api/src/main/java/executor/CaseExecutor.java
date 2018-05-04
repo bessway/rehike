@@ -1,10 +1,10 @@
 package executor;
 
-import pojo.CasePojo;
-import pojo.CaseDataPojo;
+import core.pojo.CasePojo;
+import core.pojo.CaseDataPojo;
 import java.util.Hashtable;
-import pojo.StepPojo;
-import pojo.StepDataPojo;
+import core.pojo.StepPojo;
+import core.pojo.StepDataPojo;
 import java.util.ArrayList;;
 
 public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{

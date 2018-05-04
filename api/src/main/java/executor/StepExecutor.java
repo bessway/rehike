@@ -3,10 +3,10 @@ package executor;
 import java.util.Hashtable;
 import java.util.ArrayList;
 
-import pojo.KeyPojo;
-import pojo.ParaPojo;
-import pojo.StepDataPojo;
-import pojo.StepPojo;
+import core.pojo.KeyPojo;
+import core.pojo.ParaPojo;
+import core.pojo.StepDataPojo;
+import core.pojo.StepPojo;
 
 public class StepExecutor implements Executor<KeyPojo,StepDataPojo>{
     private StepPojo test=null;

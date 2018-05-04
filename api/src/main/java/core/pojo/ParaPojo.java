@@ -1,4 +1,4 @@
-package pojo;
+package core.pojo;
 import java.util.Comparator;
 public class ParaPojo{
     private String pValue=null;

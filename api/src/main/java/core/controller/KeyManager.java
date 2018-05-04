@@ -1,11 +1,11 @@
-package core;
+package core.controller;
 
 import java.util.ArrayList;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import utils.DBUtils;
-import pojo.KeyPojo;
+import core.pojo.KeyPojo;
 
 
 public class KeyManager{

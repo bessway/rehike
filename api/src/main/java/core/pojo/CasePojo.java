@@ -1,4 +1,4 @@
-package pojo;
+package core.pojo;
 
 import java.util.ArrayList;
 import java.util.Collections;

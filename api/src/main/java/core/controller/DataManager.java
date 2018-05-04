@@ -1,11 +1,11 @@
-package core;
+package core.controller;
 
 import java.util.ArrayList;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import utils.DBUtils;
-import pojo.CaseDataPojo;
+import core.pojo.CaseDataPojo;
 
 public class DataManager{
     private ArrayList<CaseDataPojo> casedatas=null;

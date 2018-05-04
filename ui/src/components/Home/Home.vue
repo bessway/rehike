@@ -537,14 +537,14 @@ export default {
     },
     loadTreeNode(node, resolve) {
       var data;
-      setTimeout(() => {
+      //setTimeout(() => {
         if (node.level === 0) {
-          data = HomeData.getProjects();
+          data = HomeData.getProjects(resolve);
         } else {
           data = HomeData.getNodes(node.level, node.data.refId);
         }
-        resolve(data);
-      }, 500);
+        //resolve(data);
+      //}, 500);
     },
     allowDrag(draggingNode) {
       return draggingNode.level > 1;

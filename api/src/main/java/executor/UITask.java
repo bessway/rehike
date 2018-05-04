@@ -8,9 +8,9 @@ import java.util.Hashtable;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
-import pojo.CaseDataPojo;
-import pojo.CasePojo;
-import pojo.KeyPojo;
+import core.pojo.CaseDataPojo;
+import core.pojo.CasePojo;
+import core.pojo.KeyPojo;
 import utils.DBUtils;
 import utils.SeleniumUtils;
 
