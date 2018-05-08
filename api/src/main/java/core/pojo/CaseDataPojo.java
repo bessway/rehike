@@ -5,11 +5,15 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection="data")
 public class CaseDataPojo{
     private String caseId=null;
     private String version=null;
     private Hashtable<String,String> sharedParas=null;
     private ArrayList<StepDataPojo> stepsData=null;
+    
     public String getCaseId(){
         return this.caseId;
     }

@@ -2,6 +2,9 @@ package core.pojo;
 
 import java.util.ArrayList;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection="actions")
 public class KeyPojo{
     private String name=null;
     private String regFunc=null;

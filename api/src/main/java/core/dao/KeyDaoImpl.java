@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
-import core.pojo.ProjectPojo;
+import core.pojo.KeyPojo;
 
-@Repository("projectDao")
-public class ProjectDaoImpl{
+@Repository("keyDao")
+public class KeyDaoImpl{
     @Autowired
     private MongoTemplate mongoTemplate=null;
-    public List<ProjectPojo> getAllProjects(){
-        List<ProjectPojo> ret= mongoTemplate.findAll(ProjectPojo.class);
+    public List<KeyPojo> getAllKeys(){
+        List<KeyPojo> ret=mongoTemplate.findAll(KeyPojo.class);
         return ret;
-    } 
+    }
 }

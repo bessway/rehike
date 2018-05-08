@@ -27,7 +27,7 @@
       <el-tabs @tab-click="handleClickTab" style="margin-top:0px;">
         <el-tab-pane label="用例管理" name="case">
           <div>
-            <b><font size="4">正在查看： </font></b>
+            <b><font size="4">正在查看 {{selectedNodeType}} </font></b>
             <el-button size="mini" v-show="isShowAddBtn" icon="el-icon-plus" circle
             @click="handleAddNodeClick"></el-button>
             <el-button size="mini" v-show="isShowDelBtn" icon="el-icon-minus" circle
@@ -60,7 +60,7 @@
                   <el-option
                     v-for="item in actions"
                     :key="item.value"
-                    :label="item.label"
+                    :label="item.name"
                     :value="item.value">
                   </el-option>
                 </el-select>
@@ -129,7 +129,7 @@
             <el-table-column label="参数1" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
-                  v-model=scope.row.p1 allow-create clearable
+                  v-model=scope.row.paras[0] allow-create clearable
                   v-bind:disabled="isDisableSelect(scope.row,scope.column)">
                   <el-option
                     v-for="item in globalParas"
@@ -143,7 +143,7 @@
             <el-table-column label="参数2" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
-                  v-model=scope.row.p2 allow-create clearable
+                  v-model=scope.row.paras[1] allow-create clearable
                   v-bind:disabled="isDisableSelect(scope.row,scope.column)">
                   <el-option
                     v-for="item in globalParas"
@@ -157,7 +157,7 @@
             <el-table-column label="参数3" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
-                  v-model=scope.row.p3 allow-create clearable
+                  v-model=scope.row.paras[2] allow-create clearable
                   v-bind:disabled="isDisableSelect(scope.row,scope.column)">
                   <el-option
                     v-for="item in globalParas"
@@ -171,7 +171,7 @@
             <el-table-column label="参数4" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
-                  v-model=scope.row.p4 allow-create clearable
+                  v-model=scope.row.paras[3] allow-create clearable
                   v-bind:disabled="isDisableSelect(scope.row,scope.column)">
                   <el-option
                     v-for="item in globalParas"
@@ -185,7 +185,7 @@
             <el-table-column label="返回值" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
-                  v-model=scope.row.res allow-create clearable
+                  v-model=scope.row.response allow-create clearable
                   v-bind:disabled="isDisableSelect(scope.row,scope.column)">
                   <el-option
                     v-for="item in globalParas"
@@ -248,6 +248,7 @@ import HomeData from "../../controller/Home/home.js";
 const defaultTableData = '{"steps": [{"id": 0}]}';
 const emptyTableData = '{"steps": []}';
 const emptyNode = '{"label":"","refId":""}';
+var paraCount=4;
 export default {
   data() {
     return {
@@ -293,21 +294,28 @@ export default {
         return this.selectedNode.level > 0;
       }
     },
+    selectedNodeType:function(){
+      if (this.selectedNode === null) {
+        return "无";
+      }
+      if (this.selectedNode.level === 1) {
+        return "项目：";
+      } else if (this.selectedNode.level === 2) {
+        return "模块：";
+      } else if (this.selectedNode.level === 3) {
+        return "用例集：";
+      } else if (this.selectedNode.level === 4) {
+        return "用例：";
+      } else {
+        return "无";
+      }
+    },
     selectedLabel: function() {
       if (this.selectedNode === null) {
         return "无";
       } else {
-        if (this.selectedNode.level === 1) {
-          return "项目：" + this.selectedNode.label;
-        } else if (this.selectedNode.level === 2) {
-          return "模块：" + this.selectedNode.label;
-        } else if (this.selectedNode.level === 3) {
-          return "用例集：" + this.selectedNode.label;
-        } else if (this.selectedNode.level === 4) {
-          return "用例：" + this.selectedNode.label;
-        } else {
-          return "无";
-        }
+        return this.selectedNode.label;
+
       }
     },
     getPages: function() {
@@ -399,30 +407,12 @@ export default {
       for (var i = 0; i < this.actions.length; i++) {
         var result = false;
         if (this.actions[i].value === row.action) {
-          if (col.label === "参数1") {
-            result = !this.actions[i].p1;
-            if (result) {
-              row.p1 = "";
-            }
-          } else if (col.label === "参数2") {
-            result = !this.actions[i].p2;
-            if (result) {
-              row.p2 = "";
-            }
-          } else if (col.label === "参数3") {
-            result = !this.actions[i].p3;
-            if (result) {
-              row.p3 = "";
-            }
-          } else if (col.label === "参数4") {
-            result = !this.actions[i].p4;
-            if (result) {
-              row.p4 = "";
-            }
-          } else if (col.label === "返回值") {
-            result = !this.actions[i].res;
-            if (result) {
-              row.res = "";
+          if(col.label.indexOf("参数")!=-1){
+            var colIndex=col.label.substring(2,3);
+            if(colIndex>this.actions[i].paras.length){
+              result= true;
+            }else{
+              result= false;
             }
           } else if (
             col.label === "页面" ||
@@ -431,13 +421,15 @@ export default {
             col.label === "对象名" ||
             col.label === "xpath"
           ) {
-            result = !this.actions[i].object;
+            result = !this.actions[i].target;
             if (result) {
               row.page = "";
               row.type = "";
               row.name = "";
               row.path = "";
             }
+          }else if(col.label==="返回值"){
+            result=!this.actions[i].response;
           }
           return result;
         }
@@ -477,12 +469,12 @@ export default {
         this.loadGlobalParas();
         this.selectedRow = null;
       } else if (tab.name === "execute") {
-        this.loadNodes();
+        this.loadAgents();
       }
     },
     handleClickNode(data, node) {
-      this.loadCaseDetail(node);
       this.selectedNode = node;
+      this.loadCaseDetail();
       this.selectedRow = null;
     },
     filterNode(value, data) {
@@ -493,9 +485,13 @@ export default {
       if (this.actions !== null) {
         return;
       }
-      setTimeout(() => {
-        this.actions = HomeData.getActions();
-      }, 500);
+      HomeData.getActions(this.bindActionData);
+    },
+    bindActionData(response){
+      this.actions=response;
+      for(var i=0;i<this.actions.length;i++){
+        this.actions[i].value=this.actions[i].name;
+      }
     },
     loadObjects() {
       if (this.objects !== null) {
@@ -509,48 +505,70 @@ export default {
       if (this.globalParas !== null) {
         return;
       }
-      setTimeout(() => {
-        this.globalParas = HomeData.getGlobalParas();
-      }, 500);
+      HomeData.getGlobalParas(this.bindGlobalParas);
     },
-    loadCaseDetail(node) {
-      if (node.level !== 4) {
+    bindGlobalParas(response){
+      if(this.globalParas===null){
+        this.globalParas=new Array();
+      }
+      for(var item in response){
+        let tmp={};
+        tmp.label=item;
+        tmp.value=item;
+
+        this.globalParas.push(tmp);
+      }
+    },
+    loadCaseDetail() {
+      if (this.selectedNode.level !== 4) {
         this.showingCaseDetail = JSON.parse(emptyTableData);
         return;
       }
+      //已经加载过的不再重新加载
       if (
-        node.data.caseDetail != undefined &&
-        node.data.caseDetail != null &&
-        JSON.stringify(node.data.caseDetail) !== defaultTableData
+        this.selectedNode.data.caseDetail != undefined &&
+        this.selectedNode.data.caseDetail != null &&
+        JSON.stringify(this.selectedNode.data.caseDetail) !== defaultTableData
       ) {
-        this.showingCaseDetail = node.data.caseDetail;
+        this.showingCaseDetail = this.selectedNode.data.caseDetail;
         return;
       }
-
-      setTimeout(() => {
-        this.showingCaseDetail = HomeData.getCaseDetail(node.data.refId);
-        if (JSON.stringify(this.showingCaseDetail) === "{}") {
-          this.showingCaseDetail = JSON.parse(defaultTableData);
-        }
-        node.data.caseDetail = this.showingCaseDetail;
-      }, 500);
+      HomeData.getCaseDetail(this.selectedNode.data.refId,this.bindCaseDetail);
+    },
+    bindCaseDetail(response){
+      this.showingCaseDetail=response;
+      if (JSON.stringify(this.showingCaseDetail) === "{}") {
+        this.showingCaseDetail = JSON.parse(defaultTableData);
+      }
+      for(var i=0;i<this.showingCaseDetail.steps.length;i++){
+        this.showingCaseDetail.steps[i].paras=this.appendBlank(this.showingCaseDetail.steps[i].paras);
+      }
+      console.log(this.showingCaseDetail);
+      this.selectedNode.data.caseDetail = this.showingCaseDetail;
+    },
+    appendBlank(originArray){
+      var empty=new Array(paraCount);
+      for(var item in empty){
+            item="";
+      }
+      if(originArray==null||originArray==undefined){
+        originArray=new Array();
+      }
+      return originArray.concat(empty).slice(0,4);
     },
     loadTreeNode(node, resolve) {
       var data;
-      //setTimeout(() => {
-        if (node.level === 0) {
-          data = HomeData.getProjects(resolve);
-        } else {
-          data = HomeData.getNodes(node.level, node.data.refId);
-        }
-        //resolve(data);
-      //}, 500);
+      if (node.level === 0) {
+        HomeData.getProjects(resolve);
+      } else {
+        HomeData.getNodes(node.data.refId,resolve);
+      }
     },
     allowDrag(draggingNode) {
       return draggingNode.level > 1;
     },
     allowDrop(draggingNode, dropNode) {
-      if (dropNode.level === 4 || dropNode.level >= draggingNode.level) {
+      if (draggingNode.level-dropNode.level!==1) {
         return false;
       } else {
         return true;
@@ -730,7 +748,7 @@ export default {
       }
       row.name = result;
     },
-    loadNodes() {
+    loadAgents() {
       this.nodes = HomeData.getExecuteNodes();
     },
     handleRunClick(){

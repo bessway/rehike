@@ -1,24 +1,27 @@
 package core.controller;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import utils.DBUtils;
-import core.pojo.KeyPojo;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import core.service.KeyServiceImpl;
+
+@RestController
+@RequestMapping("/1/action")
 public class KeyManager{
-    private ArrayList<KeyPojo> keys=null;
-    public ArrayList<KeyPojo> getKeys() throws Exception{
-        this.keys=new Gson().fromJson(DBUtils.getData("keys.json"), new TypeToken<ArrayList<KeyPojo>>() {
-        }.getType());
-        for(KeyPojo item:this.keys){
-            System.out.println(item.toString());
-        }
-        return this.keys;
-    }
-    public static void main(String[] args) throws Exception{
-        new KeyManager().getKeys();
+    private Gson gson=new Gson();
+    @Autowired
+    private KeyServiceImpl keyService=null;
+    
+    @RequestMapping("/all")
+    public String getAllKeys(HttpServletResponse res){
+        res.addHeader("Access-Control-Allow-Origin", "*");
+        res.addHeader("Content-Type", "application/json;charset=UTF-8");
+        
+        return gson.toJson(keyService.getAllKeys());
     }
 }
