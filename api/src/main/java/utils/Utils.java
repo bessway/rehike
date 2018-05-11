@@ -12,6 +12,9 @@ public class Utils{
         if(objs==null){
             return;
         }
+        if(Utils.objectsMap==null){
+            Utils.objectsMap=new HashMap<String,String>();
+        }
         objects=objs;
         for(ObjectPojo item:objs){
             String key=item.getPage()+"."+item.getType()+"."+item.getName();
