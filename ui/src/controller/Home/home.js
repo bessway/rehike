@@ -137,7 +137,6 @@ function updateCase(refId, caseName) {
   })
     .then(response => {
       let _data = response.data;
-      bindData(_data);
     })
     .catch(function(err) {
       console.log(err);
@@ -152,20 +151,19 @@ function updateSteps(refId, casedata) {
   })
     .then(response => {
       let _data = response.data;
-      bindData(_data);
     })
     .catch(function(err) {
       console.log(err);
     });
 }
-function deleteNode(refId) {
+function deleteNode(refId,bindData) {
   axios({
     method: "delete",
-    url: host + "/1/node/"+refId
+    url: host + "/1/test/node/"+"test"
   })
     .then(response => {
       let _data = response.data;
-      //bindData(_data);
+      bindData(_data);
     })
     .catch(function(err) {
       console.log(err);

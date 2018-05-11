@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import org.apache.xmlbeans.impl.xb.ltgfmt.TestsDocument.Tests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,12 +44,6 @@ public class TestManager {
         return gson.toJson(testService.getCaseDetail(caseId,"default"));
     }
 
-    @RequestMapping(value="/node/{caseId}",method=RequestMethod.DELETE)
-    public String deleteCase(HttpServletResponse res,@PathVariable String caseId){
-        testService.deleteCase(caseId);
-
-        return "{result:true}";
-    }
     @RequestMapping(value="/node",method=RequestMethod.POST)
     public String addCase(HttpServletResponse res, @RequestBody HierachyPojo node){
         return gson.toJson(testService.addNode(node));
@@ -65,7 +58,14 @@ public class TestManager {
     }
     @RequestMapping(value="/node/step/{caseId}",method=RequestMethod.PUT)
     public String updateCaseStep(HttpServletResponse res,@PathVariable String caseId, @RequestBody List<StepDetailPojo> data){
-        testService.updateCase(caseId,data);
-        return "{result:true}";
+        Boolean result=testService.updateCase(caseId,data);
+        return "{result:"+result+"}";
+    }
+    
+    @RequestMapping(value="/node/{nodeId}",method=RequestMethod.DELETE)
+    public String deleteCase(HttpServletResponse res,@PathVariable String nodeId){
+        Boolean result=testService.deleteNode(nodeId);
+
+        return "{result:"+result+"}";
     }
 }

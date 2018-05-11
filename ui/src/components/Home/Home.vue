@@ -248,7 +248,7 @@
 <script>
 import HomeData from "../../controller/Home/home.js";
 const defaultTableData =
-  '{"steps": [{"id": 0,"action":"","name":"","page":"","paras":[],"path":"","response":"","type":""}]}';
+  '{"steps": [{"id": 0,"action":"","name":"","page":"","paras":["","","",""],"path":"","response":"","type":""}]}';
 const emptyTableData = '{"steps": []}';
 const emptyNode = '{"label":"","refId":""}';
 var paraCount = 4;
@@ -263,7 +263,7 @@ export default {
       caselabel: null,
       selectedRowId: null,
       actions: null,
-      objects: null,
+      strctureObjects: null,
       types: null,
       names: null,
       xpaths: null,
@@ -277,25 +277,6 @@ export default {
   //如果函数的依赖有变化，则按逻辑同步更新computed属性
   //即selectedNode有变化，则执行函数更新isShowAddBtn
   computed: {
-    strctureObjects: function() {
-      if (this.objects == null || this.objects.length == 0) {
-        return null;
-      }
-      var result = {};
-      for (var i = 0; i < this.objects.length; i++) {
-        var tmp = result;
-        if (tmp[this.objects[i].page] == undefined) {
-          tmp[this.objects[i].page] = {};
-        }
-        tmp = tmp[this.objects[i].page];
-        if (tmp[this.objects[i].type] == undefined) {
-          tmp[this.objects[i].type] = {};
-        }
-        tmp = tmp[this.objects[i].type];
-        tmp[this.objects[i].name] = this.objects[i].xpath;
-      }
-      return result;
-    },
     //根据选择的node显示按钮
     isShowAddBtn: function() {
       if (this.selectedNode === null) {
@@ -470,6 +451,7 @@ export default {
             var colIndex = col.label.substring(2, 3);
             if (colIndex > this.actions[i].paras.length) {
               result = true;
+              row.paras[colIndex-1]=null;
             } else {
               result = false;
             }
@@ -551,11 +533,25 @@ export default {
     },
     //获取object list
     loadObjects() {
-      if (this.objects !== null) {
+      if (this.strctureObjects !== null) {
         return;
       }
       HomeData.getObjects(function(response) {
-        this.objects = response;
+        var result = {};
+        for(var obj in response){
+          var tmp = result;
+          var target=obj.split(".");
+          if (tmp[target[0]] == undefined) {
+            tmp[target[0]] = {};
+          }
+          tmp = tmp[target[0]];
+          if (tmp[target[1]] == undefined) {
+            tmp[target[1]] = {};
+          }
+          tmp = tmp[target[1]];
+          tmp[target[2]] = response[obj];
+        }
+        this.strctureObjects=result;
       }.bind(this));
     },
     //获取global parameter list
@@ -567,10 +563,10 @@ export default {
         if (this.globalParas === null) {
           this.globalParas = new Array();
         }
-        for (var item in response) {
+        for(var i=0;i<response.length;i++){
           let tmp = {};
-          tmp.label = item;
-          tmp.value = item;
+          tmp.label = response[i];
+          tmp.value = response[i];
 
           this.globalParas.push(tmp);
         }
@@ -765,11 +761,16 @@ export default {
     },
     //保存steps
     handleSaveClick() {
-      HomeData.updateCase(this.selectedNode.data.refId,this.selectedNode.label);
-      //空步骤，不需要保存
-      if(this.showingCaseDetail.steps[0].action!=""){
-        homedata.updateSteps(this.selectedNode.data.refId,this.showingCaseDetail.steps);
+      //有空步骤，不应该保存
+      for(var i=0;i<this.showingCaseDetail.steps.length;i++){
+        if(this.showingCaseDetail.steps[i].action==""){
+          alert("have empty step");
+          return;
+        }
       }
+      HomeData.updateCase(this.selectedNode.data.refId,this.selectedNode.label);
+      
+      HomeData.updateSteps(this.selectedNode.data.refId,this.showingCaseDetail.steps);
     },
     //添加一个新的node
     handleAddNodeClick() {
@@ -783,8 +784,9 @@ export default {
     },
     //TO-DO
     handleDelNodeClick() {
-      HomeData.deleteNode(this.$refs.casetree.currentNode.node.data.refId);
-      this.$refs.casetree.remove(this.$refs.casetree.currentNode.node);
+      HomeData.deleteNode(this.$refs.casetree.currentNode.node.data.refId,function(response){
+        this.$refs.casetree.remove(this.$refs.casetree.currentNode.node);
+      }.bind(this));
     },
     handleRowClick(value, row) {
       this.selectedRowId = row.id;
@@ -795,8 +797,6 @@ export default {
       row.type = "";
       row.name = "";
       row.path = "";
-      console.log(row.paras);
-      console.log(row.action);
       for (var i = 0; i < this.paraCount; i++) {
         row.paras[i] = "";
       }
@@ -815,31 +815,30 @@ export default {
     },
     //xpath跟着对象名变化
     handleNameChange(row) {
-      var result = "";
-      for (var i = 0; i < this.objects.length; i++) {
-        if (
-          this.objects[i].page === row.page &&
-          this.objects[i].type === row.type &&
-          this.objects[i].name === row.name
-        ) {
-          result = this.objects[i].xpath;
-          break;
-        }
-      }
-      if (result != null) {
+      var result=this.strctureObjects[row.page][row.type][row.name];
+      
+      if (result!=undefined && result != null) {
         row.path = result;
+      }else{
+        //如果没有对应的记录，置空
+        row.path="";
       }
     },
     //对象名跟着xpath变化
     handlePathChange(row) {
-      var result = "";
-      for (var i = 0; i < this.objects.length; i++) {
-        if (this.objects[i].xpath === row.path) {
-          result = this.objects[i].name;
+      var names = this.strctureObjects[row.page][row.type];
+      for(var item in names){
+        if(names[item]==row.path){
+          row.name=item;
           break;
+        }else{
+          var result=this.strctureObjects[row.page][row.type][row.name];
+          //如果没有对应的记录，说明是新建的
+          if (result!=undefined && result != null) {
+            row.name = "";
+          }
         }
       }
-      row.name = result;
     },
     //TO-DO
     loadAgents() {
@@ -858,7 +857,7 @@ export default {
     startLocalAgent() {},
     debug() {
       console.log(this.$refs.casetree.currentNode.node.data);
-      console.log(this.showingCaseDetail);
+      console.log(this.globalParas);
     }
   }
 };

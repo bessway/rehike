@@ -34,24 +34,28 @@ public class TestDaoImpl {
 
         return ret;
     }
+    public List<HierachyPojo> getSubNodes(List<String> parentIds) {
+        Query query = Query.query(Criteria.where("parentId").in(parentIds));
+        List<HierachyPojo> ret = mongoTemplate.find(query, HierachyPojo.class);
+
+        return ret;
+    }
 
     public CasePojo getCaseDetail(String caseId) {
         Query query = Query.query(Criteria.where("caseId").is(caseId));
         return mongoTemplate.findOne(query, CasePojo.class);
     }
 
-    public Boolean deleteSubNodes(String parentId) {
-        Query query = Query.query(Criteria.where("parentId").is(parentId));
+    public Boolean deleteMultipleNodes(List<String> nodeIds) {
+        Query query = Query.query(Criteria.where("_id").in(nodeIds));
         mongoTemplate.remove(query, "hierachy");
         return true;
     }
-
-    public Boolean deleteNode(String nodeId) {
-        Query query = Query.query(Criteria.where("refId").is(nodeId));
-        DeleteResult ret = mongoTemplate.remove(query, "hierachy");
+    public Boolean deleteMultipleCases(List<String> caseIds){
+        Query query = Query.query(Criteria.where("caseId").in(caseIds));
+        mongoTemplate.remove(query,"cases");
         return true;
     }
-
     public void addNode(HierachyPojo node) {
         mongoTemplate.insert(node);
     }
@@ -74,6 +78,9 @@ public class TestDaoImpl {
                 HierachyPojo.class);
     }
     public Boolean updateCaseSteps(String caseId,List<StepPojo> steps){
+        Query query = Query.query(Criteria.where("caseId").is(caseId));
+        Update update = Update.update("steps", steps);
+        mongoTemplate.upsert(query, update, CasePojo.class);
         return true;
     }
 }

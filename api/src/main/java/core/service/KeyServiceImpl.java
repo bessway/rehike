@@ -11,9 +11,9 @@ import core.pojo.KeyPojo;
 @Service("KeyService")
 public class KeyServiceImpl{
     @Autowired
-    private KeyDaoImpl project=null;
+    private KeyDaoImpl keyDao=null;
     public List<KeyPojo> getAllKeys(){
-        return project.getAllKeys();
+        return keyDao.getAllKeys();
     }
 
 }

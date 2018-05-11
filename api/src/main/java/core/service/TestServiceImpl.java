@@ -3,8 +3,6 @@ package core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import core.dao.DataDaoImpl;
-import core.dao.ObjectDaoImpl;
 import core.dao.TestDaoImpl;
 import core.pojo.CaseDataPojo;
 import core.pojo.StepDetailPojo;
@@ -31,9 +29,9 @@ public class TestServiceImpl {
     @Autowired
     private TestDaoImpl testDao = null;
     @Autowired
-    private DataDaoImpl dataDao = null;
+    private DataServiceImpl dataService=null;
     @Autowired
-    private ObjectDaoImpl objDao = null;
+    private ObjectServiceImpl objService=null;
 
     public List<HierachyPojo> getProjects() {
         return this.testDao.getAllProjects();
@@ -45,14 +43,9 @@ public class TestServiceImpl {
 
     public HashMap<String, Object> getCaseDetail(String caseId, String version) {
         CasePojo casz = testDao.getCaseDetail(caseId);
-        CaseDataPojo data = dataDao.getCaseData(caseId, version);
+        CaseDataPojo data =dataService.getCaseData(caseId, version);
 
         return this.wrapCaseData(casz, data);
-    }
-
-    public Boolean deleteCase(String caseId) {
-
-        return true;
     }
 
     public HierachyPojo addNode(HierachyPojo node) {
@@ -68,40 +61,74 @@ public class TestServiceImpl {
     public HierachyPojo updateNodeName(String nodeId, HierachyPojo newName) {
         return testDao.updateCaseName(nodeId, newName.getLabel());
     }
+    
+    public Boolean deleteNode(String nodeId) {
+        List<String> allCases=new ArrayList<String>();
+        List<String> rootNodeId=new ArrayList<String>();
+        rootNodeId.add(nodeId);
+        this.findAllCases(rootNodeId, allCases);
+        //delete data
+        dataService.deleteMultipleCasesData(allCases);
+        //delete case
+        testDao.deleteMultipleCases(allCases);
+        //delete node
+        testDao.deleteMultipleNodes(allCases);
+
+        return true;
+    }
+    public Boolean findAllCases(List<String> nodeIds,List<String> allCases){
+        List<HierachyPojo> subNodes=testDao.getSubNodes(nodeIds);
+        if(subNodes!=null && subNodes.size()>0){
+            //只要有一个nodeId有子节点，那么这一级node一定不是case
+            List<String> ids=new ArrayList<String>();
+            for(HierachyPojo item:subNodes){
+                ids.add(item.getRefId());
+            }
+            this.findAllCases(ids, allCases);
+            allCases.addAll(nodeIds);
+        }else{
+            //如果没有子节点，则可能是case
+            allCases.addAll(nodeIds);
+        }
+        return true;
+    }
 
     public Boolean updateCase(String nodeId, List<StepDetailPojo> steps) {
         //前端数据可能未排序
         Collections.sort(steps,StepDetailPojo.sidComp);
         List<StepPojo> aloneSteps=new ArrayList<StepPojo>();
         CaseDataPojo data=new CaseDataPojo();
-        HashMap<String,String> gPara=new HashMap<String,String>();
-        Boolean isObjUpdated=false;
+        List<String> gPara=new ArrayList<String>();
         for(int i=0;i<steps.size();i++){
             //update object
+            if(steps.get(i).getAction().equals("")){
+                continue;
+            }
             ObjectPojo stepObj=this.extractObj(steps.get(i));
             if(this.isToUpdateObj(stepObj)){
-                objDao.updateObject(stepObj);
-                isObjUpdated=true;
+                String key=stepObj.getPage()+"."+stepObj.getType()+"."+stepObj.getName();
+                objService.updateObject(stepObj);
+                //update cached global objects
+                Utils.addToObjectMap(key,stepObj.getXpath());
             }
             //build List<StepPojo>
             aloneSteps.add(i,this.extractStep(steps.get(i)));
             //build sharedParas
             data.appendSharedParas(this.extractSharedPara(steps.get(i)));
             //build globalParas
-            gPara.putAll(this.extractGlobalPara(steps.get(i)));
+            gPara.addAll(this.extractGlobalPara(steps.get(i)));
             data.addStepsData(i, this.extractStepData(steps.get(i)));
         }
         testDao.updateCaseSteps(nodeId,aloneSteps);
-        dataDao.updateData(nodeId,"default",data.getStepsData());
-        dataDao.updateGlobalParas(gPara);
-        if(isObjUpdated){
-            Utils.cacheObject(objDao.getAllObjects());
+        dataService.updateData(nodeId,"default",data);
+        if(gPara.size()>0){
+            dataService.updateGlobalParas(gPara);
         }
         
         return null;
     }
     public ObjectPojo extractObj(StepDetailPojo step) {
-        if (step.getAction() == null || step.getAction().equals("")) {
+        if (step.getPage() == null || step.getPage().equals("")) {
             return null;
         }
         ObjectPojo obj = new ObjectPojo();
@@ -115,12 +142,21 @@ public class TestServiceImpl {
         StepDataPojo data=new StepDataPojo();
         data.setsIndex(step.getId());
         data.setResponse(step.getResponse());
-        data.setTarget(step.getPage()+"."+step.getType()+"."+step.getName());
+        if(step.getPage().equals("")){
+            data.setTarget("");
+        }else{
+            data.setTarget(step.getPage()+"."+step.getType()+"."+step.getName());
+        }
         for(int i=0;i<step.getParas().size();i++){
-            ParaPojo p=new ParaPojo();
-            p.setpIndex(i);
-            p.setpValue(step.getPara(i));
-            data.addStepPara(i, p);
+            if(step.getPara(i)!=null){
+                ParaPojo p=new ParaPojo();
+                p.setpIndex(i);
+                p.setpValue(step.getPara(i));
+                data.addStepPara(i, p);
+            }
+        }
+        if(data.getStepParas()==null||data.getStepParas().size()==0){
+            data.setStepParas(new ArrayList<ParaPojo>());
         }
 
         return data;
@@ -131,19 +167,22 @@ public class TestServiceImpl {
         step.setIndex(onestep.getId());
         return step;
     }
-    public HashMap<String,String> extractGlobalPara(StepDetailPojo step){
-        HashMap<String,String> gPara=new HashMap<String,String>();
+    public List<String> extractGlobalPara(StepDetailPojo step){
+        List<String> gPara=new ArrayList<String>();
         if(step.getResponse().contains("{{")){
-            gPara.put(step.getResponse(),"");
+            gPara.add(step.getResponse());
         }
         for(String item:step.getParas()){
+            if(item==null){
+                continue;
+            }
             if(item.contains("{{")){
                 Pattern p=Pattern.compile(".*(\\{\\{.*\\}\\}).*");
                 Matcher m=p.matcher(item);
                 m.find();
                 if(m.groupCount()>0){
                     for(int i=1;i<=m.groupCount();i++){
-                        gPara.put(m.group(i),"");
+                        gPara.add(m.group(i));
                     }
                 }
             }
@@ -156,6 +195,9 @@ public class TestServiceImpl {
             sPara.put(step.getResponse(),"");
         }
         for(String item:step.getParas()){
+            if(item==null){
+                continue;
+            }
             if(item.contains("[[")){
                 Pattern p=Pattern.compile(".*(\\[\\[.*\\]\\]).*");
                 Matcher m=p.matcher(item);
@@ -171,11 +213,11 @@ public class TestServiceImpl {
         return sPara;
     }
     public Boolean isToUpdateObj(ObjectPojo obj){
-        if(Utils.objectsMap==null){
-            return true;
-        }
         if(obj==null){
             return false;
+        }
+        if(Utils.objectsMap==null){
+            return true;
         }
         
         String key=obj.getPage()+"."+obj.getType()+"."+obj.getName();
@@ -202,8 +244,8 @@ public class TestServiceImpl {
                 tmp.setType(target[1]);
                 tmp.setName(target[2]);
 
-                if (Utils.objects == null) {
-                    Utils.cacheObject(objDao.getAllObjects());
+                if (Utils.objectsMap == null) {
+                    Utils.objectsMap=objService.getAllObjects();
                 }
                 tmp.setPath(Utils.objectsMap.get(data.getStepsData().get(i).getTarget()));
             } else {
