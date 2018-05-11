@@ -43,7 +43,8 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         if(this.test.getResponse()){
             if(this.response.contains("{{")){
                 gPara.put(this.response,String.valueOf(result));
-            }else if(this.response.contains("{")){
+            }
+            if(this.response.contains("[[")){
                 sPara.put(this.response,String.valueOf(result));
             }
         }
@@ -72,8 +73,8 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
                 }
             }
         }
-        if(para.contains("{")){
-            Pattern p=Pattern.compile(".*(\\{.*\\}).*");
+        if(para.contains("[[")){
+            Pattern p=Pattern.compile(".*(\\[\\[.*\\]\\]).*");
             Matcher m=p.matcher(para);
             m.find();
             if(m.groupCount()>0){

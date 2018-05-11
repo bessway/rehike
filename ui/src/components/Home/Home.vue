@@ -34,6 +34,8 @@
             @click="handleDelNodeClick"></el-button>
             <el-button size="mini" v-show="isShowSaveBtn" icon="el-icon-check" circle
             @click="handleSaveClick"></el-button>
+            <el-button size="mini" icon="el-icon-question"
+            @click="debug"></el-button>
             <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-up"
             @click="handleStepUpClick"></el-button>
             <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-down"
@@ -41,7 +43,7 @@
             <el-button style="float:right;padding:5px" size="mini" icon="el-icon-refresh"
             @click="handleRefreshClick"></el-button>
             <el-input type="textarea" resize="none" autosize float="left" 
-              v-model="selectedLabel">
+              v-model="caselabel">
             </el-input>
           </div>
           <el-table style="width: 100%;" stripe height="480"
@@ -245,10 +247,11 @@
 
 <script>
 import HomeData from "../../controller/Home/home.js";
-const defaultTableData = '{"steps": [{"id": 0}]}';
+const defaultTableData =
+  '{"steps": [{"id": 0,"action":"","name":"","page":"","paras":[],"path":"","response":"","type":""}]}';
 const emptyTableData = '{"steps": []}';
 const emptyNode = '{"label":"","refId":""}';
-var paraCount=4;
+var paraCount = 4;
 export default {
   data() {
     return {
@@ -257,6 +260,7 @@ export default {
         label: "label"
       },
       selectedNode: null,
+      caselabel: null,
       selectedRowId: null,
       actions: null,
       objects: null,
@@ -270,9 +274,29 @@ export default {
       selectedBrowser: null
     };
   },
-  //如果函数的依赖有变化，则按逻辑同步更新computed属相
+  //如果函数的依赖有变化，则按逻辑同步更新computed属性
   //即selectedNode有变化，则执行函数更新isShowAddBtn
   computed: {
+    strctureObjects: function() {
+      if (this.objects == null || this.objects.length == 0) {
+        return null;
+      }
+      var result = {};
+      for (var i = 0; i < this.objects.length; i++) {
+        var tmp = result;
+        if (tmp[this.objects[i].page] == undefined) {
+          tmp[this.objects[i].page] = {};
+        }
+        tmp = tmp[this.objects[i].page];
+        if (tmp[this.objects[i].type] == undefined) {
+          tmp[this.objects[i].type] = {};
+        }
+        tmp = tmp[this.objects[i].type];
+        tmp[this.objects[i].name] = this.objects[i].xpath;
+      }
+      return result;
+    },
+    //根据选择的node显示按钮
     isShowAddBtn: function() {
       if (this.selectedNode === null) {
         return 0;
@@ -280,6 +304,7 @@ export default {
         return this.selectedNode.level !== 4 && this.selectedNode.level !== 0;
       }
     },
+    //根据选择的node显示按钮
     isShowDelBtn: function() {
       if (this.selectedNode === null) {
         return 0;
@@ -287,6 +312,7 @@ export default {
         return this.selectedNode.level !== 0;
       }
     },
+    //根据选择的node显示按钮
     isShowSaveBtn: function() {
       if (this.selectedNode === null) {
         return 0;
@@ -294,7 +320,8 @@ export default {
         return this.selectedNode.level > 0;
       }
     },
-    selectedNodeType:function(){
+    //根据选择的node显示tag
+    selectedNodeType: function() {
       if (this.selectedNode === null) {
         return "无";
       }
@@ -310,17 +337,21 @@ export default {
         return "无";
       }
     },
+    //根据选择的node显示lebel
     selectedLabel: function() {
       if (this.selectedNode === null) {
         return "无";
       } else {
         return this.selectedNode.label;
-
       }
     },
+    //获取所有对象的page list
     getPages: function() {
+      if (this.strctureObjects == null || this.strctureObjects.length == 0) {
+        return [];
+      }
       var pages = new Array();
-      for (var item in this.objects) {
+      for (var item in this.strctureObjects) {
         pages.push({ label: item, value: item });
       }
       return pages;
@@ -359,47 +390,75 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.casetree.filter(val);
+    },
+    caselabel(val) {
+      if (this.$refs.casetree.currentNode != null) {
+        this.$refs.casetree.currentNode.node.data.label = val;
+      }
     }
   },
 
   methods: {
+    //设置table的key，用于排序
     getRowKeys(row) {
       return row.id;
     },
-
+    //获取所选page中所有对象的类型
     getTypesOnPage: function(page) {
-      if (page == null || page == "") {
+      if (
+        this.strctureObjects == null ||
+        this.strctureObjects.length == 0 ||
+        page == null ||
+        page == ""
+      ) {
         return [];
       }
       var types = new Array();
-      var objs = this.objects[page];
-      for (var item in objs) {
+      for (var item in this.strctureObjects[page]) {
         types.push({ label: item, value: item });
       }
       return types;
     },
+    //获取所选page中某个类型的所有对象的名称
     getPathNames: function(page, type) {
-      if (page == null || page == "" || type == null || type == "") {
+      if (
+        page == null ||
+        page == "" ||
+        type == null ||
+        type == "" ||
+        this.strctureObjects == null ||
+        this.strctureObjects.length == 0
+      ) {
         return [];
       }
       var names = new Array();
-      var objs = this.objects[page][type];
-      for (var item in objs) {
+      for (var item in this.strctureObjects[page][type]) {
         names.push({ label: item, value: item });
       }
       return names;
     },
+    //获取所选page中某个类型的所有对象的xpath
     getPaths: function(page, type) {
-      if (page == null || page == "" || type == null || type == "") {
+      if (
+        page == null ||
+        page == "" ||
+        type == null ||
+        type == "" ||
+        this.strctureObjects == null ||
+        this.strctureObjects.length == 0
+      ) {
         return [];
       }
       var paths = new Array();
-      var objs = this.objects[page][type];
-      for (var item in objs) {
-        paths.push({ label: objs[item], value: objs[item] });
+      for (var item in this.strctureObjects[page][type]) {
+        paths.push({
+          label: this.strctureObjects[page][type][item],
+          value: this.strctureObjects[page][type][item]
+        });
       }
       return paths;
     },
+    //根据选择的action判断是否禁用参数字段
     isDisableSelect(row, col) {
       if (this.actions === null || this.actions.length === 0) {
         return false;
@@ -407,12 +466,12 @@ export default {
       for (var i = 0; i < this.actions.length; i++) {
         var result = false;
         if (this.actions[i].value === row.action) {
-          if(col.label.indexOf("参数")!=-1){
-            var colIndex=col.label.substring(2,3);
-            if(colIndex>this.actions[i].paras.length){
-              result= true;
-            }else{
-              result= false;
+          if (col.label.indexOf("参数") != -1) {
+            var colIndex = col.label.substring(2, 3);
+            if (colIndex > this.actions[i].paras.length) {
+              result = true;
+            } else {
+              result = false;
             }
           } else if (
             col.label === "页面" ||
@@ -428,40 +487,33 @@ export default {
               row.name = "";
               row.path = "";
             }
-          }else if(col.label==="返回值"){
-            result=!this.actions[i].response;
+          } else if (col.label === "返回值") {
+            result = !this.actions[i].response;
           }
           return result;
         }
       }
     },
+    //根据选择的action显示每个参数的提示
     getPlaceHolder(row, col) {
       if (this.actions === null || this.actions.length === 0) {
         return "";
       }
       for (var i = 0; i < this.actions.length; i++) {
         if (this.actions[i].value === row.action) {
-          if (col.label === "参数1") {
-            return this.actions[i].p1desc === undefined
-              ? ""
-              : this.actions[i].p1desc;
-          } else if (col.label === "参数2") {
-            return this.actions[i].p2desc === undefined
-              ? ""
-              : this.actions[i].p2desc;
-          } else if (col.label === "参数3") {
-            return this.actions[i].p3desc === undefined
-              ? ""
-              : this.actions[i].p3desc;
-          } else if (col.label === "参数4") {
-            return this.actions[i].p4desc === undefined
-              ? ""
-              : this.actions[i].p4desc;
+          if (col.label.indexOf("参数") != -1) {
+            var colIndex = col.label.substring(2, 3);
+            if (colIndex > this.actions[i].paras.length) {
+              return "";
+            } else {
+              return this.actions[i].paras[colIndex - 1].pDesc;
+            }
           }
         }
       }
       return "";
     },
+    //选择tab后加载action list，object list，global parameter list etc
     handleClickTab(tab) {
       if (tab.name === "case") {
         this.loadActions();
@@ -472,53 +524,59 @@ export default {
         this.loadAgents();
       }
     },
+    //选择node后记载详细信息
     handleClickNode(data, node) {
       this.selectedNode = node;
       this.loadCaseDetail();
       this.selectedRow = null;
+      this.caselabel = node.label;
     },
+    //tree关键字搜索
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
+    //获取action list
     loadActions() {
       if (this.actions !== null) {
         return;
       }
-      HomeData.getActions(this.bindActionData);
+      HomeData.getActions(function(response) {
+        for (var i = 0; i < response.length; i++) {
+          response[i].value = response[i].name;
+          response[i].label = response[i].name;
+        }
+        this.actions=response;
+      }.bind(this));
     },
-    bindActionData(response){
-      this.actions=response;
-      for(var i=0;i<this.actions.length;i++){
-        this.actions[i].value=this.actions[i].name;
-      }
-    },
+    //获取object list
     loadObjects() {
       if (this.objects !== null) {
         return;
       }
-      setTimeout(() => {
-        this.objects = HomeData.getObjects();
-      }, 500);
+      HomeData.getObjects(function(response) {
+        this.objects = response;
+      }.bind(this));
     },
+    //获取global parameter list
     loadGlobalParas() {
       if (this.globalParas !== null) {
         return;
       }
-      HomeData.getGlobalParas(this.bindGlobalParas);
-    },
-    bindGlobalParas(response){
-      if(this.globalParas===null){
-        this.globalParas=new Array();
-      }
-      for(var item in response){
-        let tmp={};
-        tmp.label=item;
-        tmp.value=item;
+      HomeData.getGlobalParas(function(response) {
+        if (this.globalParas === null) {
+          this.globalParas = new Array();
+        }
+        for (var item in response) {
+          let tmp = {};
+          tmp.label = item;
+          tmp.value = item;
 
-        this.globalParas.push(tmp);
-      }
+          this.globalParas.push(tmp);
+        }
+      }.bind(this));
     },
+    //获取case detail
     loadCaseDetail() {
       if (this.selectedNode.level !== 4) {
         this.showingCaseDetail = JSON.parse(emptyTableData);
@@ -533,50 +591,61 @@ export default {
         this.showingCaseDetail = this.selectedNode.data.caseDetail;
         return;
       }
-      HomeData.getCaseDetail(this.selectedNode.data.refId,this.bindCaseDetail);
+      HomeData.getCaseDetail(this.selectedNode.data.refId, function(response) {
+        this.showingCaseDetail = response;
+        if (JSON.stringify(this.showingCaseDetail) === "{}") {
+          this.showingCaseDetail = JSON.parse(defaultTableData);
+        }
+        for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
+          this.showingCaseDetail.steps[i].paras = this.appendBlank(
+            this.showingCaseDetail.steps[i].paras
+          );
+        }
+        this.selectedNode.data.caseDetail = this.showingCaseDetail;
+      }.bind(this));
     },
-    bindCaseDetail(response){
-      this.showingCaseDetail=response;
-      if (JSON.stringify(this.showingCaseDetail) === "{}") {
-        this.showingCaseDetail = JSON.parse(defaultTableData);
+    //casedetail禁用的参数字段置空
+    appendBlank(originArray) {
+      var empty = new Array(paraCount);
+      for (var item in empty) {
+        item = "";
       }
-      for(var i=0;i<this.showingCaseDetail.steps.length;i++){
-        this.showingCaseDetail.steps[i].paras=this.appendBlank(this.showingCaseDetail.steps[i].paras);
+      if (originArray == null || originArray == undefined) {
+        originArray = new Array();
       }
-      console.log(this.showingCaseDetail);
-      this.selectedNode.data.caseDetail = this.showingCaseDetail;
+      return originArray.concat(empty).slice(0, 4);
     },
-    appendBlank(originArray){
-      var empty=new Array(paraCount);
-      for(var item in empty){
-            item="";
-      }
-      if(originArray==null||originArray==undefined){
-        originArray=new Array();
-      }
-      return originArray.concat(empty).slice(0,4);
-    },
+    //获取下一级node
     loadTreeNode(node, resolve) {
       var data;
       if (node.level === 0) {
         HomeData.getProjects(resolve);
       } else {
-        HomeData.getNodes(node.data.refId,resolve);
+        HomeData.getNodes(node.data.refId, resolve);
       }
     },
+    //判断node是否可以拖动
     allowDrag(draggingNode) {
       return draggingNode.level > 1;
     },
+    //判断node是否可以放到目标node下
     allowDrop(draggingNode, dropNode) {
-      if (draggingNode.level-dropNode.level!==1) {
+      if (draggingNode.level - dropNode.level !== 1) {
         return false;
       } else {
         return true;
       }
     },
+    //移动node
     handleDrop(draggingNode, dropNode, dropType, ev) {
-      //call server
+      HomeData.moveNode(draggingNode.data.refId, dropNode.data.refId, function(
+        response
+      ) {
+        draggingNode.data.parentId = response.parentId;
+      });
     },
+
+    //添加step
     handleAddStepClick(row) {
       for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
         if (this.showingCaseDetail.steps[i].id > row.id) {
@@ -593,6 +662,7 @@ export default {
         tmpcase.steps[0]
       );
     },
+    //删除step
     handleDelStepClick(row) {
       var index = null;
       for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
@@ -606,6 +676,7 @@ export default {
       }
       this.showingCaseDetail.steps.splice(index, 1);
     },
+    //向上移动step   BUG
     handleStepUpClick() {
       var currstep = null;
       var currIndex = null;
@@ -647,6 +718,7 @@ export default {
         });*/
       }
     },
+    //向下移动step  BUG
     handleStepDownClick() {
       var currstep = null;
       var currIndex = null;
@@ -683,6 +755,7 @@ export default {
         });
       }
     },
+    //强制重新获取casedetail
     handleRefreshClick() {
       if (this.$refs.casetree.getCurrentNode().caseDetail == undefined) {
         return;
@@ -690,77 +763,102 @@ export default {
       this.$refs.casetree.getCurrentNode().caseDetail = null;
       this.loadCaseDetail(this.$refs.casetree.currentNode.node);
     },
+    //保存steps
     handleSaveClick() {
-      console.log(JSON.stringify(this.showingCaseDetail));
-      console.log(this.selectedRowId);
-      console.log(this.$refs.caseTable);
-    },
-    handleAddNodeClick() {
-      var tmp = JSON.parse(emptyNode);
-      if (this.$refs.casetree.currentNode.node.level === 4) {
-        tmp.casedetail = JSON.parse(defaultTableData);
+      HomeData.updateCase(this.selectedNode.data.refId,this.selectedNode.label);
+      //空步骤，不需要保存
+      if(this.showingCaseDetail.steps[0].action!=""){
+        homedata.updateSteps(this.selectedNode.data.refId,this.showingCaseDetail.steps);
       }
-      this.$refs.casetree.append(tmp, this.$refs.casetree.currentNode.node);
     },
+    //添加一个新的node
+    handleAddNodeClick() {
+      HomeData.createNode(
+        this.$refs.casetree.currentNode.node.data.refId,
+        function(response){
+          //return the new node info,add empty detail
+          this.$refs.casetree.append(response, this.$refs.casetree.currentNode.node);
+        }.bind(this)
+      );
+    },
+    //TO-DO
     handleDelNodeClick() {
+      HomeData.deleteNode(this.$refs.casetree.currentNode.node.data.refId);
       this.$refs.casetree.remove(this.$refs.casetree.currentNode.node);
     },
     handleRowClick(value, row) {
       this.selectedRowId = row.id;
     },
+    //重新选操作后清空后面所有的字段
     handleActionChange(row) {
       row.page = "";
       row.type = "";
       row.name = "";
       row.path = "";
-      row.p1 = "";
-      row.p2 = "";
-      row.p3 = "";
-      row.p4 = "";
-      row.res = "";
+      console.log(row.paras);
+      console.log(row.action);
+      for (var i = 0; i < this.paraCount; i++) {
+        row.paras[i] = "";
+      }
+      row.response = "";
     },
+    //重新选page后清空类型，对象名，xpath
     handlePageChange(row) {
       row.type = "";
       row.name = "";
       row.path = "";
     },
+    //重新选type后情空对象名和xpath
     handleTypeChange(row) {
       row.name = "";
       row.path = "";
     },
+    //xpath跟着对象名变化
     handleNameChange(row) {
-      var result = this.objects[row.page][row.type][row.name];
-      if (result != undefined && result != null && result != "") {
+      var result = "";
+      for (var i = 0; i < this.objects.length; i++) {
+        if (
+          this.objects[i].page === row.page &&
+          this.objects[i].type === row.type &&
+          this.objects[i].name === row.name
+        ) {
+          result = this.objects[i].xpath;
+          break;
+        }
+      }
+      if (result != null) {
         row.path = result;
-      } else {
-        row.path = "";
       }
     },
+    //对象名跟着xpath变化
     handlePathChange(row) {
-      console.log(this.objects);
       var result = "";
-      var items = this.objects[row.page][row.type];
-      for (var item in items) {
-        if (items[item] == row.path) {
-          result = item;
+      for (var i = 0; i < this.objects.length; i++) {
+        if (this.objects[i].xpath === row.path) {
+          result = this.objects[i].name;
           break;
         }
       }
       row.name = result;
     },
+    //TO-DO
     loadAgents() {
       this.nodes = HomeData.getExecuteNodes();
     },
-    handleRunClick(){
+    //TO-DO
+    handleRunClick() {
       console.log(this.$refs.casetree.getCheckedNodes());
       console.log(this.$refs.casetree.getCheckedNodes()[0].level);
     },
-    handleLocalRunClick(){
+    handleLocalRunClick() {
       this.startLocalAgent();
-      this.handleRunClick()
+      this.handleRunClick();
     },
-    startLocalAgent(){
-
+    //TO-DO
+    startLocalAgent() {},
+    debug() {
+      console.log(this.$refs.casetree.currentNode.node.data);
+      console.log(this.showingCaseDetail);
     }
   }
 };

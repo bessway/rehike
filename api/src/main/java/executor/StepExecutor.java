@@ -1,10 +1,9 @@
 package executor;
 
 import java.util.Hashtable;
-import java.util.ArrayList;
 
 import core.pojo.KeyPojo;
-import core.pojo.ParaPojo;
+
 import core.pojo.StepDataPojo;
 import core.pojo.StepPojo;
 

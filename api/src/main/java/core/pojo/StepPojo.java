@@ -12,8 +12,14 @@ public class StepPojo{
     public Integer getIndex(){
         return this.index;
     }
+    public void setIndex(Integer index){
+        this.index=index;
+    }
     public String getKey(){
         return this.key;
+    }
+    public void setKey(String key){
+        this.key=key;
     }
     public String toString(){
         return "index:"+String.valueOf(this.index)

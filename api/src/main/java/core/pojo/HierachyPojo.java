@@ -14,6 +14,24 @@ public class HierachyPojo{
     public String toString(){
         return "refId:"+this.refId
         +"\nlabel:"+this.label
-        +"\nparent:"+this.parentId;
+        +"\nparentId:"+this.parentId;
+    }
+    public void setLabel(String label){
+        this.label=label;
+    }
+    public String getLabel(){
+        return this.label;
+    }
+    public void setRefId(String refId){
+        this.refId=refId;
+    }
+    public void setParentId(String parentId){
+        this.parentId=parentId;
+    }
+    public String getRefId(){
+        return this.refId;
+    }
+    public String getParentId(){
+        return this.parentId;
     }
 }

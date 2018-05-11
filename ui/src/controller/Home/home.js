@@ -7,11 +7,9 @@ export default {
   getActions,
   moveNode,
   updateCase,
-  createSteps,
-  updateNodeLabel,
+  updateSteps,
   createNode,
   deleteNode,
-  getNodeLabel,
   getExecuteNodes
 };
 import axios from "axios";
@@ -72,22 +70,18 @@ function getGlobalParas(bindData) {
     });
 }
 
-function getObjects() {
-  return {
-    search: {
-      input: {
-        keyword: "//div[@id='name']",
-        password: "//div[@id='pwd']xxxxxxxxxxxxxxxxxxxxxxxxx"
-      },
-      button: {
-        search: "//div[@id='btn']"
-      },
-      text: {
-        result: "//div[@id='btn']",
-        paginition:""
-      }
-    }
-  };
+function getObjects(bindData) {
+  axios({
+    method: "get",
+    url: host + "/1/object/all"
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
 }
 
 function getActions(bindData) {
@@ -103,13 +97,80 @@ function getActions(bindData) {
       console.log(err);
     });
 }
-function moveNode(movedRefId, targetRefId) {}
-function updateCase(refId, casedata) {}
-function createSteps(refId, casedata) {}
-function updateNodeLabel(refId, newLabel) {}
-function createNode(parentRefId) {}
-function deleteNode(refId) {}
-function getNodeLabel(refId) {}
+
+function createNode(parentRefId,bindData) {
+  axios({
+    method: "post",
+    url: host + "/1/test/node",
+    data:{'parentId':parentRefId},
+    headers:{'Content-Type':'application/json;charset=UTF-8'},
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function moveNode(movedRefId, targetRefId, bindData) {
+  axios({
+    method: "put",
+    url: host + "/1/test/node/hierachy/"+movedRefId,
+    data:{'refId':targetRefId},
+    headers:{'Content-Type':'application/json;charset=UTF-8'},
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function updateCase(refId, caseName) {
+  axios({
+    method: "put",
+    url: host + "/1/test/node/"+refId,
+    data:{'label':caseName},
+    headers:{'Content-Type':'application/json;charset=UTF-8'},
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function updateSteps(refId, casedata) {
+  axios({
+    method: "put",
+    url: host + "/1/test/node/step/"+refId,
+    data:casedata,
+    headers:{'Content-Type':'application/json;charset=UTF-8'},
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function deleteNode(refId) {
+  axios({
+    method: "delete",
+    url: host + "/1/node/"+refId
+  })
+    .then(response => {
+      let _data = response.data;
+      //bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
 function getExecuteNodes() {
   return {
     chrome: [

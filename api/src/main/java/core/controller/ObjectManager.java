@@ -8,17 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import core.service.KeyServiceImpl;
+import core.service.ObjectServiceImpl;
 
 @RestController
-@RequestMapping("/1/action")
-public class KeyManager{
-    private Gson gson=new Gson();
+@RequestMapping("/1/object")
+public class ObjectManager{
     @Autowired
-    private KeyServiceImpl keyService=null;
-    
+    private ObjectServiceImpl objService=null;
+    Gson gson=new Gson();
+
     @RequestMapping("/all")
-    public String getAllKeys(HttpServletResponse res){   
-        return gson.toJson(keyService.getAllKeys());
+    public String getAllObjects(HttpServletResponse res){
+        return gson.toJson(objService.getAllObjects());
     }
 }

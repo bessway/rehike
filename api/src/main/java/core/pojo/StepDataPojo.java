@@ -16,11 +16,23 @@ public class StepDataPojo{
     public Integer getsIndex(){
         return this.sIndex;
     }
+    public void setsIndex(Integer sIndex){
+        this.sIndex=sIndex;
+    }
     public String getResponse(){
         return this.response;
     }
+    public void setResponse(String response){
+        this.response=response;
+    }
     public String getTarget(){
         return this.target;
+    }
+    public void setTarget(String target){
+        this.target=target;
+    }
+    public void setStepParas(ArrayList<ParaPojo> stepParas){
+        this.stepParas=stepParas;
     }
     public ArrayList<ParaPojo> getStepParas(){
         return this.stepParas;
@@ -28,6 +40,12 @@ public class StepDataPojo{
     public ArrayList<ParaPojo> getSortedStepParas(){
         Collections.sort(this.stepParas,ParaPojo.pindexComp);
         return this.stepParas;
+    }
+    public void addStepPara(Integer index,ParaPojo p){
+        if(this.stepParas==null){
+            this.stepParas=new ArrayList<ParaPojo>();
+        }
+        this.stepParas.add(index,p);
     }
     public String toString(){
         String ret="sIndex:"+String.valueOf(this.sIndex)

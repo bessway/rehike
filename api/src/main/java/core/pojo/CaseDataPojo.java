@@ -17,14 +17,32 @@ public class CaseDataPojo{
     public String getCaseId(){
         return this.caseId;
     }
+    public void setCaseId(String caseId){
+        this.caseId=caseId;
+    }
     public String getVersion(){
         return this.version;
+    }
+    public void setVersion(String version){
+        this.version=version;
     }
     public Hashtable<String,String> getSharedParas(){
         return this.sharedParas;
     }
+    public void setSharedParas(Hashtable<String,String> sharedParas){
+        this.sharedParas=sharedParas;
+    }
     public ArrayList<StepDataPojo> getStepsData(){
         return this.stepsData;
+    }
+    public void setStepsData(ArrayList<StepDataPojo> stepsData){
+        this.stepsData=stepsData;
+    }
+    public void addStepsData(Integer index,StepDataPojo data){
+        if(this.stepsData==null){
+            this.stepsData=new ArrayList<StepDataPojo>();
+        }
+        this.stepsData.add(index,data);
     }
     public ArrayList<StepDataPojo> getSortedStepsData(){
         Collections.sort(this.stepsData,StepDataPojo.sindexComp);
@@ -35,6 +53,12 @@ public class CaseDataPojo{
             this.sharedParas=new Hashtable<String,String>();
         }
         this.sharedParas.put(key,value);
+    }
+    public void appendSharedParas(Hashtable para){
+        if(this.sharedParas==null){
+            this.sharedParas=new Hashtable<String,String>();
+        }
+        this.sharedParas.putAll(para);
     }
     public String toString(){
         String ret="caseId:"+this.caseId
