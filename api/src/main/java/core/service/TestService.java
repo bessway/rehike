@@ -19,4 +19,5 @@ public interface TestService{
     public Boolean findAllNodes(List<String> nodeIds,List<String> allCases);
     public Boolean updateCase(String nodeId, List<StepDetailPojo> steps);
     public List<CasePojo> getCases(List<String> casesId);
+    public HierachyPojo CopyNode(String nodeId, HierachyPojo parentNode);
 }
