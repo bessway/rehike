@@ -3,6 +3,7 @@ package executor;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -89,7 +90,7 @@ public class UITask implements Executor<CasePojo,CaseDataPojo> {
             }else{
                 this.suite.getCases().put(casz.getCaseId(),Utils.ExecStatus.SUCCESS);
             }
-            this.updateCaseStatus();
+            this.updateCaseStatus(casz.getCaseId(),result);
             SeleniumUtils.closeDrivers(null);
         }
         if(taskResult.equals("stopped")){
@@ -102,6 +103,7 @@ public class UITask implements Executor<CasePojo,CaseDataPojo> {
         //同步服务端job的执行情况
         this.syncRunningJob();
         //保存suite执行结果
+        suite.setEndTime(new Date());
         this.saveTestResult();
         return taskResult;
     }
@@ -134,15 +136,20 @@ public class UITask implements Executor<CasePojo,CaseDataPojo> {
     }
     //检查是否停止执行
     private Boolean checkStopExec(){
-        return false;
+        BuildPojo result=jenkinsService.getExecution(this.suite.getJobName(), this.suite.getBuildId());
+        return result.isFroceStop();
     }
     //suite执行完后保存结果
     private void saveTestResult(){
-
+        jenkinsService.updateExecStatus(this.suite);
     }
     //更新suite中每个case的执行结果
-    private void updateCaseStatus(){
-
+    private void updateCaseStatus(String caseId,String status){
+        if(status.equals("failed")){
+            jenkinsService.updateCaseStatus(this.suite.getJobName(), this.suite.getBuildId(), caseId, Utils.ExecStatus.FAILED);
+        }else{
+            jenkinsService.updateCaseStatus(this.suite.getJobName(), this.suite.getBuildId(), caseId, Utils.ExecStatus.SUCCESS);
+        }
     }
     //同步服务器的runningjob
     private void syncRunningJob(){

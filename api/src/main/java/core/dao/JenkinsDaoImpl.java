@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import core.pojo.AgentPojo;
@@ -51,5 +52,20 @@ public class JenkinsDaoImpl implements JenkinsDao{
     public BuildPojo getExecution(String jobName,Integer buildId){
         Query query=Query.query(Criteria.where("jobName").is(jobName).and("buildId").is(buildId));
         return mongoTemplate.findOne(query, BuildPojo.class);
+    }
+    public Boolean updateExecutionStatus(BuildPojo suite){
+        Query query=Query.query(Criteria.where("jobName").is(suite.getJobName()).and("buildId").is(suite.getBuildId()));
+        Update update=Update.update("buildStatus", suite.getBuildStatus());
+        update.set("cases", suite.getCases());
+        update.set("forceStop",suite.isFroceStop());
+        update.set("endTime",suite.isFroceStop());
+        mongoTemplate.findAndModify(query, update, BuildPojo.class);
+        return true;
+    }
+    public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status){
+        Query query=Query.query(Criteria.where("jobName").is(jobName).and("buildId").is(buildId));
+        Update update=Update.update("cases."+caseId, status);
+        mongoTemplate.findAndModify(query, update, BuildPojo.class);
+        return true;
     }
 }

@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import core.pojo.StepDetailPojo;
 import core.pojo.HierachyPojo;
-import core.service.TestServiceImpl;
+import core.service.TestService;
 
 @RestController
 @RequestMapping("/1/test")
 public class TestManager {
     @Autowired
-    private TestServiceImpl testService = null;
+    private TestService testService = null;
     private Gson gson = new Gson();
 
     @RequestMapping("/health")

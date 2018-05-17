@@ -176,4 +176,10 @@ public class JenkinsServiceImpl implements JenkinsService {
         }
         return true;
     }
+    public Boolean updateExecStatus(BuildPojo suite){
+        return jenkinsDao.updateExecutionStatus(suite);
+    }
+    public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status){
+        return jenkinsDao.updateCaseStatus(jobName, buildId, caseId, status);
+    }
 }
