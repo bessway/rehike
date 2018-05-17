@@ -152,7 +152,7 @@ public class TestServiceImpl implements TestService {
             dataService.updateGlobalParas(gPara);
         }
         
-        return null;
+        return true;
     }
     public List<CasePojo> getCases(List<String> casesId){
         return testDao.getCases(casesId);

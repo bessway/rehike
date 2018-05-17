@@ -17,4 +17,5 @@ public interface JenkinsService{
     public Boolean syncRunningJob(String jobName,Boolean isJobRunning);
     public Boolean updateExecStatus(BuildPojo suite);
     public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status);
+    public Boolean updateAgentStatus(String jobName,Boolean isFree);
 }

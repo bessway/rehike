@@ -419,7 +419,7 @@ export default {
           agents.push({
             label: this.agents[i].jobName,
             value: this.agents[i].jobName,
-            status: this.agents[i].status
+            status: !this.agents[i].status
           });
         }
       }
@@ -465,6 +465,9 @@ export default {
       ) {
         return [];
       }
+      if(this.strctureObjects[page]==undefined){
+        return [];
+      }
       var types = new Array();
       for (var item in this.strctureObjects[page]) {
         types.push({ label: item, value: item });
@@ -483,6 +486,9 @@ export default {
       ) {
         return [];
       }
+      if(this.strctureObjects[page]==undefined ||this.strctureObjects[page][type]==undefined){
+        return [];
+      }
       var names = new Array();
       for (var item in this.strctureObjects[page][type]) {
         names.push({ label: item, value: item });
@@ -499,6 +505,9 @@ export default {
         this.strctureObjects == null ||
         this.strctureObjects.length == 0
       ) {
+        return [];
+      }
+      if(this.strctureObjects[page]==undefined ||this.strctureObjects[page][type]==undefined){
         return [];
       }
       var paths = new Array();
@@ -925,6 +934,10 @@ export default {
     },
     //xpath跟着对象名变化
     handleNameChange(row) {
+      if(this.strctureObjects[row.page]==undefined ||this.strctureObjects[row.page][row.type]==undefined){
+        row.path=="";
+        return;
+      }
       var result = this.strctureObjects[row.page][row.type][row.name];
 
       if (result != undefined && result != null) {
@@ -936,6 +949,10 @@ export default {
     },
     //对象名跟着xpath变化
     handlePathChange(row) {
+      if(this.strctureObjects[row.page]==undefined ||this.strctureObjects[row.page][row.type]==undefined){
+        row.name=="";
+        return;
+      }
       var names = this.strctureObjects[row.page][row.type];
       for (var item in names) {
         if (names[item] == row.path) {
@@ -966,7 +983,7 @@ export default {
       var build = {};
       build["jobName"] = this.selectedAgent;
       build["paras"] = {};
-      build["paras"]["browserType"] = this.selectedBrowser;
+      build["paras"]["dataVersion"] = "default";
       build["cases"] = {};
       for (var i = 0; i < this.$refs.casetree.getCheckedNodes().length; i++) {
         build["cases"][this.$refs.casetree.getCheckedNodes()[i].refId] = 0;

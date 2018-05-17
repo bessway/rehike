@@ -15,4 +15,5 @@ public interface JenkinsDao{
     public BuildPojo getExecution(String jobName,Integer buildId);
     public Boolean updateExecutionStatus(BuildPojo suite);
     public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status);
+    public Boolean updateAgentStatus(String jobName,Boolean isFree);
 }

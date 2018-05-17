@@ -82,12 +82,14 @@ public class JenkinsServiceImpl implements JenkinsService {
         this.isAlreadyStarted(suite.getJobName());
         //防止启动另外一个build
         runningJob.add(suite.getJobName());
+        //设置agent状态
+        this.updateAgentStatus(suite.getJobName(), false);
         this.findAllCases(suite);
 
         MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJobName());
         Integer id=job.getNextBuildNumber();
         suite.setBuildId(id);
-        suite.setBuildStatus(Utils.ExecStatus.READYTOSTART);
+        suite.setBuildStatus(Utils.ExecStatus.RUNNING);
         suite.setCreateTime(new Date());
         suite.setPassed(0);
         suite.setFailed(0);
@@ -181,5 +183,8 @@ public class JenkinsServiceImpl implements JenkinsService {
     }
     public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status){
         return jenkinsDao.updateCaseStatus(jobName, buildId, caseId, status);
+    }
+    public Boolean updateAgentStatus(String jobName,Boolean isFree){
+        return jenkinsDao.updateAgentStatus(jobName, isFree);
     }
 }

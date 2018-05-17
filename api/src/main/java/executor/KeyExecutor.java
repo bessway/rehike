@@ -37,7 +37,7 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         //Method toExe=SeleniumUtils.class.getMethod(funcName, String.class, String.class, String.class);
         Object result=null;
         List<String> mParaValue=new ArrayList<String>();
-        if(this.target!=null){
+        if(this.target!=null&&!this.target.equals("")){
             mParaValue.add(0,this.unpackPara(this.target,sPara,gPara));
         }
         mParaValue.addAll(this.wrapPara(sPara,gPara));

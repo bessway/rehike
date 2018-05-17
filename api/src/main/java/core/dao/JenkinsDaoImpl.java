@@ -68,4 +68,10 @@ public class JenkinsDaoImpl implements JenkinsDao{
         mongoTemplate.findAndModify(query, update, BuildPojo.class);
         return true;
     }
+    public Boolean updateAgentStatus(String jobName,Boolean isFree){
+        Query query=Query.query(Criteria.where("jobName").is(jobName));
+        Update update=Update.update("status", isFree);
+        mongoTemplate.findAndModify(query, update, AgentPojo.class);
+        return true;
+    }
 }

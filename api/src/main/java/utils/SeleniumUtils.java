@@ -14,11 +14,12 @@ import org.testng.Assert;
 import java.io.File;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SeleniumUtils {
     public static Logger logger = Logger.getLogger(SeleniumUtils.class);
-    private static HashMap<String, WebDriver> drivers = new HashMap<String, WebDriver>();
-    private static HashMap<String, WebDriverWait> waits = new HashMap<String, WebDriverWait>();
+    private static Map<String, WebDriver> drivers = new HashMap<String, WebDriver>();
+    private static Map<String, WebDriverWait> waits = new HashMap<String, WebDriverWait>();
     private static Integer maxWait = 10;
 
     private static WebDriver launchBrowser(String type) throws Exception {
@@ -59,22 +60,47 @@ public class SeleniumUtils {
         return driver;
     }
 
-    public static String openSite(String url,String browserType) throws Exception{
-        WebDriver driver=null;
-        if(!drivers.containsKey(url)){
-            driver=launchBrowser(browserType);
-            drivers.put(url, driver);
-        }
-        drivers.get(url).get(url);
-         
+    public static String openSite(String url, String browserType) throws Exception {
+        /*
+         * WebDriver driver=null; if(!drivers.containsKey(url)){
+         * driver=launchBrowser(browserType); drivers.put(url, driver); }
+         * drivers.get(url).get(url);
+         */
+        logger.debug("openSite");
+        logger.debug(url);
+        logger.debug(browserType);
         return url;
     }
-    public static String post(String url,String header,String body) throws Exception{
-        System.out.println("post url:"+url);
-        System.out.println("post header:"+header);
-        System.out.println("post body:"+body);
+
+    public static void input(String target, String content) throws Exception {
+        logger.debug("input");
+        logger.debug(target);
+        logger.debug(content);
+    }
+    public static void click(String target) throws Exception {
+        logger.debug("click");
+        logger.debug(target);
+    }
+    public static String getText(String target) throws Exception {
+        logger.debug("getText");
+        logger.debug(target);
+        return "text in getText";
+    }
+    public static String assertEqual(String target,String attribute,String exValue) throws Exception {
+        logger.debug("assertEqual");
+        logger.debug(target);
+        logger.debug(attribute);
+        logger.debug(exValue);
+        return "assert result";
+    }
+
+    public static String post(String url, String header, String body) throws Exception {
+        logger.debug("post url:" + url);
+        logger.debug("post header:" + header);
+        logger.debug("post body:" + body);
         return url;
     }
+
     public static void closeDrivers(String browserHandlerName) {
         try {
             if (browserHandlerName == null) {
@@ -86,6 +112,7 @@ public class SeleniumUtils {
                     drivers.get(browserHandlerName).quit();
                 }
             }
+            logger.debug("close all the drivers");
         } catch (NullPointerException e) {
             logger.debug("already quit driver");
         }
