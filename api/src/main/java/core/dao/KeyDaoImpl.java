@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import core.pojo.KeyPojo;
 
-@Repository("keyDao")
-public class KeyDaoImpl{
+@Repository("KeyDao")
+public class KeyDaoImpl implements KeyDao{
     @Autowired
     private MongoTemplate mongoTemplate=null;
     public List<KeyPojo> getAllKeys(){

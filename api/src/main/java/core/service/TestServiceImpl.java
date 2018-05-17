@@ -3,7 +3,7 @@ package core.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import core.dao.TestDaoImpl;
+import core.dao.TestDao;
 import core.pojo.CaseDataPojo;
 import core.pojo.StepDetailPojo;
 import core.pojo.StepPojo;
@@ -19,19 +19,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import utils.Utils;
 
 @Service("TestService")
-public class TestServiceImpl {
+public class TestServiceImpl implements TestService {
     @Autowired
-    private TestDaoImpl testDao = null;
+    private TestDao testDao = null;
     @Autowired
-    private DataServiceImpl dataService=null;
+    private DataService dataService=null;
     @Autowired
-    private ObjectServiceImpl objService=null;
+    private ObjectService objService=null;
 
     public List<HierachyPojo> getProjects() {
         return this.testDao.getAllProjects();
@@ -41,7 +42,7 @@ public class TestServiceImpl {
         return this.testDao.getSubNodes(parentId);
     }
 
-    public HashMap<String, Object> getCaseDetail(String caseId, String version) {
+    public Map<String, Object> getCaseDetail(String caseId, String version) {
         CasePojo casz = testDao.getCaseDetail(caseId);
         CaseDataPojo data =dataService.getCaseData(caseId, version);
 
@@ -89,7 +90,7 @@ public class TestServiceImpl {
         List<String> allCases=new ArrayList<String>();
         List<String> rootNodeId=new ArrayList<String>();
         rootNodeId.add(nodeId);
-        this.findAllCases(rootNodeId, allCases);
+        this.findAllNodes(rootNodeId, allCases);
         //delete data
         dataService.deleteMultipleCasesData(allCases);
         //delete case
@@ -99,7 +100,10 @@ public class TestServiceImpl {
 
         return true;
     }
-    public Boolean findAllCases(List<String> nodeIds,List<String> allCases){
+    public List<String> getValidCases(List<String> toValidate){
+        return testDao.getValidCases(toValidate);
+    }
+    public Boolean findAllNodes(List<String> nodeIds,List<String> allCases){
         List<HierachyPojo> subNodes=testDao.getSubNodes(nodeIds);
         if(subNodes!=null && subNodes.size()>0){
             //只要有一个nodeId有子节点，那么这一级node一定不是case
@@ -107,7 +111,7 @@ public class TestServiceImpl {
             for(HierachyPojo item:subNodes){
                 ids.add(item.getRefId());
             }
-            this.findAllCases(ids, allCases);
+            this.findAllNodes(ids, allCases);
             allCases.addAll(nodeIds);
         }else{
             //如果没有子节点，则可能是case
@@ -149,6 +153,9 @@ public class TestServiceImpl {
         }
         
         return null;
+    }
+    public List<CasePojo> getCases(List<String> casesId){
+        return testDao.getCases(casesId);
     }
     public ObjectPojo extractObj(StepDetailPojo step) {
         if (step.getPage() == null || step.getPage().equals("")) {
@@ -212,8 +219,8 @@ public class TestServiceImpl {
         }
         return gPara;
     }
-    public Hashtable<String,String> extractSharedPara(StepDetailPojo step){
-        Hashtable<String,String> sPara=new Hashtable<String,String>();
+    public Map<String,String> extractSharedPara(StepDetailPojo step){
+        Map<String,String> sPara=new HashMap<String,String>();
         if(step.getResponse().contains("[[")){
             sPara.put(step.getResponse(),"");
         }
@@ -251,12 +258,12 @@ public class TestServiceImpl {
         return true;
     }
 
-    public HashMap<String, Object> wrapCaseData(CasePojo casz, CaseDataPojo data) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public Map<String, Object> wrapCaseData(CasePojo casz, CaseDataPojo data) {
+        Map<String, Object> result = new HashMap<String, Object>();
         if (casz == null || data == null) {
             return result;
         }
-        ArrayList<StepDetailPojo> steps = new ArrayList<StepDetailPojo>();
+        List<StepDetailPojo> steps = new ArrayList<StepDetailPojo>();
         for (int i = 0; i < casz.getSteps().size(); i++) {
             StepDetailPojo tmp = new StepDetailPojo();
             tmp.setAction(casz.getSteps().get(i).getKey());
@@ -268,7 +275,7 @@ public class TestServiceImpl {
                 tmp.setName(target[2]);
 
                 if (Utils.objectsMap == null) {
-                    Utils.objectsMap=objService.getAllObjects();
+                    Utils.objectsMap=(Hashtable<String,String>)objService.getAllObjects();
                 }
                 tmp.setPath(Utils.objectsMap.get(data.getStepsData().get(i).getTarget()));
             } else {

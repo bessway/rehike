@@ -11,7 +11,10 @@ export default {
   updateSteps,
   createNode,
   deleteNode,
-  getExecuteNodes
+  getAgents,
+  getExecutions,
+  startJob,
+  getJobDetail
 };
 import axios from "axios";
 var host = "http://127.0.0.1:8081";
@@ -177,7 +180,7 @@ function updateSteps(refId, casedata) {
 function deleteNode(refId,bindData) {
   axios({
     method: "delete",
-    url: host + "/1/test/node/"+"test"
+    url: host + "/1/test/node/"+refId
   })
     .then(response => {
       let _data = response.data;
@@ -187,21 +190,56 @@ function deleteNode(refId,bindData) {
       console.log(err);
     });
 }
-function getExecuteNodes() {
-  return {
-    chrome: [
-      {
-        node: "1",
-        version: "1",
-        status: true
-      }
-    ],
-    firfox: [
-      {
-        node: "2",
-        version: "2",
-        status: false
-      }
-    ]
-  };
+function startJob(build,bindData){
+  axios({
+    method: "post",
+    url: host + "/1/jenkins/job",
+    data: build
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function getExecutions(bindData){
+  axios({
+    method: "get",
+    url: host + "/1/jenkins/jobs"
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function getAgents(bindData) {
+  axios({
+    method: "get",
+    url: host + "/1/jenkins/agents"
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+function getJobDetail(job,build,bindData) {
+  axios({
+    method: "get",
+    url: host + "/1/jenkins/job/"+job+"/build/"+build
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
 }

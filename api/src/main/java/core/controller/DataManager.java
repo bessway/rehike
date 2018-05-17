@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import core.service.DataServiceImpl;
+import core.service.DataService;
 
 @RestController
 @RequestMapping("/1/data")
 public class DataManager{
     @Autowired
-    private DataServiceImpl dataService=null;
+    private DataService dataService=null;
     private Gson gson=new Gson();
 
     @RequestMapping("/global")

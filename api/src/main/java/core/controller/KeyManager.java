@@ -8,14 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import core.service.KeyServiceImpl;
+import core.service.KeyService;
 
 @RestController
 @RequestMapping("/1/action")
 public class KeyManager{
     private Gson gson=new Gson();
     @Autowired
-    private KeyServiceImpl keyService=null;
+    private KeyService keyService=null;
     
     @RequestMapping("/all")
     public String getAllKeys(HttpServletResponse res){   

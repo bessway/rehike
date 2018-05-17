@@ -11,6 +11,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+
 @SpringBootApplication
 @EnableAutoConfiguration
 @Configuration
@@ -29,7 +30,8 @@ public class Application {
         return bean;  
     } 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         SpringApplication.run(Application.class, args);
+        //new JenkinsServiceImpl().startJob(null);
     }
 }

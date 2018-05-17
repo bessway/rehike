@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import core.pojo.ObjectPojo;
 
-@Repository("objectDao")
-public class ObjectDaoImpl {
+@Repository("ObjectDao")
+public class ObjectDaoImpl implements ObjectDao{
     @Autowired
     private MongoTemplate mongoTemplate = null;
 

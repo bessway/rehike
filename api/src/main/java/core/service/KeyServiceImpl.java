@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import core.dao.KeyDaoImpl;
+import core.dao.KeyDao;
 import core.pojo.KeyPojo;
 
 @Service("KeyService")
-public class KeyServiceImpl{
+public class KeyServiceImpl implements KeyService{
     @Autowired
-    private KeyDaoImpl keyDao=null;
+    private KeyDao keyDao=null;
     public List<KeyPojo> getAllKeys(){
         return keyDao.getAllKeys();
     }

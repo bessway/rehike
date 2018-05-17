@@ -1,6 +1,6 @@
 package executor;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import core.pojo.KeyPojo;
 
@@ -17,7 +17,7 @@ public class StepExecutor implements Executor<KeyPojo,StepDataPojo>{
         this.data=data;
     }
     
-    public String execute(Hashtable<String,String> sPara,Hashtable<String,String> gPara) throws Exception{
+    public String execute(Map<String,String> sPara,Map<String,String> gPara) throws Exception{
         String keyName=this.test.getKey();
         String result=this.getSuccessor(this.getKeyPojo(keyName), this.data).execute(sPara, gPara);
 
@@ -29,6 +29,6 @@ public class StepExecutor implements Executor<KeyPojo,StepDataPojo>{
         return this.successor;
     }
     public KeyPojo getKeyPojo(String keyName){
-        return UITask.sortKey.get(keyName);
+        return UITask.cachedKey.get(keyName);
     }
 }

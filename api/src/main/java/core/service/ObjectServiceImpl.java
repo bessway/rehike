@@ -1,28 +1,30 @@
 package core.service;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import core.dao.ObjectDaoImpl;
+import core.dao.ObjectDao;
 import core.pojo.ObjectPojo;
 import utils.Utils;
 
 @Service("ObjectService")
-public class ObjectServiceImpl{
+public class ObjectServiceImpl implements ObjectService{
     @Autowired
-    private ObjectDaoImpl objDao=null;
+    private ObjectDao objDao=null;
 
-    public HashMap<String,String> getAllObjects(){
+    public Map<String,String> getAllObjects(){
         List<ObjectPojo> objs=objDao.getAllObjects();
-        HashMap<String,String> result=new HashMap<String,String>(); 
+        Map<String,String> result=new Hashtable<String,String>(); 
         for(ObjectPojo item:objs){
             String key=item.getPage()+"."+item.getType()+"."+item.getName();
             result.put(key,item.getXpath());
         }
-        Utils.objectsMap=result;
+        Utils.objectsMap=(Hashtable<String,String>)result;
         return result;
     }
     public Boolean updateObject(ObjectPojo obj){

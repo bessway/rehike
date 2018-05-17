@@ -1,11 +1,9 @@
 package core.dao;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.mongodb.client.result.DeleteResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,10 +13,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import core.pojo.CaseDataPojo;
-import core.pojo.StepDataPojo;
 
-@Repository("dataDao")
-public class DataDaoImpl {
+@Repository("DataDao")
+public class DataDaoImpl implements DataDao{
     @Autowired
     private MongoTemplate mongoTemplate = null;
 
@@ -45,7 +42,11 @@ public class DataDaoImpl {
     }
     public Boolean deleteMultipleCasesData(List<String> caseIds){
         Query query = Query.query(Criteria.where("caseId").in(caseIds));
-        DeleteResult ret=mongoTemplate.remove(query,"data");
+        mongoTemplate.remove(query,"data");
         return true;
+    }
+    public List<CaseDataPojo> getCasesData(List<String> casesId,String version){
+        Query query = Query.query(Criteria.where("caseId").in(casesId).and("version").is(version));
+        return mongoTemplate.find(query,CaseDataPojo.class);
     }
 }

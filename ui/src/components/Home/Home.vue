@@ -52,8 +52,10 @@
           highlight-current-row
           ref="caseTable"
           :row-key="getRowKeys"
+          fixed
+          :header-cell-style = "getHeaderCellStyle"
           @row-click="handleRowClick">
-            <el-table-column label="" prop='id' sortable width="0">
+            <el-table-column label="" prop='id' width="0">
             </el-table-column>
             <el-table-column label="操作" min-width="140" header-align="center">
               <template slot-scope="scope">
@@ -68,7 +70,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="页面" min-width="60" header-align="center">
+            <el-table-column label="页面" min-width="80" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable placeholder="输入/选择"
                   v-model=scope.row.page allow-create clearable
@@ -83,7 +85,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="对象类型" min-width="60" header-align="center">
+            <el-table-column label="对象类型" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable placeholder="输入/选择"
                   v-model=scope.row.type allow-create clearable
@@ -98,7 +100,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="对象名" min-width="80" header-align="center">
+            <el-table-column label="对象名" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable placeholder="输入/选择"
                   v-model=scope.row.name allow-create clearable
@@ -128,7 +130,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="参数1" min-width="100" header-align="center">
+            <el-table-column label="参数1" min-width="140" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.paras[0] allow-create clearable
@@ -142,7 +144,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="参数2" min-width="100" header-align="center">
+            <el-table-column label="参数2" min-width="140" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.paras[1] allow-create clearable
@@ -156,7 +158,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="参数3" min-width="100" header-align="center">
+            <el-table-column label="参数3" min-width="140" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.paras[2] allow-create clearable
@@ -170,7 +172,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="参数4" min-width="100" header-align="center">
+            <el-table-column label="参数4" min-width="140" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.paras[3] allow-create clearable
@@ -184,7 +186,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="返回值" min-width="100" header-align="center">
+            <el-table-column label="返回值" min-width="160" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.response allow-create clearable
@@ -198,7 +200,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="" min-width="30px">
+            <el-table-column label="" min-width="30px" fixed="right">
               <template slot-scope="scope">              
                   <el-button size="mini" icon="el-icon-circle-plus-outline"
                   @click="handleAddStepClick(scope.row)"></el-button>
@@ -213,7 +215,15 @@
         <el-tab-pane label="数据管理" name="data">数据管理</el-tab-pane>
         <el-tab-pane-- label="节点管理" name="node">节点管理</el-tab-pane-->
         <el-tab-pane label="用例执行" name="execute">
-          <el-select v-model=selectedBrowser filterable placeholder="请选择">
+          <el-select v-model=selectedOs filterable placeholder="操作系统">
+              <el-option
+                v-for="item in getOs"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+          </el-select>
+          <el-select v-model=selectedBrowser filterable placeholder="浏览器">
               <el-option
                 v-for="item in getBrowser"
                 :key="item.value"
@@ -221,19 +231,38 @@
                 :value="item.value">
               </el-option>
           </el-select>
-          <el-select v-model=selectedAgent filterable placeholder="请选择">
+          <el-select v-model=selectedAgent filterable placeholder="任务名">
               <el-option
                 v-for="item in getAgents"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-                :disabled="item.disabled">
+                :disabled="item.status">
               </el-option>
           </el-select>
           <el-button type="primary"
           @click="handleRunClick">运行</el-button>
           <el-button type="primary"
           @click="handleLocalRunClick">本地运行</el-button>
+          <el-button type="primary"
+          @click="getJobDetail" style="float:right">查看详情</el-button>
+          <el-button type="primary"
+          @click="handleRefreshAgent" style="float:right">刷新</el-button>
+          <el-table style="width: 100%;padding-top:10px" stripe height="480"
+          :data="executions"
+          :default-sort = "{prop: 'createTime', order: 'descending'}"
+          highlight-current-row
+          ref="executionTable"
+          :row-key="getExecRowKeys"
+          :row-style = "{'text-align':'center'}"
+          @row-click="handleExecRowClick">
+            <el-table-column label="任务名" min-width="100" header-align="center" prop="jobName"></el-table-column>
+            <el-table-column label="任务编号" min-width="100" header-align="center" prop="buildId"></el-table-column>
+            <el-table-column label="创建时间" min-width="100" header-align="center" sortable prop="createTime"></el-table-column>
+            <el-table-column label="状态" min-width="100" header-align="center" prop="buildStatus"></el-table-column>
+            <el-table-column label="成功用例数量" min-width="100" header-align="center" prop="passed"></el-table-column>
+            <el-table-column label="失败用例数量" min-width="100" header-align="center" prop="failed"></el-table-column>
+          </el-table>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -269,9 +298,13 @@ export default {
       xpaths: null,
       globalParas: null,
       showingCaseDetail: JSON.parse(emptyTableData),
-      nodes: null,
+      agents: null,
       selectedAgent: null,
-      selectedBrowser: null
+      selectedBrowser: null,
+      selectedOs: null,
+      executions: null,
+      selectedExecRowData: null,
+      showingJobDetail:null
     };
   },
   //如果函数的依赖有变化，则按逻辑同步更新computed属性
@@ -338,30 +371,57 @@ export default {
       return pages;
     },
     getBrowser: function() {
-      var browsers = new Array();
-      for (var item in this.nodes) {
-        browsers.push({ label: item, value: item });
-      }
-      return browsers;
-    },
-    getAgents() {
-      if (this.selectedBrowser == null) {
+      if (this.agents == null) {
         return [];
       }
-      var agents = new Array();
-      for (var i = 0; i < this.nodes[this.selectedBrowser].length; i++) {
-        console.log(this.nodes[this.selectedBrowser][i]);
-        agents.push({
-          label:
-            this.nodes[this.selectedBrowser][i].node +
-            "_" +
-            this.nodes[this.selectedBrowser][i].version,
-          value:
-            this.nodes[this.selectedBrowser][i].node +
-            "_" +
-            this.nodes[this.selectedBrowser][i].version,
-          disabled: this.nodes[this.selectedBrowser][i].status
-        });
+      var browsers = {};
+      for (var i = 0; i < this.agents.length; i++) {
+        browsers[
+          this.agents[i].browserType + "_" + this.agents[i].browserVersion
+        ] =
+          "";
+      }
+      var result = [];
+      for (var item in browsers) {
+        result.push({ label: item, value: item });
+      }
+      return result;
+    },
+    getOs: function() {
+      if (this.agents == null) {
+        return [];
+      }
+      var os = {};
+      for (var i = 0; i < this.agents.length; i++) {
+        os[this.agents[i].osType + "_" + this.agents[i].osVersion] = "";
+      }
+      var result = [];
+      for (var item in os) {
+        result.push({ label: item, value: item });
+      }
+      return result;
+    },
+    getAgents() {
+      if (this.agents == null) {
+        return [];
+      }
+      if (this.selectedBrowser == null || this.selectedOs == null) {
+        return [];
+      }
+      var agents = [];
+      for (var i = 0; i < this.agents.length; i++) {
+        if (
+          this.agents[i].browserType + "_" + this.agents[i].browserVersion ===
+            this.selectedBrowser &&
+          this.agents[i].osType + "_" + this.agents[i].osVersion ===
+            this.selectedOs
+        ) {
+          agents.push({
+            label: this.agents[i].jobName,
+            value: this.agents[i].jobName,
+            status: this.agents[i].status
+          });
+        }
       }
       return agents;
     }
@@ -380,9 +440,20 @@ export default {
   },
 
   methods: {
+    getHeaderCellStyle(style) {
+      var result;
+      if (style.columnIndex > 0 && style.columnIndex < 11) {
+        result = { "padding-left": style.columnIndex * 10 + "px" };
+      }
+      return result;
+    },
     //设置table的key，用于排序
     getRowKeys(row) {
       return row.id;
+    },
+    //设置table的key，用于排序
+    getExecRowKeys(row) {
+      return row.createTime;
     },
     //获取所选page中所有对象的类型
     getTypesOnPage: function(page) {
@@ -451,7 +522,7 @@ export default {
             var colIndex = col.label.substring(2, 3);
             if (colIndex > this.actions[i].paras.length) {
               result = true;
-              row.paras[colIndex-1]=null;
+              row.paras[colIndex - 1] = null;
             } else {
               result = false;
             }
@@ -504,6 +575,7 @@ export default {
         this.selectedRow = null;
       } else if (tab.name === "execute") {
         this.loadAgents();
+        this.loadExecutions();
       }
     },
     //选择node后记载详细信息
@@ -523,54 +595,60 @@ export default {
       if (this.actions !== null) {
         return;
       }
-      HomeData.getActions(function(response) {
-        for (var i = 0; i < response.length; i++) {
-          response[i].value = response[i].name;
-          response[i].label = response[i].name;
-        }
-        this.actions=response;
-      }.bind(this));
+      HomeData.getActions(
+        function(response) {
+          for (var i = 0; i < response.length; i++) {
+            response[i].value = response[i].name;
+            response[i].label = response[i].name;
+          }
+          this.actions = response;
+        }.bind(this)
+      );
     },
     //获取object list
     loadObjects() {
       if (this.strctureObjects !== null) {
         return;
       }
-      HomeData.getObjects(function(response) {
-        var result = {};
-        for(var obj in response){
-          var tmp = result;
-          var target=obj.split(".");
-          if (tmp[target[0]] == undefined) {
-            tmp[target[0]] = {};
+      HomeData.getObjects(
+        function(response) {
+          var result = {};
+          for (var obj in response) {
+            var tmp = result;
+            var target = obj.split(".");
+            if (tmp[target[0]] == undefined) {
+              tmp[target[0]] = {};
+            }
+            tmp = tmp[target[0]];
+            if (tmp[target[1]] == undefined) {
+              tmp[target[1]] = {};
+            }
+            tmp = tmp[target[1]];
+            tmp[target[2]] = response[obj];
           }
-          tmp = tmp[target[0]];
-          if (tmp[target[1]] == undefined) {
-            tmp[target[1]] = {};
-          }
-          tmp = tmp[target[1]];
-          tmp[target[2]] = response[obj];
-        }
-        this.strctureObjects=result;
-      }.bind(this));
+          this.strctureObjects = result;
+        }.bind(this)
+      );
     },
     //获取global parameter list
     loadGlobalParas() {
       if (this.globalParas !== null) {
         return;
       }
-      HomeData.getGlobalParas(function(response) {
-        if (this.globalParas === null) {
-          this.globalParas = new Array();
-        }
-        for(var i=0;i<response.length;i++){
-          let tmp = {};
-          tmp.label = response[i];
-          tmp.value = response[i];
+      HomeData.getGlobalParas(
+        function(response) {
+          if (this.globalParas === null) {
+            this.globalParas = new Array();
+          }
+          for (var i = 0; i < response.length; i++) {
+            let tmp = {};
+            tmp.label = response[i];
+            tmp.value = response[i];
 
-          this.globalParas.push(tmp);
-        }
-      }.bind(this));
+            this.globalParas.push(tmp);
+          }
+        }.bind(this)
+      );
     },
     //获取case detail
     loadCaseDetail() {
@@ -587,18 +665,21 @@ export default {
         this.showingCaseDetail = this.selectedNode.data.caseDetail;
         return;
       }
-      HomeData.getCaseDetail(this.selectedNode.data.refId, function(response) {
-        this.showingCaseDetail = response;
-        if (JSON.stringify(this.showingCaseDetail) === "{}") {
-          this.showingCaseDetail = JSON.parse(defaultTableData);
-        }
-        for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
-          this.showingCaseDetail.steps[i].paras = this.appendBlank(
-            this.showingCaseDetail.steps[i].paras
-          );
-        }
-        this.selectedNode.data.caseDetail = this.showingCaseDetail;
-      }.bind(this));
+      HomeData.getCaseDetail(
+        this.selectedNode.data.refId,
+        function(response) {
+          this.showingCaseDetail = response;
+          if (JSON.stringify(this.showingCaseDetail) === "{}") {
+            this.showingCaseDetail = JSON.parse(defaultTableData);
+          }
+          for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
+            this.showingCaseDetail.steps[i].paras = this.appendBlank(
+              this.showingCaseDetail.steps[i].paras
+            );
+          }
+          this.selectedNode.data.caseDetail = this.showingCaseDetail;
+        }.bind(this)
+      );
     },
     //casedetail禁用的参数字段置空
     appendBlank(originArray) {
@@ -619,6 +700,20 @@ export default {
       } else {
         HomeData.getNodes(node.data.refId, resolve);
       }
+    },
+    loadAgents() {
+      HomeData.getAgents(
+        function(response) {
+          this.agents = response;
+        }.bind(this)
+      );
+    },
+    loadExecutions() {
+      HomeData.getExecutions(
+        function(response) {
+          this.executions = response;
+        }.bind(this)
+      );
     },
     //判断node是否可以拖动
     allowDrag(draggingNode) {
@@ -762,34 +857,49 @@ export default {
     //保存steps
     handleSaveClick() {
       //有空步骤，不应该保存
-      for(var i=0;i<this.showingCaseDetail.steps.length;i++){
-        if(this.showingCaseDetail.steps[i].action==""){
+      for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
+        if (this.showingCaseDetail.steps[i].action == "") {
           alert("have empty step");
           return;
         }
       }
-      HomeData.updateCase(this.selectedNode.data.refId,this.selectedNode.label);
-      
-      HomeData.updateSteps(this.selectedNode.data.refId,this.showingCaseDetail.steps);
+      HomeData.updateCase(
+        this.selectedNode.data.refId,
+        this.selectedNode.label
+      );
+
+      HomeData.updateSteps(
+        this.selectedNode.data.refId,
+        this.showingCaseDetail.steps
+      );
     },
     //添加一个新的node
     handleAddNodeClick() {
       HomeData.createNode(
         this.$refs.casetree.currentNode.node.data.refId,
-        function(response){
+        function(response) {
           //return the new node info,add empty detail
-          this.$refs.casetree.append(response, this.$refs.casetree.currentNode.node);
+          this.$refs.casetree.append(
+            response,
+            this.$refs.casetree.currentNode.node
+          );
         }.bind(this)
       );
     },
     //TO-DO
     handleDelNodeClick() {
-      HomeData.deleteNode(this.$refs.casetree.currentNode.node.data.refId,function(response){
-        this.$refs.casetree.remove(this.$refs.casetree.currentNode.node);
-      }.bind(this));
+      HomeData.deleteNode(
+        this.$refs.casetree.currentNode.node.data.refId,
+        function(response) {
+          this.$refs.casetree.remove(this.$refs.casetree.currentNode.node);
+        }.bind(this)
+      );
     },
     handleRowClick(value, row) {
       this.selectedRowId = row.id;
+    },
+    handleExecRowClick(value, row) {
+      this.selectedExecRowData = value;
     },
     //重新选操作后清空后面所有的字段
     handleActionChange(row) {
@@ -815,46 +925,83 @@ export default {
     },
     //xpath跟着对象名变化
     handleNameChange(row) {
-      var result=this.strctureObjects[row.page][row.type][row.name];
-      
-      if (result!=undefined && result != null) {
+      var result = this.strctureObjects[row.page][row.type][row.name];
+
+      if (result != undefined && result != null) {
         row.path = result;
-      }else{
+      } else {
         //如果没有对应的记录，置空
-        row.path="";
+        row.path = "";
       }
     },
     //对象名跟着xpath变化
     handlePathChange(row) {
       var names = this.strctureObjects[row.page][row.type];
-      for(var item in names){
-        if(names[item]==row.path){
-          row.name=item;
+      for (var item in names) {
+        if (names[item] == row.path) {
+          row.name = item;
           break;
-        }else{
-          var result=this.strctureObjects[row.page][row.type][row.name];
+        } else {
+          var result = this.strctureObjects[row.page][row.type][row.name];
           //如果没有对应的记录，说明是新建的
-          if (result!=undefined && result != null) {
+          if (result != undefined && result != null) {
             row.name = "";
           }
         }
       }
     },
-    //TO-DO
-    loadAgents() {
-      this.nodes = HomeData.getExecuteNodes();
+    //获取最新的任务执行状态以及可用的agent机器
+    handleRefreshAgent() {
+      this.loadAgents();
+      this.loadExecutions();
+    },
+    handleRunClick() {
+      if (
+        this.selectedAgent == null ||
+        this.$refs.casetree.getCheckedNodes().length == 0
+      ) {
+        alert("need to select agent and cases");
+        return;
+      }
+      var build = {};
+      build["jobName"] = this.selectedAgent;
+      build["paras"] = {};
+      build["paras"]["browserType"] = this.selectedBrowser;
+      build["cases"] = {};
+      for (var i = 0; i < this.$refs.casetree.getCheckedNodes().length; i++) {
+        build["cases"][this.$refs.casetree.getCheckedNodes()[i].refId] = 0;
+      }
+      HomeData.startJob(
+        build,
+        function(response) {
+          if (this.executions == null) {
+            this.executions = [];
+          }
+          this.executions.push(response);
+        }.bind(this)
+      );
     },
     //TO-DO
-    handleRunClick() {
-      console.log(this.$refs.casetree.getCheckedNodes());
-      console.log(this.$refs.casetree.getCheckedNodes()[0].level);
+    getJobDetail() {
+      HomeData.getJobDetail(
+        this.selectedExecRowData.jobName,
+        this.selectedExecRowData.buildId,
+        function(response) {
+          this.showingJobDetail=response;
+        }.bind(this)
+      );
     },
     handleLocalRunClick() {
       this.startLocalAgent();
-      this.handleRunClick();
+      this.reRunJob();
     },
     //TO-DO
-    startLocalAgent() {},
+    reRunJob() {},
+    //TO-DO
+    startLocalAgent() {
+      console.log(this.agents);
+      console.log(this.executions);
+    },
     debug() {
       console.log(this.$refs.casetree.currentNode.node.data);
       console.log(this.globalParas);
