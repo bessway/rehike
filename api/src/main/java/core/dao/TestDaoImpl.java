@@ -65,12 +65,14 @@ public class TestDaoImpl {
         return mongoTemplate.findOne(query, HierachyPojo.class);
     }
 
+   //移动子节点
     public HierachyPojo updateParentNode(String nodeId, String targetNodeId) {
         Query query = Query.query(Criteria.where("_id").is(nodeId));
         Update update = Update.update("parentId", targetNodeId);
         return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(false),
                 HierachyPojo.class);
     }
+
     public HierachyPojo updateCaseName(String nodeId, String newName) {
         Query query = Query.query(Criteria.where("_id").is(nodeId));
         Update update = Update.update("label", newName);

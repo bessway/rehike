@@ -6,6 +6,7 @@ export default {
   getObjects,
   getActions,
   moveNode,
+  copyNode,
   updateCase,
   updateSteps,
   createNode,
@@ -128,6 +129,23 @@ function moveNode(movedRefId, targetRefId, bindData) {
       console.log(err);
     });
 }
+//复制子节点
+function copyNode(copyRefId, targetRefId, bindData) {
+  axios({
+    method: "post",
+    url: host + "/1/test/node/hierachy/"+copyRefId,
+    data:{'refId':targetRefId},
+    headers:{'Content-Type':'application/json;charset=UTF-8'},
+  })
+    .then(response => {
+      let _data = response.data;
+      bindData(_data);
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
+
 function updateCase(refId, caseName) {
   axios({
     method: "put",

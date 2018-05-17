@@ -58,6 +58,29 @@ public class TestServiceImpl {
         return testDao.updateParentNode(nodeId, parentNode.getRefId());
     }
 
+    //复制子节点
+    public HierachyPojo CopyNode(String nodeId, HierachyPojo parentNode) {
+           HierachyPojo node = new HierachyPojo();
+           node.setParentId(parentNode.getRefId());
+           node.setLabel("new node" + String.valueOf(new Date().getTime()));
+           testDao.addNode(node);
+           HierachyPojo newCase=testDao.getNodeByLabel(node.getLabel());
+
+        //更新case表
+        CasePojo oldCaseDetail= testDao.getCaseDetail(nodeId);
+        if(oldCaseDetail!=null){
+            testDao.updateCaseSteps(newCase.getRefId(), oldCaseDetail.getSortedSteps());
+        }
+      
+        //更新data表
+        CaseDataPojo caseData = dataService.getCaseData(nodeId, "default");
+        if(caseData!=null){
+            dataService.updateData(newCase.getRefId(),"default", caseData);
+        }
+           return newCase;
+    }
+   
+
     public HierachyPojo updateNodeName(String nodeId, HierachyPojo newName) {
         return testDao.updateCaseName(nodeId, newName.getLabel());
     }

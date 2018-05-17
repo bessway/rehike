@@ -52,6 +52,14 @@ public class TestManager {
     public String updateParentNode(HttpServletResponse res,@PathVariable String nodeId, @RequestBody HierachyPojo parentNode){
         return gson.toJson(testService.updateNodeParentId(nodeId, parentNode));
     }
+
+     //复制子节点
+     @RequestMapping(value="/node/hierachy/{nodeId}",method=RequestMethod.POST)
+     public String  CopyNode(HttpServletResponse res,@PathVariable String nodeId, @RequestBody HierachyPojo parentNode){
+        return gson.toJson(testService.CopyNode(nodeId, parentNode));
+     }
+
+
     @RequestMapping(value="/node/{nodeId}",method=RequestMethod.PUT)
     public String updateNodeName(HttpServletResponse res,@PathVariable String nodeId, @RequestBody HierachyPojo newName){
         return gson.toJson(testService.updateNodeName(nodeId, newName));
