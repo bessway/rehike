@@ -2,16 +2,18 @@ package executor;
 
 import core.pojo.CasePojo;
 import core.pojo.CaseDataPojo;
-import java.util.Hashtable;
+import java.util.Map;
+
 import core.pojo.StepPojo;
 import core.pojo.StepDataPojo;
-import java.util.ArrayList;;
+import java.util.List;;
 
 public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
     private CasePojo test=null;
     private Executor successor=null;
     private CaseDataPojo data=null;
-    private ArrayList<StepDataPojo> sortStep=null;
+    private List<StepDataPojo> sortStep=null;
+    private String caseId=null;
 
     public CaseExecutor(){
         
@@ -21,8 +23,12 @@ public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
         this.data=data;
         this.sortStep=data.getSortedStepsData();
     }
+    public CaseExecutor(String caseId){
+        this.caseId=caseId;
+        this.sortStep=data.getSortedStepsData();
+    }
     
-    public String execute(Hashtable<String,String> sPara,Hashtable<String,String> gPara) throws Exception{
+    public String execute(Map<String,String> sPara,Map<String,String> gPara) throws Exception{
         String caseResult = "true";
         for (StepPojo step : this.test.getSortedSteps()) {
             String result = this.getSuccessor(step,this.getTestData(step)).execute(this.getSharedData(), gPara);
@@ -37,7 +43,7 @@ public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
         this.successor=new StepExecutor(test, data);
         return this.successor;
     }
-    public Hashtable<String,String> getSharedData(){
+    public Map<String,String> getSharedData(){
         return this.data.getSharedParas();
     }
     public StepDataPojo getTestData(StepPojo test){

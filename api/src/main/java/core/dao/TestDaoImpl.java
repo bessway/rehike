@@ -1,8 +1,8 @@
 package core.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.mongodb.client.result.DeleteResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -16,8 +16,8 @@ import core.pojo.CasePojo;
 import core.pojo.HierachyPojo;
 import core.pojo.StepPojo;
 
-@Repository("testDao")
-public class TestDaoImpl {
+@Repository("TestDao")
+public class TestDaoImpl implements TestDao{
     @Autowired
     private MongoTemplate mongoTemplate = null;
 
@@ -82,5 +82,21 @@ public class TestDaoImpl {
         Update update = Update.update("steps", steps);
         mongoTemplate.upsert(query, update, CasePojo.class);
         return true;
+    }
+    public List<String> getValidCases(List<String> toValidate){
+        Query query=Query.query(Criteria.where("caseId").in(toValidate));
+        query.fields().include("caseId");
+        query.fields().exclude("_id");
+        
+        List<CasePojo> cases= mongoTemplate.find(query, CasePojo.class);
+        List<String> result=new ArrayList<String>();
+        for(CasePojo item:cases){
+            result.add(item.getCaseId());
+        }
+        return result;
+    }
+    public List<CasePojo> getCases(List<String> casesId){
+        Query query=Query.query(Criteria.where("caseId").in(casesId));
+        return mongoTemplate.find(query, CasePojo.class);
     }
 }

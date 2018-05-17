@@ -1,8 +1,11 @@
 package executor;
-import java.util.Hashtable;
+
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
+import java.util.List;
+
 import core.pojo.KeyPojo;
 import core.pojo.ParaPojo;
 import utils.SeleniumUtils;
@@ -11,7 +14,7 @@ import core.pojo.StepDataPojo;
 
 public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
     private KeyPojo test=null;
-    private ArrayList<ParaPojo> data=null;
+    private List<ParaPojo> data=null;
     private String target=null;
     private String response=null;
     public KeyExecutor(KeyPojo test,StepDataPojo data){
@@ -20,7 +23,7 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         this.target=data.getTarget();
         this.response=data.getResponse();
     }
-    public String execute(Hashtable<String,String> sPara,Hashtable<String,String> gPara) throws Exception{
+    public String execute(Map<String,String> sPara,Map<String,String> gPara) throws Exception{
         String funcName=this.test.getRegFunc();
         int paraCount=this.data.size();
         if(this.test.getTarget()){
@@ -33,7 +36,7 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         Method toExe=SeleniumUtils.class.getMethod(funcName, mPara);
         //Method toExe=SeleniumUtils.class.getMethod(funcName, String.class, String.class, String.class);
         Object result=null;
-        ArrayList<String> mParaValue=new ArrayList<String>();
+        List<String> mParaValue=new ArrayList<String>();
         if(this.target!=null){
             mParaValue.add(0,this.unpackPara(this.target,sPara,gPara));
         }
@@ -54,15 +57,15 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
     public Executor getSuccessor(KeyPojo test,StepDataPojo data){
         return null;
     }
-    public ArrayList<String> wrapPara(Hashtable<String,String> sPara,Hashtable<String,String> gPara){
+    public List<String> wrapPara(Map<String,String> sPara,Map<String,String> gPara){
         Integer pCount=this.data.size();
-        ArrayList<String> result=new ArrayList<String>();
+        List<String> result=new ArrayList<String>();
         for(int i=0;i<this.data.size();i++){
             result.add(i,this.unpackPara(this.data.get(i).getpValue(), sPara, gPara));
         }
         return result;
     }
-    public String unpackPara(String para,Hashtable<String,String> sPara,Hashtable<String,String> gPara){
+    public String unpackPara(String para,Map<String,String> sPara,Map<String,String> gPara){
         if(para.contains("{{")){
             Pattern p=Pattern.compile(".*(\\{\\{.*\\}\\}).*");
             Matcher m=p.matcher(para);

@@ -8,13 +8,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import core.dao.DataDaoImpl;
+import core.dao.DataDao;
 import core.pojo.CaseDataPojo;
 
 @Service("DataService")
-public class DataServiceImpl{
+public class DataServiceImpl implements DataService{
     @Autowired
-    private DataDaoImpl dataDao=null;
+    private DataDao dataDao=null;
 
     public List<String> getGlobalParas(){
         Map<String,Object> ret=this.dataDao.getGlobalParas();
@@ -42,5 +42,8 @@ public class DataServiceImpl{
     }
     public Boolean deleteMultipleCasesData(List<String> caseIds){
         return dataDao.deleteMultipleCasesData(caseIds);
+    }
+    public List<CaseDataPojo> getCasesData(List<String> casesId,String version){
+        return dataDao.getCasesData(casesId, version);
     }
 }

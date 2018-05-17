@@ -2,7 +2,8 @@ package core.pojo;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class CaseDataPojo{
     private String caseId=null;
     private String version=null;
-    private Hashtable<String,String> sharedParas=null;
+    private HashMap<String,String> sharedParas=null;
     private ArrayList<StepDataPojo> stepsData=null;
     
     public String getCaseId(){
@@ -26,10 +27,10 @@ public class CaseDataPojo{
     public void setVersion(String version){
         this.version=version;
     }
-    public Hashtable<String,String> getSharedParas(){
+    public HashMap<String,String> getSharedParas(){
         return this.sharedParas;
     }
-    public void setSharedParas(Hashtable<String,String> sharedParas){
+    public void setSharedParas(HashMap<String,String> sharedParas){
         this.sharedParas=sharedParas;
     }
     public ArrayList<StepDataPojo> getStepsData(){
@@ -50,13 +51,13 @@ public class CaseDataPojo{
     }
     public void addSharedParas(String key,String value){
         if(this.sharedParas==null){
-            this.sharedParas=new Hashtable<String,String>();
+            this.sharedParas=new HashMap<String,String>();
         }
         this.sharedParas.put(key,value);
     }
-    public void appendSharedParas(Hashtable para){
+    public void appendSharedParas(Map para){
         if(this.sharedParas==null){
-            this.sharedParas=new Hashtable<String,String>();
+            this.sharedParas=new HashMap<String,String>();
         }
         this.sharedParas.putAll(para);
     }
