@@ -1,11 +1,11 @@
 <template>
 <el-container style="border: 1px solid #eee">
-  <el-aside width="200px" style="background-color: rgb(238, 241, 246);color: #333 ">
+  <el-aside width=250px style="background-color: rgb(238, 241, 246);color: #333 ">
     <el-input
       placeholder="仅过滤已加载的节点"
       v-model="filterText" height="40px">
     </el-input>
-    <el-tree style="background-color: #b3c0d1;"
+    <el-tree style="background-color: #b3c0d1;height:560px"
       class="filter-tree"
       node-key="id"
       :load="loadTreeNode"
@@ -984,6 +984,7 @@ export default {
       build["jobName"] = this.selectedAgent;
       build["paras"] = {};
       build["paras"]["dataVersion"] = "default";
+      build["paras"]["logLevel"] = "debug";
       build["cases"] = {};
       for (var i = 0; i < this.$refs.casetree.getCheckedNodes().length; i++) {
         build["cases"][this.$refs.casetree.getCheckedNodes()[i].refId] = 0;
@@ -1020,8 +1021,8 @@ export default {
       console.log(this.executions);
     },
     debug() {
-      console.log(this.$refs.casetree.currentNode.node.data);
-      console.log(this.globalParas);
+      console.log(this.$refs.casetree.currentNode.node.store);
+      //this.$refs.casetree.currentNode.node.store.load(this.$refs.casetree.currentNode.node,resolve);
     }
   }
 };

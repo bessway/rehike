@@ -99,7 +99,7 @@ public class JenkinsServiceImpl implements JenkinsService {
         //添加maven参数
         suite.addPara("jobName", suite.getJobName());
         suite.addPara("buildId", String.valueOf(suite.getBuildId()));
-/*
+
         //启动执行
         try{
             job.build(suite.getParas(),true);
@@ -107,7 +107,7 @@ public class JenkinsServiceImpl implements JenkinsService {
             runningJob.remove(suite.getJobName());
             throw new Exception("error when calling jenkins:"+e.getMessage());
         }
-*/
+
         BuildPojo result=new BuildPojo();
         result.setBuildId(suite.getBuildId());
         result.setBuildStatus(suite.getBuildStatus());
@@ -148,7 +148,7 @@ public class JenkinsServiceImpl implements JenkinsService {
     }
     public List<AgentPojo> getAllAgents(){
         List<AgentPojo> agents=jenkinsDao.getAllAgents(true);
-        //检查是否正在使用中：看是否有正在执行的job
+/*        //检查是否正在使用中：看是否有正在执行的job
         //这里agent和job是一对一的
         List<BuildPojo> runningJobs=jenkinsDao.getRunningJobs();
         for(AgentPojo item:agents){
@@ -161,21 +161,21 @@ public class JenkinsServiceImpl implements JenkinsService {
             if(item.getStatus()==null){
                 item.setStatus(true);
             }
-        }
+        }*/
         return agents;
     }
     public BuildPojo getExecution(String jobName,Integer buildId){
         return jenkinsDao.getExecution(jobName, buildId);
     }
-    public Boolean syncRunningJob(String jobName,Boolean isJobRunning){
-        if(runningJob==null){
-            return true;
+    public Boolean syncAgentStatus(String jobName,Boolean isComplete){
+        if(runningJob!=null){
+            if(isComplete){
+                runningJob.remove(jobName);
+            }else{
+                runningJob.add(jobName);
+            }
         }
-        if(isJobRunning){
-            runningJob.add(jobName);
-        }else{
-            runningJob.remove(jobName);
-        }
+        this.updateAgentStatus(jobName, isComplete);
         return true;
     }
     public Boolean updateExecStatus(BuildPojo suite){

@@ -55,7 +55,7 @@ public class CaseDataPojo{
         }
         this.sharedParas.put(key,value);
     }
-    public void appendSharedParas(Map para){
+    public void appendSharedParas(Map<String,String> para){
         if(this.sharedParas==null){
             this.sharedParas=new HashMap<String,String>();
         }

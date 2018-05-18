@@ -13,7 +13,6 @@ public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
     private Executor successor=null;
     private CaseDataPojo data=null;
     private List<StepDataPojo> sortStep=null;
-    private String caseId=null;
 
     public CaseExecutor(){
         
@@ -21,10 +20,6 @@ public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
     public CaseExecutor(CasePojo test,CaseDataPojo data){
         this.test=test;
         this.data=data;
-        this.sortStep=data.getSortedStepsData();
-    }
-    public CaseExecutor(String caseId){
-        this.caseId=caseId;
         this.sortStep=data.getSortedStepsData();
     }
     

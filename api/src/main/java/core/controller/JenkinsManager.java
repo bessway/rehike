@@ -60,7 +60,7 @@ public class JenkinsManager{
     }
     @RequestMapping("/job/{jobName}")
     public String syncRunningJob(@PathVariable String jobName,@RequestBody Map<String,Boolean> build){
-        jenkinsService.syncRunningJob(jobName, build.get("isComplete"));
-        return "{'status':true}";
+        jenkinsService.syncAgentStatus(jobName, build.get("isComplete"));
+        return "{\"status\":true}";
     }
 }

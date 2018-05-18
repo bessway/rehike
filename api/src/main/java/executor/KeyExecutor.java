@@ -58,7 +58,6 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         return null;
     }
     public List<String> wrapPara(Map<String,String> sPara,Map<String,String> gPara){
-        Integer pCount=this.data.size();
         List<String> result=new ArrayList<String>();
         for(int i=0;i<this.data.size();i++){
             result.add(i,this.unpackPara(this.data.get(i).getpValue(), sPara, gPara));

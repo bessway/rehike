@@ -20,7 +20,14 @@ public class BuildPojo{
     private Date createTime=null;
     private Integer passed=null;
     private Integer failed=null;
+    private String logLevel=null;
 
+    public void setLogLevel(String logLevel){
+        this.logLevel=logLevel;
+    }
+    public String getLogLevel(){
+        return this.logLevel;
+    }
     public void setPassed(Integer passed){
         this.passed=passed;
     }

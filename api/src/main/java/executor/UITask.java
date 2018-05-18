@@ -38,8 +38,8 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
     public static Hashtable<String, KeyPojo> cachedKey = null;
 
     @BeforeClass
-    @Parameters({ "jobName", "buildId", "dataVersion" })
-    public void loadData(String jobName, Integer buildId, String dataVersion) throws Exception {
+    @Parameters({ "jobName", "buildId", "dataVersion","logLevel" })
+    public void loadData(String jobName, Integer buildId, String dataVersion,String logLevel) throws Exception {
         if (jobName == null || buildId == null || dataVersion == null) {
             throw new Exception(
                     "parameters is null: " + jobName + " | " + String.valueOf(buildId) + " | " + dataVersion);
@@ -100,13 +100,11 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
         } else {
             this.suite.setBuildStatus(Utils.ExecStatus.SUCCESS);
         }
-        // 同步服务端job的执行情况
-        this.syncRunningJob();
+        // 同步服务端job的执行情况,同时重置agent状态,放在jenkins做了
+        //this.syncRunningJob();
         // 保存suite执行结果
         this.suite.setEndTime(new Date());
         this.saveTestResult();
-        // 设置agent状态
-        MongoUtils.updateAgentStatus(this.suite.getJobName(), true);
         MongoUtils.closeMongo();
         return taskResult;
     }

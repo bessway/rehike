@@ -14,7 +14,7 @@ public interface JenkinsService{
     public TestReport getTestResult(BuildPojo suite) throws Exception;
     public List<AgentPojo> getAllAgents();
     public BuildPojo getExecution(String jobName,Integer buildId);
-    public Boolean syncRunningJob(String jobName,Boolean isJobRunning);
+    public Boolean syncAgentStatus(String jobName,Boolean isJobRunning);
     public Boolean updateExecStatus(BuildPojo suite);
     public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status);
     public Boolean updateAgentStatus(String jobName,Boolean isFree);
