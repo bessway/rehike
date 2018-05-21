@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="ui" parallel="classes" thread-count="1">
     <!--parameter name="Environment" value="${testEnvironment}"/-->
-    <test verbose="2" preserve-order="true" name="mainfolder">
+    <test verbose="1" preserve-order="true" name="uiexecutor">
         <classes>
             <class name="executor.UITask"/>
         </classes>

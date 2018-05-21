@@ -57,8 +57,8 @@ public class JenkinsDaoImpl implements JenkinsDao{
         Update update=Update.update("buildStatus", suite.getBuildStatus());
         update.set("cases", suite.getCases());
         update.set("forceStop",suite.isFroceStop());
-        update.set("endTime",suite.isFroceStop());
-        mongoTemplate.findAndModify(query, update, BuildPojo.class);
+        update.set("endTime",suite.getEndTime());
+        BuildPojo result=mongoTemplate.findAndModify(query, update, BuildPojo.class);
         return true;
     }
     public Boolean updateCaseStatus(String jobName,Integer buildId,String caseId,Utils.ExecStatus status){

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import core.pojo.AgentPojo;
 import core.pojo.BuildPojo;
 import core.service.JenkinsService;
 
@@ -44,11 +45,10 @@ public class JenkinsManager{
     public String getAllAgents(){
         return gson.toJson(jenkinsService.getAllAgents());
     }
-    @RequestMapping("/job/{jobName}/build/{buildId}")
+    @RequestMapping("/jobdetail/{jobName}/build/{buildId}")
     public String getJobDetail(HttpServletResponse res, @PathVariable String jobName,@PathVariable Integer buildId) throws Exception{
         BuildPojo suite=new BuildPojo();
-        //for debug to set 98
-        suite.setBuildId(98);
+        suite.setBuildId(buildId);
         suite.setJobName(jobName);
         try{
             TestReport result= jenkinsService.getTestResult(suite);
@@ -62,5 +62,24 @@ public class JenkinsManager{
     public String syncRunningJob(@PathVariable String jobName,@RequestBody Map<String,Boolean> build){
         jenkinsService.syncAgentStatus(jobName, build.get("isComplete"));
         return "{\"status\":true}";
+    }
+    @RequestMapping("/job/{jobName}/build/{buildId}")
+    public String getExecutioin(@PathVariable String jobName,@PathVariable Integer buildId){
+        return gson.toJson(jenkinsService.getExecution(jobName, buildId));
+    }
+    @RequestMapping(value="/jobstatus",method=RequestMethod.PUT)
+    public String updateExecStatus(@RequestBody BuildPojo suite){
+        jenkinsService.updateExecStatus(suite);
+        return "{\"status\":true}"; 
+    }
+    @RequestMapping(value="/casestatus",method=RequestMethod.PUT)
+    public String updateCaseStatus(@RequestBody BuildPojo suite){
+        jenkinsService.updateCaseStatus(suite.getJobName(), suite.getBuildId(), (String)suite.getCases().keySet().toArray()[0], suite.getCases().get(0));
+        return "{\"status\":true}"; 
+    }
+    @RequestMapping(value="/agentstatus",method=RequestMethod.PUT)
+    public String updateAgentStatus(@RequestBody AgentPojo agent){
+        jenkinsService.updateAgentStatus(agent.getJobName(), agent.getStatus());
+        return "{\"status\":true}"; 
     }
 }

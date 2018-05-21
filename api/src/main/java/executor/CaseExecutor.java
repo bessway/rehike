@@ -30,6 +30,7 @@ public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
             //有一个失败则整体是失败状态
             if (result.equals("false")) {
                 caseResult = result;
+                break;
             }
         }
         return caseResult;

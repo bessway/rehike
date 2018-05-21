@@ -3,11 +3,15 @@ package executor;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.aventstack.extentreports.Status;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import core.pojo.KeyPojo;
 import core.pojo.ParaPojo;
+import utils.ReportUtils;
 import utils.SeleniumUtils;
 import java.lang.reflect.Method;
 import core.pojo.StepDataPojo;
@@ -41,7 +45,7 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
             mParaValue.add(0,this.unpackPara(this.target,sPara,gPara));
         }
         mParaValue.addAll(this.wrapPara(sPara,gPara));
-        
+        ReportUtils.addLog(Status.INFO, toExe.getName()+this.paraToString(mParaValue), null);
         result=toExe.invoke(null, mParaValue.toArray());
         if(this.test.getResponse()){
             if(this.response.contains("{{")){
@@ -86,5 +90,12 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
             }
         }
         return para;
+    }
+    private String paraToString(List<String> paras){
+        String result="";
+        for(String item:paras){
+            result=result+", "+item;
+        }
+        return result;
     }
 }

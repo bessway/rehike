@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SeleniumUtils {
-    public static Logger logger = Logger.getLogger(SeleniumUtils.class);
+    private static Logger logger = Logger.getLogger(SeleniumUtils.class);
     private static Map<String, WebDriver> drivers = new HashMap<String, WebDriver>();
     private static Map<String, WebDriverWait> waits = new HashMap<String, WebDriverWait>();
     private static Integer maxWait = 10;
@@ -59,7 +59,7 @@ public class SeleniumUtils {
         driver.manage().window().maximize();
         return driver;
     }
-
+    
     public static String openSite(String url, String browserType) throws Exception {
         /*
          * WebDriver driver=null; if(!drivers.containsKey(url)){
@@ -71,21 +71,24 @@ public class SeleniumUtils {
         logger.debug(browserType);
         return url;
     }
-
+    
     public static void input(String target, String content) throws Exception {
         logger.debug("input");
         logger.debug(target);
         logger.debug(content);
     }
+   
     public static void click(String target) throws Exception {
         logger.debug("click");
         logger.debug(target);
     }
+    
     public static String getText(String target) throws Exception {
         logger.debug("getText");
         logger.debug(target);
         return "text in getText";
     }
+    
     public static String assertEqual(String target,String attribute,String exValue) throws Exception {
         logger.debug("assertEqual");
         logger.debug(target);

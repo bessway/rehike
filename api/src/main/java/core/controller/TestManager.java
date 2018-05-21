@@ -76,4 +76,8 @@ public class TestManager {
 
         return "{result:"+result+"}";
     }
+    @RequestMapping(value="/cases",method=RequestMethod.POST)
+    public String getCases(@RequestBody List<String> casesId){
+        return gson.toJson(testService.getCases(casesId));
+    }
 }
