@@ -233,7 +233,7 @@ function getAgents(bindData) {
 function getJobDetail(job,build,bindData) {
   axios({
     method: "get",
-    url: host + "/1/jenkins/job/"+job+"/build/"+build
+    url: host + "/1/jenkins/jobdetail/"+job+"/build/"+build
   })
     .then(response => {
       let _data = response.data;
