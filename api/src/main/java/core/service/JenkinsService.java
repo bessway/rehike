@@ -12,6 +12,7 @@ public interface JenkinsService{
     public BuildPojo startJob(BuildPojo suite) throws Exception;
     public List<BuildPojo> getAllBuilds();
     public TestReport getTestResult(BuildPojo suite) throws Exception;
+    public String getTestReport(String jobName,Integer buildId) throws Exception;
     public List<AgentPojo> getAllAgents();
     public BuildPojo getExecution(String jobName,Integer buildId);
     public Boolean syncAgentStatus(String jobName,Boolean isJobRunning);

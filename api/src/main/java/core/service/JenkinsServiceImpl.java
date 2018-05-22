@@ -144,7 +144,12 @@ public class JenkinsServiceImpl implements JenkinsService {
         MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJobName());
         MavenBuild build=job.getBuildByNumber(suite.getBuildId());
         TestReport result= build.getTestReport();
+        
         return result;
+    }
+    public String getTestReport(String jobName,Integer buildId) throws Exception{
+        MavenJobWithDetails job=getJenkinsServer().getMavenJob(jobName);
+        return jProperty.getProperty("jenkins.host")+"/userContent/"+jobName+String.valueOf(buildId)+".html";
     }
     public List<AgentPojo> getAllAgents(){
         List<AgentPojo> agents=jenkinsDao.getAllAgents(true);

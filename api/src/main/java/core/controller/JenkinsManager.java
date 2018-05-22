@@ -47,7 +47,7 @@ public class JenkinsManager{
     }
     @RequestMapping("/jobdetail/{jobName}/build/{buildId}")
     public String getJobDetail(HttpServletResponse res, @PathVariable String jobName,@PathVariable Integer buildId) throws Exception{
-        BuildPojo suite=new BuildPojo();
+/*        BuildPojo suite=new BuildPojo();
         suite.setBuildId(buildId);
         suite.setJobName(jobName);
         try{
@@ -55,8 +55,8 @@ public class JenkinsManager{
             return result.toString();
         }catch(Exception e){
             res.sendError(500, e.getMessage());
-        }
-        return "{}";
+        }*/
+        return "{\"url\":\""+jenkinsService.getTestReport(jobName,buildId)+"\"}";
     }
     @RequestMapping("/job/{jobName}")
     public String syncRunningJob(@PathVariable String jobName,@RequestBody Map<String,Boolean> build){

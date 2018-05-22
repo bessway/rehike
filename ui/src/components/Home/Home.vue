@@ -303,8 +303,7 @@ export default {
       selectedBrowser: null,
       selectedOs: null,
       executions: null,
-      selectedExecRowData: null,
-      showingJobDetail:null
+      selectedExecRowData: null
     };
   },
   //如果函数的依赖有变化，则按逻辑同步更新computed属性
@@ -1001,11 +1000,13 @@ export default {
     },
     //TO-DO
     getJobDetail() {
-      HomeData.getJobDetail(
-        this.selectedExecRowData.jobName,
-        this.selectedExecRowData.buildId,
-        function(response) {
-          this.showingJobDetail=response;
+      if(this.selectedExecRowData==null){
+        alert("please select one job");
+        return;
+      }
+      HomeData.getJobDetail(this.selectedExecRowData.jobName,this.selectedExecRowData.buildId,function(response) {
+        console.log(response.url);
+          window.open(response.url);
         }.bind(this)
       );
     },
