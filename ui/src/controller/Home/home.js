@@ -17,7 +17,7 @@ export default {
   getJobDetail
 };
 import axios from "axios";
-var host = "http://127.0.0.1:8081";
+var host = "http://192.168.2.103:8081";
 function getProjects(resolve) {
   axios({
     method: "get",

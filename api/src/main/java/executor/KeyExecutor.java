@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import com.aventstack.extentreports.Status;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +15,18 @@ import core.pojo.KeyPojo;
 import core.pojo.ParaPojo;
 import utils.ReportUtils;
 import utils.SeleniumUtils;
+import utils.Utils;
+
 import java.lang.reflect.Method;
 import core.pojo.StepDataPojo;
 
 public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
+    private static Logger logger=Logger.getLogger(KeyExecutor.class);
     private KeyPojo test=null;
     private List<ParaPojo> data=null;
     private String target=null;
     private String response=null;
+    private static String keySuffix="Key";
     public KeyExecutor(KeyPojo test,StepDataPojo data){
         this.test=test;
         this.data=data.getSortedStepParas();
@@ -29,6 +35,7 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
     }
     public String execute(Map<String,String> sPara,Map<String,String> gPara) throws Exception{
         String funcName=this.test.getRegFunc();
+        funcName=funcName+keySuffix;
         int paraCount=this.data.size();
         if(this.test.getTarget()){
             paraCount=paraCount+1;
@@ -37,24 +44,35 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         for(int i=0;i<mPara.length;i++){
             mPara[i]=String.class;
         }
-        Method toExe=SeleniumUtils.class.getMethod(funcName, mPara);
-        //Method toExe=SeleniumUtils.class.getMethod(funcName, String.class, String.class, String.class);
         Object result=null;
-        List<String> mParaValue=new ArrayList<String>();
-        if(this.target!=null&&!this.target.equals("")){
-            mParaValue.add(0,this.unpackPara(this.target,sPara,gPara));
-        }
-        mParaValue.addAll(this.wrapPara(sPara,gPara));
-        ReportUtils.addLog(Status.INFO, toExe.getName()+this.paraToString(mParaValue), null);
-        result=toExe.invoke(null, mParaValue.toArray());
-        if(this.test.getResponse()){
-            if(this.response.contains("{{")){
-                gPara.put(this.response,String.valueOf(result));
+        try{
+            Method toExe=SeleniumUtils.class.getMethod(funcName, mPara);
+            //Method toExe=SeleniumUtils.class.getMethod(funcName, String.class, String.class, String.class);
+            List<String> mParaValue=new ArrayList<String>();
+            if(this.target!=null&&!this.target.equals("")){
+                mParaValue.add(0,this.unpackPara(this.target,sPara,gPara));
             }
-            if(this.response.contains("[[")){
-                sPara.put(this.response,String.valueOf(result));
+            mParaValue.addAll(this.wrapPara(sPara,gPara));
+
+            ReportUtils.addLog(Status.INFO, funcName+this.paraToString(mParaValue), null);
+        
+            result=toExe.invoke(null, mParaValue.toArray());
+            if(this.test.getResponse()){
+                if(this.response.contains(Utils.gParaSymbol)){
+                    gPara.put(this.response,String.valueOf(result));
+                }
+                if(this.response.contains(Utils.sParaSymbol)){
+                    sPara.put(this.response,String.valueOf(result));
+                }
             }
+        }catch(NoSuchMethodException e){
+            logger.debug("cannot find the method "+funcName);
+            result=Utils.execFail;
+        }catch(Exception e){
+            logger.debug("excute method "+funcName+" failed");
+            result=Utils.execFail;
         }
+        
 
         return String.valueOf(result);
     }
@@ -69,8 +87,8 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         return result;
     }
     public String unpackPara(String para,Map<String,String> sPara,Map<String,String> gPara){
-        if(para.contains("{{")){
-            Pattern p=Pattern.compile(".*(\\{\\{.*\\}\\}).*");
+        if(para.contains(Utils.gParaSymbol)){
+            Pattern p=Pattern.compile(".*("+Utils.gParaSymbol+".*"+Utils.gParaSymbol+").*");
             Matcher m=p.matcher(para);
             m.find();
             if(m.groupCount()>0){
@@ -79,8 +97,8 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
                 }
             }
         }
-        if(para.contains("[[")){
-            Pattern p=Pattern.compile(".*(\\[\\[.*\\]\\]).*");
+        if(para.contains(Utils.sParaSymbol)){
+            Pattern p=Pattern.compile(".*("+Utils.sParaSymbol+".*"+Utils.sParaSymbol+").*");
             Matcher m=p.matcher(para);
             m.find();
             if(m.groupCount()>0){

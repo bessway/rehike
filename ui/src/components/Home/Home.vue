@@ -560,6 +560,9 @@ export default {
       if (this.actions === null || this.actions.length === 0) {
         return "";
       }
+      if(col.label=="返回值"){
+        return "参数名";
+      }
       for (var i = 0; i < this.actions.length; i++) {
         if (this.actions[i].value === row.action) {
           if (col.label.indexOf("参数") != -1) {

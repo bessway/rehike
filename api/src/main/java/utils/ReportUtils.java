@@ -50,7 +50,7 @@ public class ReportUtils{
         tests.addLast(currTest);
     }
 
-    public static void completeCurrReport(){
+    public static void completeTestReport(){
         tests.removeLast();
         if(tests.size()==0){
             currTest=null;

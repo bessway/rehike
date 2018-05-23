@@ -199,15 +199,15 @@ public class TestServiceImpl implements TestService {
     }
     public List<String> extractGlobalPara(StepDetailPojo step){
         List<String> gPara=new ArrayList<String>();
-        if(step.getResponse().contains("{{")){
+        if(step.getResponse().contains(Utils.gParaSymbol)){
             gPara.add(step.getResponse());
         }
         for(String item:step.getParas()){
             if(item==null){
                 continue;
             }
-            if(item.contains("{{")){
-                Pattern p=Pattern.compile(".*(\\{\\{.*\\}\\}).*");
+            if(item.contains(Utils.gParaSymbol)){
+                Pattern p=Pattern.compile(".*("+Utils.gParaSymbol+".*"+Utils.gParaSymbol+").*");
                 Matcher m=p.matcher(item);
                 m.find();
                 if(m.groupCount()>0){
@@ -221,15 +221,15 @@ public class TestServiceImpl implements TestService {
     }
     public Map<String,String> extractSharedPara(StepDetailPojo step){
         Map<String,String> sPara=new HashMap<String,String>();
-        if(step.getResponse().contains("[[")){
+        if(step.getResponse().contains(Utils.sParaSymbol)){
             sPara.put(step.getResponse(),"");
         }
         for(String item:step.getParas()){
             if(item==null){
                 continue;
             }
-            if(item.contains("[[")){
-                Pattern p=Pattern.compile(".*(\\[\\[.*\\]\\]).*");
+            if(item.contains(Utils.sParaSymbol)){
+                Pattern p=Pattern.compile(".*("+Utils.sParaSymbol+".*"+Utils.sParaSymbol+").*");
                 Matcher m=p.matcher(item);
                 m.find();
                 if(m.groupCount()>0){

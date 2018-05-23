@@ -31,6 +31,7 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
     private Map<String, CaseDataPojo> data = null;
     private List<CasePojo> tests = null;
     public static Hashtable<String, KeyPojo> cachedKey = null;
+    public static Map<String,String> cachedObj=null;
 
     @BeforeClass
     @Parameters({ "jobName", "buildId", "dataVersion", "logLevel" })
@@ -47,7 +48,7 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
         // 从数据库根据suiteid获取所有的数据
         this.loadTestData(casesId, dataVersion);
         this.loadKeys();
-        ServerUtils.getAllObjects();
+        cachedObj=ServerUtils.getAllObjects();
     }
 
     @Test
@@ -56,12 +57,13 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
     }
 
     public String execute(Map<String, String> sPara, Map<String, String> gPara) throws Exception {
-        String taskResult = "true";
+        String taskResult = Utils.execPass;
         for (CasePojo casz : this.tests) {
+            //一个addSubTest必须对应到一个completeTestReport
             ReportUtils.addSubTest(casz.getCaseId());
             if (checkStopExec()) {
                 this.suite.setFroceStop(true);
-                taskResult = "stopped";
+                taskResult = Utils.execException;
                 continue;
             }
             this.suite.setStartTime(new Date());
@@ -73,23 +75,26 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
                 }
                 result = this.getSuccessor(casz, this.getTestData(casz)).execute(this.getSharedData(), gPara);
             } catch (Exception e) {
-                result = "false";
+                result = Utils.execFail;
+            }finally{
+                SeleniumUtils.closeDriversKey(null);
             }
             // 有一个case失败则suite是失败状态
-            if (result.equals("false")) {
+            if (result.equals(Utils.execFail)) {
                 taskResult = result;
                 this.suite.getCases().put(casz.getCaseId(), Utils.ExecStatus.FAILED);
             } else {
                 this.suite.getCases().put(casz.getCaseId(), Utils.ExecStatus.SUCCESS);
             }
             this.updateCaseStatus(casz.getCaseId(), result);
-            SeleniumUtils.closeDrivers(null);
+            
             ReportUtils.addEndTime(new Date());
-            ReportUtils.completeCurrReport();
+            ReportUtils.completeTestReport();
         }
-        if (taskResult.equals("stopped")) {
+        
+        if (taskResult.equals(Utils.execException)) {
             this.suite.setBuildStatus(Utils.ExecStatus.FORCESTOP);
-        } else if (taskResult.equals("false")) {
+        } else if (taskResult.equals(Utils.execFail)) {
             this.suite.setBuildStatus(Utils.ExecStatus.FAILED);
         } else {
             this.suite.setBuildStatus(Utils.ExecStatus.SUCCESS);
@@ -131,7 +136,7 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
 
     // 更新suite中每个case的执行结果
     private void updateCaseStatus(String caseId, String status) throws Exception {
-        if (status.equals("failed")) {
+        if (status.equals(Utils.execFail)) {
             ServerUtils.updateCaseStatus(this.suite.getJobName(), this.suite.getBuildId(), caseId,
                     Utils.ExecStatus.FAILED);
         } else {

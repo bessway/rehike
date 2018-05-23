@@ -5,6 +5,7 @@ import core.pojo.CaseDataPojo;
 import java.util.Map;
 
 import core.pojo.StepPojo;
+import utils.Utils;
 import core.pojo.StepDataPojo;
 import java.util.List;;
 
@@ -24,11 +25,11 @@ public class CaseExecutor implements Executor<StepPojo,StepDataPojo>{
     }
     
     public String execute(Map<String,String> sPara,Map<String,String> gPara) throws Exception{
-        String caseResult = "true";
+        String caseResult = Utils.execPass;
         for (StepPojo step : this.test.getSortedSteps()) {
             String result = this.getSuccessor(step,this.getTestData(step)).execute(this.getSharedData(), gPara);
-            //有一个失败则整体是失败状态
-            if (result.equals("false")) {
+            //有一个失败则整体是失败状态，停止当前case的执行
+            if (result.equals(Utils.execFail)) {
                 caseResult = result;
                 break;
             }

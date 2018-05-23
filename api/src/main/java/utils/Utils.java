@@ -18,6 +18,11 @@ public class Utils{
         FAILEDTOSTART,
         FORCESTOP,
     }
+    public final static String execPass="exec pass";
+    public final static String execFail="exec fail";
+    public final static String execException="exec stopped";
+    public final static String gParaSymbol="%%";
+    public final static String sParaSymbol="@@";
 
     public static void addToObjectMap(String key, String value){
         if(objectsMap==null){

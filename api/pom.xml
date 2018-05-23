@@ -15,8 +15,7 @@
   </parent>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <!--maven.compiler.source>1.8</maven.compiler.source><maven.compiler.target>1.8</maven.compiler.target-->
     <!--mvn -Dname=value实际上是在设置系统变量name，可以直接在testng中通过System.getProperty("name")使用，
     或者通过@Parameters({"name"})
     在pom中可以通过${name}来引用
@@ -76,6 +75,26 @@
             </pluginExecutions>
           </lifecycleMappingMetadata>
         </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.11</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <complianceLevel>1.8</complianceLevel>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -169,5 +188,15 @@
       <artifactId>extentreports</artifactId>
       <version>3.1.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>1.9.1</version>
+    </dependency>
+    <dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjrt</artifactId>
+    <version>1.8.13</version>
+</dependency>
   </dependencies>
 </project>
