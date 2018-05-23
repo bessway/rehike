@@ -3,15 +3,17 @@ import groovyx.net.http.HTTPBuilder
 import static groovyx.net.http.Method.* 
 import static groovyx.net.http.ContentType.*
 
-if("${JOB_NAME}".contains('example_company')){
+if("${JOB_NAME}".contains('auto_')){
 	def shortName="${JOB_NAME}".split("/")[0]
 	println "${JENKINS_HOME}\\jobs\\${shortName}\\configurations\\axis-label\\${shortName}\\htmlreports\\Test_Report\\${shortName}${BUILD_ID}.html"
-	def src=new File("${JENKINS_HOME}\\jobs\\${shortName}\\configurations\\axis-label\\${shortName}\\htmlreports\\Test_Report\\${shortName}${BUILD_ID}.html")
-	def des=new File("${JENKINS_HOME}\\userContent\\${shortName}${BUILD_ID}.html")
-	des.withOutputStream{
-	os-> src.withInputStream {
-		ins->
-		   os << ins 
+	def srcFolder=new File("${JENKINS_HOME}\\jobs\\${shortName}\\configurations\\axis-label\\${shortName}\\htmlreports\\Test_Report")
+	srcFolder.eachFile{file->
+		def des=new File("${JENKINS_HOME}\\userContent\\"+file.getName())
+		des.withOutputStream{
+		os-> file.withInputStream {
+			ins->
+			   os << ins 
+			}
 		}
 	}
 	
@@ -27,10 +29,10 @@ if("${JOB_NAME}".contains('example_company')){
 		}
 	}
 	
-	def output=new File("D:\\Program Files (x86)\\Jenkins\\userContent")
-    output.eachFile{file->
-		if(des.lastModified()<new Date().getTime()-7*24*3600){
-			des.delete()
+	def delete=new File("${JENKINS_HOME}\\userContent")
+    delete.eachFile{file->
+		if(file.lastModified()<new Date().getTime()-7*24*3600){
+			file.delete()
 		}
 	}
 }

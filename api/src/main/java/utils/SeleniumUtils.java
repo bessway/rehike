@@ -241,7 +241,7 @@ public class SeleniumUtils {
         File img=((TakesScreenshot)getCurrDriver()).getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(img, path);
         
-        return path.getAbsolutePath();
+        return name;
     }
     private static void deleteScreenshot(){
         File screenshotDir = new File("report-output/");
