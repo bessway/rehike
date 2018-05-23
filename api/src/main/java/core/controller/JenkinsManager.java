@@ -74,7 +74,8 @@ public class JenkinsManager{
     }
     @RequestMapping(value="/casestatus",method=RequestMethod.PUT)
     public String updateCaseStatus(@RequestBody BuildPojo suite){
-        jenkinsService.updateCaseStatus(suite.getJobName(), suite.getBuildId(), (String)suite.getCases().keySet().toArray()[0], suite.getCases().get(0));
+        String key=(String)suite.getCases().keySet().toArray()[0];
+        jenkinsService.updateCaseStatus(suite.getJobName(), suite.getBuildId(), key, suite.getCases().get(key));
         return "{\"status\":true}"; 
     }
     @RequestMapping(value="/agentstatus",method=RequestMethod.PUT)

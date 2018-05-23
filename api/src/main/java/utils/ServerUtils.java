@@ -50,6 +50,7 @@ public class ServerUtils {
         String url="http://" + aProperty.getProperty("server.host") + ":" + aProperty.getProperty("server.port")+method;
         try{
             request.setURI(URI.create(url));
+            
             res =client.execute(request);
             Integer status = res.getStatusLine().getStatusCode();
             if (status != 200) {
@@ -66,14 +67,15 @@ public class ServerUtils {
         String method="/1/jenkins/job/"+jobName+"/build/"+String.valueOf(buildId);
         HttpGet get=new HttpGet();
         CloseableHttpResponse res=callMethod(method, get);
-        
-        return gson.fromJson(EntityUtils.toString(res.getEntity()), BuildPojo.class);
+        BuildPojo result=gson.fromJson(EntityUtils.toString(res.getEntity()), BuildPojo.class);
+        res.close();
+        return result;
     }
     public static void updateExecStatus(BuildPojo suite)throws Exception{
         String method="/1/jenkins/jobstatus";
         HttpPut put=new HttpPut();
         put.setEntity(new StringEntity(gson.toJson(suite),"utf-8"));
-        callMethod(method, put);
+        callMethod(method, put).close();;
     }
     public static void updateCaseStatus(String jobName, Integer buildId, String caseId, Utils.ExecStatus status)throws Exception{
         String method="/1/jenkins/casestatus";
@@ -83,7 +85,7 @@ public class ServerUtils {
         req.setBuildId(buildId);
         req.addCase(caseId, status);
         put.setEntity(new StringEntity(gson.toJson(req),"utf-8"));
-        callMethod(method, put);
+        callMethod(method, put).close();;
     }
     public static void updateAgentStatus(String jobName, Boolean isFree)throws Exception{
         String method="/1/jenkins/agentstatus";
@@ -92,44 +94,53 @@ public class ServerUtils {
         req.setJobName(jobName);
         req.setStatus(isFree);
         put.setEntity(new StringEntity(gson.toJson(req),"utf-8"));
-        callMethod(method, put);
+        callMethod(method, put).close();;
     }
     public static List<String> getGlobalParas() throws Exception{
         String method="/1/data/global";
         HttpGet get=new HttpGet();
         CloseableHttpResponse res=callMethod(method, get);
-
-        return gson.fromJson(EntityUtils.toString(res.getEntity()), new TypeToken<List<String>>() {
+        List<String> result=gson.fromJson(EntityUtils.toString(res.getEntity()), new TypeToken<List<String>>() {
         }.getType());
+        res.close();
+        return result;
     }
     public static List<CaseDataPojo> getCasesData(List<String> casesId,String version)throws Exception{
         String method="/1/data/casesdata/version/"+version;
         HttpPost post=new HttpPost();
         post.setEntity(new StringEntity(gson.toJson(casesId),"utf-8"));
         CloseableHttpResponse res=callMethod(method, post);
-        return gson.fromJson(EntityUtils.toString(res.getEntity()),new TypeToken<List<CaseDataPojo>>() {
+        List<CaseDataPojo> result=gson.fromJson(EntityUtils.toString(res.getEntity()),new TypeToken<List<CaseDataPojo>>() {
         }.getType());
+        res.close();
+        return result;
     }
     public static List<CasePojo> getCases(List<String> casesId)throws Exception{
         String method="/1/test/cases";
         HttpPost post=new HttpPost();
         post.setEntity(new StringEntity(gson.toJson(casesId),"utf-8"));
         CloseableHttpResponse res=callMethod(method, post);
-        return gson.fromJson(EntityUtils.toString(res.getEntity()),new TypeToken<List<CasePojo>>() {
+        List<CasePojo> result=gson.fromJson(EntityUtils.toString(res.getEntity()),new TypeToken<List<CasePojo>>() {
         }.getType());
+        res.close();
+        return result;
     }
     public static List<KeyPojo> getAllKeys()throws Exception{
         String method="/1/action/all";
         HttpGet get=new HttpGet();
         CloseableHttpResponse res=callMethod(method, get);
-        return gson.fromJson(EntityUtils.toString(res.getEntity()), new TypeToken<List<KeyPojo>>() {
+        List<KeyPojo> result=gson.fromJson(EntityUtils.toString(res.getEntity()), new TypeToken<List<KeyPojo>>() {
         }.getType());
+        res.close();
+        return result;
     }
     public static Map<String,String> getAllObjects()throws Exception{
         String method="/1/object/all";
         HttpGet get=new HttpGet();
         CloseableHttpResponse res=callMethod(method, get);
-        return gson.fromJson(EntityUtils.toString(res.getEntity()), new TypeToken<Map<String,String>>() {
+        Map<String,String> result=gson.fromJson(EntityUtils.toString(res.getEntity()), new TypeToken<Map<String,String>>() {
         }.getType());
+        res.close();
+        return result;
     }
 }
