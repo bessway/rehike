@@ -50,11 +50,11 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
             //Method toExe=SeleniumUtils.class.getMethod(funcName, String.class, String.class, String.class);
             List<String> mParaValue=new ArrayList<String>();
             if(this.target!=null&&!this.target.equals("")){
-                mParaValue.add(0,this.unpackPara(this.target,sPara,gPara));
+                mParaValue.add(0,this.getXpath(this.target,sPara,gPara));
             }
             mParaValue.addAll(this.wrapPara(sPara,gPara));
 
-            ReportUtils.addLog(Status.INFO, funcName+this.paraToString(mParaValue), null);
+            ReportUtils.addLog(Status.INFO, funcName+this.paraToString(mParaValue)+" "+String.valueOf(this.target), null);
         
             result=toExe.invoke(null, mParaValue.toArray());
             if(this.test.getResponse()){
@@ -114,6 +114,14 @@ public class KeyExecutor implements Executor<KeyPojo,StepDataPojo>{
         for(String item:paras){
             result=result+", "+item;
         }
+        return result;
+    }
+    private String getXpath(String pathName,Map<String,String> sPara,Map<String,String> gPara) throws Exception{
+        String result=UITask.cachedObj.get(pathName);
+        if(result==null){
+            throw new Exception("cannot find the xpath: "+pathName);
+        }
+        result=this.unpackPara(result, sPara, gPara);
         return result;
     }
 }

@@ -20,15 +20,25 @@ public class StepAspect{
 
     @AfterThrowing(pointcut="pointcutName()", throwing="e")
     public void afterThrowing(Exception e){
-        String screenshot=SeleniumUtils.takeScreenshot();
-        ReportUtils.addLog(Status.FAIL, e.getMessage()+"\n"+e.getCause(), screenshot);
+        String screenshot=null;
+        try{
+            screenshot=SeleniumUtils.takeScreenshot();
+            ReportUtils.addLog(Status.FAIL, e.getMessage()+"\n"+e.getCause(), screenshot);
+        }catch(Exception e1){
+            ReportUtils.addLog(Status.FAIL, e.getMessage()+"\n"+e.getCause()+"\nfailed to attach screenshot", screenshot);
+        }
     }
  
     @AfterReturning(pointcut="pointcutName()", returning="result")
     public void afterReturning(Object result) {
         if(Utils.execFail.equals(String.valueOf(result))){
-            String screenshot=SeleniumUtils.takeScreenshot();
-            ReportUtils.addLog(Status.FAIL, "step failed,response: "+String.valueOf(result), screenshot);
+            String screenshot=null;
+            try{
+                screenshot=SeleniumUtils.takeScreenshot();
+                ReportUtils.addLog(Status.FAIL, "step failed,response: "+String.valueOf(result), screenshot);
+            }catch(Exception e){
+                ReportUtils.addLog(Status.FAIL, "step failed but failed to get screenshot,response: "+String.valueOf(result), null);
+            }
         }else{
             ReportUtils.addLog(Status.PASS, "step passed,response: "+String.valueOf(result), null);
         }

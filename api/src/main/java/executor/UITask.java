@@ -77,7 +77,7 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
             } catch (Exception e) {
                 result = Utils.execFail;
             }finally{
-                SeleniumUtils.closeDriversKey(null);
+                SeleniumUtils.closeBrowsersKey(null);
             }
             // 有一个case失败则suite是失败状态
             if (result.equals(Utils.execFail)) {
@@ -91,7 +91,7 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
             ReportUtils.addEndTime(new Date());
             ReportUtils.completeTestReport();
         }
-        
+
         if (taskResult.equals(Utils.execException)) {
             this.suite.setBuildStatus(Utils.ExecStatus.FORCESTOP);
         } else if (taskResult.equals(Utils.execFail)) {

@@ -116,7 +116,7 @@ public class JenkinsServiceImpl implements JenkinsService {
         result.setFailed(suite.getFailed());
         result.setCreateTime(suite.getCreateTime());
         //for debug
-        runningJob.remove(suite.getJobName());
+        //runningJob.remove(suite.getJobName());
         return result;
     }
     public List<BuildPojo> getAllBuilds(){
@@ -128,9 +128,9 @@ public class JenkinsServiceImpl implements JenkinsService {
             Integer passed=0;
             Integer failed=0;
             for(Utils.ExecStatus status:item.getCases().values()){
-                if(status.equals(Utils.ExecStatus.SUCCESS)){
+                if(Utils.ExecStatus.SUCCESS.equals(status)){
                     passed=passed+1;
-                }else if(status.equals(Utils.ExecStatus.FAILED)){
+                }else if(Utils.ExecStatus.FAILED.equals(status)){
                     failed=failed+1;
                 }
             }
