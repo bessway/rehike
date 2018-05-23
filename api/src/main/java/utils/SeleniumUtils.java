@@ -33,7 +33,7 @@ public class SeleniumUtils {
 
     public static String assertEqualKey(String target, String attribute, String exValue) throws Exception {
         String actual=getAttributeKey(target, attribute);
-        if("exValue".equals(actual)){
+        if(exValue.equals(actual)){
             return Utils.execPass;
         }else{
             throw new Exception("assert equal failed: actual = "+actual);
@@ -237,11 +237,11 @@ public class SeleniumUtils {
             screenshotDir.mkdir();
         }
         String name=String.valueOf(new Date().getTime())+".jpg";
-        String path="/screenshot/"+name;
+        File path=new File("screenshot/"+name);
         File img=((TakesScreenshot)getCurrDriver()).getScreenshotAs(OutputType.FILE);
-        FileUtils.copyFile(img, new File(path));
+        FileUtils.copyFile(img, path);
         
-        return path;
+        return path.getAbsolutePath();
     }
     private static void deleteScreenshot(){
         File screenshotDir = new File("screenshot/");
