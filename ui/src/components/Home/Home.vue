@@ -34,6 +34,8 @@
             @click="handleDelNodeClick"></el-button>
             <el-button size="mini" v-show="isShowSaveBtn" icon="el-icon-check" circle
             @click="handleSaveClick"></el-button>
+            <el-button size="mini"
+            @click="debug">copy</el-button>
             <el-button size="mini" icon="el-icon-question"
             @click="debug"></el-button>
             <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-up"
@@ -1001,7 +1003,6 @@ export default {
         }.bind(this)
       );
     },
-    //TO-DO
     getJobDetail() {
       if(this.selectedExecRowData==null){
         alert("please select one job");
@@ -1025,8 +1026,9 @@ export default {
       console.log(this.executions);
     },
     debug() {
-      console.log(this.$refs.casetree.currentNode.node.store);
+      //console.log(this.$refs.casetree.currentNode.node.store);
       //this.$refs.casetree.currentNode.node.store.load(this.$refs.casetree.currentNode.node,resolve);
+      console.log(document.querySelector("main"));
     }
   }
 };

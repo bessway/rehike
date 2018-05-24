@@ -22,7 +22,7 @@ if("${JOB_NAME}".contains('auto_')){
 		body = [isComplete:true] 
 		response.success = { resp, json ->
 			println "agent status synced! ${resp.status}"
-		}
+		}s
 
 		response.failure = { resp ->
 			println "Sync agent status failed with status ${resp.status}"

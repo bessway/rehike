@@ -17,7 +17,7 @@ public class ReportUtils{
     private static LinkedList<ExtentTest> tests=new LinkedList<ExtentTest>();
     private static ExtentTest currTest=null;
     private static ExtentReports extent=null;
-    private static String reportRoot="report-output/";
+    public static String reportRoot="report-output/";
 
     public static void init(String desc){
         File reportDir= new File(reportRoot);

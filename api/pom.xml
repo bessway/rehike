@@ -3,10 +3,10 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.auto.hike</groupId>
-  <artifactId>hike</artifactId>
+  <artifactId>api</artifactId>
   <version>0.0.1</version>
-  <packaging>jar</packaging>
-  <name>hike</name>
+  <packaging>war</packaging>
+  <name>api</name>
   <url>http://maven.apache.org</url>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -15,41 +15,34 @@
   </parent>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--maven.compiler.source>1.8</maven.compiler.source><maven.compiler.target>1.8</maven.compiler.target-->
-    <!--mvn -Dname=value实际上是在设置系统变量name，可以直接在testng中通过System.getProperty("name")使用，
-    或者通过@Parameters({"name"})
-    在pom中可以通过${name}来引用
-    但是在这里定义的变量，在testng中不能直接用，即这里的fromcmd不能直接使用
-    但是fromcmd在pom中可以通过${fromcmd}使用-->
-    <!--fromcmd>${name}</fromcmd-->
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <java.version>1.8</java.version>
   </properties>
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!--这里设置的systemPropertyVariables在testng中可以直接使用
-        所以这里实际上是通过${fromcmd}引用${name}，从而引用到命令行中设置的参数
-        其实这里也可以直接用${name}替换${fromcmd}-->
-          <!--systemPropertyVariables><browserTypeinpom>${browserType}</browserTypeinpom></systemPropertyVariables-->
-          <suiteXmlFiles>
-            <suiteXmlFile>testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <testSourceDirectory>${basedir}/src/main/java/</testSourceDirectory>
-          <testClassesDirectory>${project.build.directory}/classes/</testClassesDirectory>
-          <properties>
-            <property>
-              <name>usedefaultlisteners</name>
-              <value>false</value>
-            </property>
-            <!--property><name>listener</name><value>org.uncommons.reportng.HTMLReporter, org.uncommons.reportng.JUnitXMLReporter</value></property-->
-          </properties>
-          <argLine>-Dfile.encoding=UTF-8</argLine>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <warName>${project.build.finalName}</warName>
+          <webResources>
+            <resource>
+              <directory>src/main/resources</directory>
+              <excludes>
+                <exclude>**/*driver*</exclude>
+              </excludes>
+            </resource>
+          </webResources>
+          <!--excludes>
+            src\main\resources\*driver*
+          </excludes-->
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.m2e</groupId>
@@ -76,85 +69,13 @@
           </lifecycleMappingMetadata>
         </configuration>
       </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.11</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <complianceLevel>1.8</complianceLevel>
-          <encoding>UTF-8</encoding>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>test-compile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>6.8</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-firefox-driver</artifactId>
-      <version>3.11.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-chrome-driver</artifactId>
-      <version>3.11.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-ie-driver</artifactId>
-      <version>3.11.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-edge-driver</artifactId>
-      <version>3.11.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-android-driver</artifactId>
-      <version>2.39.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-support</artifactId>
-      <version>3.11.0</version>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
-    </dependency>
-    <!--dependency><groupId>org.uncommons</groupId><artifactId>reportng</artifactId><version>1.1.4</version><scope>test</scope><exclusions><exclusion><groupId>org.testng</groupId><artifactId>testng</artifactId></exclusion></exclusions></dependency-->
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml</artifactId>
-      <version>3.17</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.inject</groupId>
-      <artifactId>guice</artifactId>
-      <version>3.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup</groupId>
-      <artifactId>javapoet</artifactId>
-      <version>1.7.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -169,6 +90,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jetty</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -188,15 +110,5 @@
       <artifactId>extentreports</artifactId>
       <version>3.1.5</version>
     </dependency>
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-      <version>1.9.1</version>
-    </dependency>
-    <dependency>
-    <groupId>org.aspectj</groupId>
-    <artifactId>aspectjrt</artifactId>
-    <version>1.8.13</version>
-</dependency>
   </dependencies>
 </project>

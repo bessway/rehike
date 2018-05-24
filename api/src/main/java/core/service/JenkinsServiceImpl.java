@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import com.google.common.collect.Lists;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.MavenBuild;
 import com.offbytwo.jenkins.model.MavenJobWithDetails;
@@ -15,7 +16,7 @@ import com.offbytwo.jenkins.model.TestReport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.testng.collections.Lists;
+
 
 import core.dao.JenkinsDao;
 import core.pojo.AgentPojo;

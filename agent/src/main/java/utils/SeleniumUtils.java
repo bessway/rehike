@@ -232,19 +232,19 @@ public class SeleniumUtils {
 
     public static String takeScreenshot() throws Exception{
         deleteScreenshot();
-        File screenshotDir = new File("report-output/");
+        File screenshotDir = new File(ReportUtils.reportRoot);
         if(!screenshotDir.exists()&& !screenshotDir .isDirectory()){
             screenshotDir.mkdir();
         }
         String name=String.valueOf(new Date().getTime())+".jpg";
-        File path=new File("report-output/"+name);
+        File path=new File(ReportUtils.reportRoot+name);
         File img=((TakesScreenshot)getCurrDriver()).getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(img, path);
         
         return name;
     }
     private static void deleteScreenshot(){
-        File screenshotDir = new File("report-output/");
+        File screenshotDir = new File(ReportUtils.reportRoot);
         if(!screenshotDir.exists()){
             return;
         }
