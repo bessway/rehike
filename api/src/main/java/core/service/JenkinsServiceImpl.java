@@ -1,5 +1,6 @@
 package core.service;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,6 +15,7 @@ import com.offbytwo.jenkins.model.MavenBuild;
 import com.offbytwo.jenkins.model.MavenJobWithDetails;
 import com.offbytwo.jenkins.model.TestReport;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ import utils.Utils;
 
 @Service("JenkinsService")
 public class JenkinsServiceImpl implements JenkinsService {
+    private Logger logger=Logger.getLogger(JenkinsServiceImpl.class);
     private String jenkinsConfigFile = "jenkins.properties";
     private static Properties jProperty = null;
     private static JenkinsServer jServer = null;
@@ -39,7 +42,7 @@ public class JenkinsServiceImpl implements JenkinsService {
             try {
                 jProperty = Utils.readPropery(this.jenkinsConfigFile);
             } catch (Exception e) {
-                System.out.println("cannot find jenkins config file");
+                logger.debug("cannot find jenkins config file");
             }
             
         }
@@ -192,5 +195,25 @@ public class JenkinsServiceImpl implements JenkinsService {
     }
     public Boolean updateAgentStatus(String jobName,Boolean isFree){
         return jenkinsDao.updateAgentStatus(jobName, isFree);
+    }
+    public Boolean deleteLogFile(){
+        Properties pLog=null;
+        try{
+            pLog=Utils.readPropery("log4j.properties");
+        }catch(Exception e){
+            logger.debug("cannot find log4j configuration");
+        }
+        String path=pLog.getProperty("log4j.appender.logfile.File");
+        String dir=System.getenv("user.dir")+"/"+path.split("/")[1];
+        File logFolder=new File(dir);
+        if(logFolder.exists()){
+            for(File f:logFolder.listFiles()){
+                if(f.lastModified()<new Date().getTime()-7*24*3600){
+                    f.delete();
+                }
+            }
+        }
+        
+        return true;
     }
 }

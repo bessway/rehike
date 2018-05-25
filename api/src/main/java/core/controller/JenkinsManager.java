@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.offbytwo.jenkins.model.TestReport;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import core.service.JenkinsService;
 @RestController
 @RequestMapping("/1/jenkins")
 public class JenkinsManager{
+    private Logger logger=Logger.getLogger(JenkinsManager.class);
     @Autowired
     private JenkinsService jenkinsService=null;
     private Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -31,8 +33,11 @@ public class JenkinsManager{
         BuildPojo result=null;
         try{
             result=jenkinsService.startJob(build);
-            return gson.toJson(result);
+            String strResult=gson.toJson(result);
+            logger.debug(strResult);
+            return strResult;
         }catch(Exception e){
+            logger.debug(e.getMessage());
             res.sendError(500, e.getMessage());
         }
         return "{}";
@@ -81,6 +86,11 @@ public class JenkinsManager{
     @RequestMapping(value="/agentstatus",method=RequestMethod.PUT)
     public String updateAgentStatus(@RequestBody AgentPojo agent){
         jenkinsService.updateAgentStatus(agent.getJobName(), agent.getStatus());
+        return "{\"status\":true}"; 
+    }
+    @RequestMapping(value="/log",method=RequestMethod.DELETE)
+    public String deleteLogFile(){
+        jenkinsService.deleteLogFile();
         return "{\"status\":true}"; 
     }
 }

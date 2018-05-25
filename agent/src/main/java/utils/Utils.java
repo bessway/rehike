@@ -32,6 +32,7 @@ public class Utils{
     }
     public static Properties readPropery(String fileName) throws Exception{
         String path=Utils.class.getResource("/").toURI().getRawPath();
+        path=URLDecoder.decode(path, "UTF-8");
         InputStream io=new BufferedInputStream(new FileInputStream(new File("/"+path+fileName)));
         Properties result= new Properties();
         result.load(io);

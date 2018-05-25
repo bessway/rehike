@@ -132,6 +132,20 @@
                 </el-select>
               </template>
             </el-table-column>
+            <el-table-column label="返回值" min-width="140" header-align="center">
+              <template slot-scope="scope">
+                <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
+                  v-model=scope.row.response allow-create clearable
+                  v-bind:disabled="isDisableSelect(scope.row,scope.column)">
+                  <el-option
+                    v-for="item in globalParas"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </template>
+            </el-table-column>
             <el-table-column label="参数1" min-width="140" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
@@ -174,7 +188,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="参数4" min-width="140" header-align="center">
+            <el-table-column label="参数4" min-width="150" header-align="center">
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.paras[3] allow-create clearable
@@ -188,20 +202,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="返回值" min-width="160" header-align="center">
-              <template slot-scope="scope">
-                <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
-                  v-model=scope.row.response allow-create clearable
-                  v-bind:disabled="isDisableSelect(scope.row,scope.column)">
-                  <el-option
-                    v-for="item in globalParas"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </template>
-            </el-table-column>
+            
             <el-table-column label="" min-width="30px" fixed="right">
               <template slot-scope="scope">              
                   <el-button size="mini" icon="el-icon-circle-plus-outline"
@@ -869,22 +870,29 @@ export default {
     },
     //保存steps
     handleSaveClick() {
+      HomeData.updateCase(
+        this.selectedNode.data.refId,
+        this.selectedNode.label
+      );
       //有空步骤，不应该保存
       for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
         if (this.showingCaseDetail.steps[i].action == "") {
           alert("have empty step");
           return;
         }
+        if(this.showingCaseDetail.steps[i].page!="" &&(
+          this.showingCaseDetail.steps[i].type==""||this.showingCaseDetail.steps[i].name==""||this.showingCaseDetail.steps[i].path==""
+        )){
+          alert("object is not complete");
+          return;
+        }
       }
-      HomeData.updateCase(
-        this.selectedNode.data.refId,
-        this.selectedNode.label
-      );
-
-      HomeData.updateSteps(
-        this.selectedNode.data.refId,
-        this.showingCaseDetail.steps
-      );
+      if(JSON.stringify(this.selectedNode.data.caseDetail) !== this.emptyTableData){
+        HomeData.updateSteps(
+          this.selectedNode.data.refId,
+          this.showingCaseDetail.steps
+        );
+      }
     },
     //添加一个新的node
     handleAddNodeClick() {
@@ -1029,6 +1037,7 @@ export default {
       //console.log(this.$refs.casetree.currentNode.node.store);
       //this.$refs.casetree.currentNode.node.store.load(this.$refs.casetree.currentNode.node,resolve);
       console.log(document.querySelector("main"));
+      console.log(this.showingCaseDetail);
     }
   }
 };

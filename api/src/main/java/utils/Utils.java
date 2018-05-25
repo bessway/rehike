@@ -4,10 +4,14 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class Utils{
+    private static Logger logger=Logger.getLogger(Utils.class);
     public static Hashtable<String,String> objectsMap=null;
     public enum ExecStatus{
         READYTOSTART,
@@ -32,6 +36,7 @@ public class Utils{
     }
     public static Properties readPropery(String fileName) throws Exception{
         String path=Utils.class.getResource("/").toURI().getRawPath();
+        path=URLDecoder.decode(path, "UTF-8");
         InputStream io=new BufferedInputStream(new FileInputStream(new File("/"+path+fileName)));
         Properties result= new Properties();
         result.load(io);

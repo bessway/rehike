@@ -66,6 +66,9 @@ public class SeleniumUtils {
     }
     public static String navigateToKey(String url) throws Exception{
         getCurrDriver().get(url);
+        drivers.put(url, drivers.get(currDriver));
+        drivers.remove(currDriver);
+        currDriver=url;
         return currDriver;
     }
     public static String openSiteKey(String url, String browserType) throws Exception {
@@ -152,10 +155,6 @@ public class SeleniumUtils {
                 throw new Exception("assert match failed: actual = "+actual);
             }
         }
-        return Utils.execPass;
-    }
-    public static String switchToWindowKey(String handler) throws Exception{
-        getCurrDriver().switchTo().window(handler);
         return Utils.execPass;
     }
     public static String waitEnableKey(String target) throws Exception{
