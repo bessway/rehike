@@ -28,8 +28,9 @@ public class Application {
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);  
         return bean;  
     } 
-
+/*
     public static void main(String[] args) throws Exception{
         SpringApplication.run(Application.class, args);
     }
+    */
 }
