@@ -47,7 +47,7 @@ public class ServerUtils {
         CloseableHttpResponse res=null;
         request.addHeader("Content-Type", "application/json;charset=UTF-8");
         request.addHeader("Accept", "application/json;charset=UTF-8");
-        String url="http://" + aProperty.getProperty("server.host") + ":" + aProperty.getProperty("server.port")+method;
+        String url="http://" + aProperty.getProperty("server.host")+method;
         try{
             request.setURI(URI.create(url));
             
