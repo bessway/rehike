@@ -245,8 +245,8 @@ public class SeleniumUtils {
     }
     private static void deleteScreenshot(){
         File screenshotDir = new File(ReportUtils.reportRoot);
-        if(!screenshotDir.exists()){
-            return;
+        if(!screenshotDir.exists()&& !screenshotDir.isDirectory()){
+            screenshotDir.mkdir();
         }
         File[] fls=screenshotDir.listFiles(new FilenameFilter(){
             @Override
