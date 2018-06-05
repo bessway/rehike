@@ -482,7 +482,7 @@ export default {
     getHeaderCellStyle(style) {
       var result;
       if (style.columnIndex > 0 && style.columnIndex < 12) {
-        result = { "padding-left": style.columnIndex * 10 + "px" };
+        result = { "padding-left": style.columnIndex + "px" };
       }
       return result;
     },
@@ -893,84 +893,56 @@ export default {
       }
       this.showingCaseDetail.steps.splice(index, 1);
     },
+    handleRowClick(row, event,column) {
+      this.selectedRowId = row;
+    },
     //向上移动step   BUG
     handleStepUpClick() {
-      var currstep = null;
-      var currIndex = null;
-      var nextstep = null;
-      var nextIndex = null;
-      if (this.selectedRowId != null && this.selectedRowId > 0) {
-        for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
-          if (this.showingCaseDetail.steps[i].id === this.selectedRowId) {
-            currstep = this.showingCaseDetail.steps[i];
-            currIndex = i;
-          } else if (
-            this.showingCaseDetail.steps[i].id ===
-            this.selectedRowId - 1
-          ) {
-            nextstep = this.showingCaseDetail.steps[i];
-            nextIndex = i;
-          }
-        }
-        nextstep.id = this.selectedRowId;
-        currstep.id = this.selectedRowId - 1;
-        this.selectedRowId = this.selectedRowId - 1;
-
-        this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
-        this.$nextTick(function() {
-          console.log(this.$refs.caseTable.data[currIndex]);
-          this.$refs.caseTable.setCurrentRow(
-            this.$refs.caseTable.data[currIndex]
-          );
-        });
-        /*
-        this.$nextTick(function() {
-          //this.$set(this.showingCaseDetail.steps, currIndex, currstep);
-          this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
-          this.$nextTick(function() {
-            this.$refs.caseTable.setCurrentRow(
-              this.$refs.caseTable.data[currIndex]
-            );
-          });
-        });*/
+      if(this.selectedRowId==null){
+        alert("需要先选择一行");
+        return;
       }
+      if(this.selectedRowId.id==0){
+        return;
+      }
+      var selectedIndex=this.selectedRowId.id;
+      var nextStep=this.showingCaseDetail.steps[selectedIndex-1];
+      
+      //this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex]);
+      this.showingCaseDetail.steps[selectedIndex-1]=this.selectedRowId;
+      this.showingCaseDetail.steps[selectedIndex]=nextStep;
+      this.showingCaseDetail.steps[selectedIndex].id=selectedIndex;
+      this.showingCaseDetail.steps[selectedIndex-1].id=selectedIndex-1;
+      //this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex-1]);
+      //必须新建数组，否则vue不会重新渲染
+      this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
+      this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex]);
+      this.$nextTick(function() {
+        this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex-1]);
+      });
     },
     //向下移动step  BUG
     handleStepDownClick() {
-      var currstep = null;
-      var currIndex = null;
-      var nextstep = null;
-      var nextIndex = null;
-      if (
-        this.selectedRowId != null &&
-        this.selectedRowId < this.showingCaseDetail.steps.length - 1
-      ) {
-        for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
-          if (this.showingCaseDetail.steps[i].id === this.selectedRowId) {
-            currstep = this.showingCaseDetail.steps[i];
-            currIndex = i;
-          } else if (
-            this.showingCaseDetail.steps[i].id ===
-            this.selectedRowId + 1
-          ) {
-            nextstep = this.showingCaseDetail.steps[i];
-            nextIndex = i;
-          }
-        }
-        nextstep.id = this.selectedRowId;
-        currstep.id = this.selectedRowId + 1;
-        this.selectedRowId = this.selectedRowId + 1;
-        //this.$set(this.showingCaseDetail.steps, currIndex, currstep);
-        this.$nextTick(function() {
-          //this.$set(this.showingCaseDetail.steps, currIndex, currstep);
-          this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
-          this.$nextTick(function() {
-            this.$refs.caseTable.setCurrentRow(
-              this.$refs.caseTable.data[currIndex]
-            );
-          });
-        });
+      if(this.selectedRowId==null){
+        alert("需要先选择一行");
+        return;
       }
+      if(this.selectedRowId.id==this.showingCaseDetail.steps.length-1){
+        return;
+      }
+      var selectedIndex=this.selectedRowId.id;
+      var nextStep=this.showingCaseDetail.steps[selectedIndex+1];
+      
+      this.showingCaseDetail.steps[selectedIndex+1]=this.selectedRowId;
+      this.showingCaseDetail.steps[selectedIndex]=nextStep;
+      this.showingCaseDetail.steps[selectedIndex].id=selectedIndex;
+      this.showingCaseDetail.steps[selectedIndex+1].id=selectedIndex+1;
+      //必须新建数组，否则vue不会重新渲染
+      this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
+      this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex]);
+      this.$nextTick(function() {
+        this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex+1]);
+      });
     },
     //强制重新获取casedetail
     handleRefreshClick() {
@@ -1046,9 +1018,7 @@ export default {
         })
         .catch(() => {});
     },
-    handleRowClick(value, row) {
-      this.selectedRowId = row.id;
-    },
+
     handleExecRowClick(value, row) {
       this.selectedExecRowData = value;
     },
@@ -1179,7 +1149,6 @@ export default {
       //this.$refs.casetree.currentNode.node.store.load(this.$refs.casetree.currentNode.node,resolve);
       console.log(document.querySelector("main"));
       console.log(this.showingCaseDetail);
-      console.log(this.targetNode);
     }
   }
 };

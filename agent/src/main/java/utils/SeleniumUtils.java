@@ -3,6 +3,7 @@ package utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -49,7 +50,8 @@ public class SeleniumUtils {
     }
     public static String clickKey(String target) throws Exception {
         WebElement we=findElement(target);
-        
+        //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
+        we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
         Thread.sleep(500);
         we.click();
         return Utils.execPass;
@@ -63,6 +65,7 @@ public class SeleniumUtils {
     }
     public static String inputKey(String target, String content) throws Exception {
         WebElement tmp=findElement(target);
+        tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
         tmp.clear();
         tmp.sendKeys(content);
         return Utils.execPass;
@@ -87,7 +90,9 @@ public class SeleniumUtils {
         return url;
     }
     public static String selectKey(String target,String value) throws Exception{
-        new Select(findElement(target)).selectByValue(value);
+        WebElement we=findElement(target);
+        we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+        new Select(we).selectByValue(value);
         return Utils.execPass;
     }
     public static String swithToFrameKey(String target) throws Exception{
@@ -304,7 +309,7 @@ public class SeleniumUtils {
         driver.manage().window().maximize();
         return driver;
     }
-/*    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception{
         try{
             openSiteKey("http://testcrm.zkh360.com/", "chrome");
             inputKey("//input[@id='userName']", "test@zkh360.com");
@@ -316,5 +321,5 @@ public class SeleniumUtils {
         }finally{
             closeBrowsersKey(null);
         }
-    }*/
+    }
 }
