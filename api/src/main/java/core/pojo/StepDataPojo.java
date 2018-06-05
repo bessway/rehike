@@ -6,6 +6,7 @@ public class StepDataPojo{
     private Integer sIndex=null;
     private String response=null;
     private String target=null;
+    private String desc=null;
     private ArrayList<ParaPojo> stepParas=null;
     public static Comparator<StepDataPojo> sindexComp=new Comparator<StepDataPojo>() {
         @Override
@@ -13,6 +14,12 @@ public class StepDataPojo{
             return first.getsIndex()-second.getsIndex();
         }
     };
+    public void setDesc(String desc){
+        this.desc=desc;
+    }
+    public String getDesc(){
+        return this.desc;
+    }
     public Integer getsIndex(){
         return this.sIndex;
     }

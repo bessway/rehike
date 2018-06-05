@@ -12,13 +12,19 @@ public class StepDetailPojo{
     private String path=null;
     private ArrayList<String> paras=null;
     private String response=null;
+    private String desc=null;
     public static Comparator<StepDetailPojo> sidComp=new Comparator<StepDetailPojo>() {
         @Override
         public int compare(StepDetailPojo first, StepDetailPojo second){
             return first.getId()-second.getId();            
         }
     };
-
+    public void setDesc(String desc){
+        this.desc=desc;
+    }
+    public String getDesc(){
+        return this.desc;
+    }
     public void setid(Integer id){
         this.id=id;
     }

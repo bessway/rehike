@@ -6,7 +6,7 @@ export default {
   getObjects,
   getActions,
   moveNode,
-  copyNode,
+  copyNodes,
   updateCase,
   updateSteps,
   createNode,
@@ -17,9 +17,9 @@ export default {
   getJobDetail
 };
 import axios from "axios";
-//var host = "http://192.168.2.103:8081/hike";
+//var host = "http://192.168.2.103:8081";
 var host = "http://118.178.133.96:8080/hike";
-function getProjects(resolve) {
+function getProjects(resolve,popup) {
   axios({
     method: "get",
     url: host + "/1/test/projects"
@@ -29,11 +29,12 @@ function getProjects(resolve) {
       resolve(_data);
     })
     .catch(function(err) {
+      popup("获取数据失败");
       console.log(err);
     });
 }
 
-function getNodes(refId,resolve) {
+function getNodes(refId,resolve,popup) {
   axios({
     method: "get",
     url: host + "/1/test/nodes/"+refId
@@ -44,10 +45,11 @@ function getNodes(refId,resolve) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取节点失败");
     });
 }
 
-function getCaseDetail(refId,bindData) {
+function getCaseDetail(refId,bindData,popup) {
   axios({
     method: "get",
     url: host + "/1/test/detail/"+refId
@@ -58,10 +60,11 @@ function getCaseDetail(refId,bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取用例信息失败");
     });
 }
 
-function getGlobalParas(bindData) {
+function getGlobalParas(bindData,popup) {
   axios({
     method: "get",
     url: host + "/1/data/global"
@@ -72,10 +75,11 @@ function getGlobalParas(bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取全局变量失败");
     });
 }
 
-function getObjects(bindData) {
+function getObjects(bindData,popup) {
   axios({
     method: "get",
     url: host + "/1/object/all"
@@ -86,10 +90,11 @@ function getObjects(bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取对象信息失败");
     });
 }
 
-function getActions(bindData) {
+function getActions(bindData,popup) {
   axios({
     method: "get",
     url: host + "/1/action/all"
@@ -100,10 +105,11 @@ function getActions(bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取关键词信息失败");
     });
 }
 
-function createNode(parentRefId,bindData) {
+function createNode(parentRefId,bindData,popup) {
   axios({
     method: "post",
     url: host + "/1/test/node",
@@ -116,9 +122,10 @@ function createNode(parentRefId,bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("添加节点失败");
     });
 }
-function moveNode(movedRefId, targetRefId, bindData) {
+function moveNode(movedRefId, targetRefId, bindData,popup) {
   axios({
     method: "put",
     url: host + "/1/test/node/hierachy/"+movedRefId,
@@ -131,14 +138,15 @@ function moveNode(movedRefId, targetRefId, bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("移动节点失败");
     });
 }
 //复制子节点
-function copyNode(copyRefId, targetRefId, bindData) {
+function copyNodes(targetRefId, copiedRefIds, bindData,popup) {
   axios({
     method: "post",
-    url: host + "/1/test/node/hierachy/"+copyRefId,
-    data:{'refId':targetRefId},
+    url: host + "/1/test/node/hierachy/"+targetRefId,
+    data:copiedRefIds,
     headers:{'Content-Type':'application/json;charset=UTF-8'},
   })
     .then(response => {
@@ -147,10 +155,11 @@ function copyNode(copyRefId, targetRefId, bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("复制节点失败");
     });
 }
 
-function updateCase(refId, caseName) {
+function updateCase(refId, caseName,popup) {
   axios({
     method: "put",
     url: host + "/1/test/node/"+refId,
@@ -162,9 +171,10 @@ function updateCase(refId, caseName) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("保存用例失败");
     });
 }
-function updateSteps(refId, casedata) {
+function updateSteps(refId, casedata,popup) {
   axios({
     method: "put",
     url: host + "/1/test/node/step/"+refId,
@@ -176,9 +186,10 @@ function updateSteps(refId, casedata) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("保存用例信息失败");
     });
 }
-function deleteNode(refId,bindData) {
+function deleteNode(refId,bindData,popup) {
   axios({
     method: "delete",
     url: host + "/1/test/node/"+refId
@@ -189,9 +200,10 @@ function deleteNode(refId,bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("删除节点失败");
     });
 }
-function startJob(build,bindData){
+function startJob(build,bindData,popup){
   axios({
     method: "post",
     url: host + "/1/jenkins/job",
@@ -203,9 +215,10 @@ function startJob(build,bindData){
     })
     .catch(function(err) {
       console.log(err);
+      popup("启动任务失败");
     });
 }
-function getExecutions(bindData){
+function getExecutions(bindData,popup){
   axios({
     method: "get",
     url: host + "/1/jenkins/jobs"
@@ -216,9 +229,10 @@ function getExecutions(bindData){
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取任务信息失败");
     });
 }
-function getAgents(bindData) {
+function getAgents(bindData,popup) {
   axios({
     method: "get",
     url: host + "/1/jenkins/agents"
@@ -229,9 +243,10 @@ function getAgents(bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取节点机器失败");
     });
 }
-function getJobDetail(job,build,bindData) {
+function getJobDetail(job,build,bindData,popup) {
   axios({
     method: "get",
     url: host + "/1/jenkins/jobdetail/"+job+"/build/"+build
@@ -242,5 +257,6 @@ function getJobDetail(job,build,bindData) {
     })
     .catch(function(err) {
       console.log(err);
+      popup("获取报告失败");
     });
 }

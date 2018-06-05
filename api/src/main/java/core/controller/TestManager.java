@@ -53,10 +53,10 @@ public class TestManager {
         return gson.toJson(testService.updateNodeParentId(nodeId, parentNode));
     }
 
-     //复制子节点
-     @RequestMapping(value="/node/hierachy/{nodeId}",method=RequestMethod.POST)
-     public String  CopyNode(HttpServletResponse res,@PathVariable String nodeId, @RequestBody HierachyPojo parentNode){
-        return gson.toJson(testService.CopyNode(nodeId, parentNode));
+     //复制用例
+     @RequestMapping(value="/node/hierachy/{targetId}",method=RequestMethod.POST)
+     public String  copyNodes(HttpServletResponse res,@PathVariable String targetId, @RequestBody List<HierachyPojo> copiedNodes){
+        return gson.toJson(testService.copyNodes(targetId, copiedNodes));
      }
 
 

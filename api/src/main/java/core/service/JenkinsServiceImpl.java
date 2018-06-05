@@ -70,7 +70,7 @@ public class JenkinsServiceImpl implements JenkinsService {
     private void findAllCases(BuildPojo suite) throws Exception{
         //找到所有的case，可能会包含非case的node
         List<String> allCases=new ArrayList<String>();
-        testService.findAllNodes(Lists.newArrayList(suite.getCases().keySet()), allCases);
+        testService.findAllSubNodes(Lists.newArrayList(suite.getCases().keySet()), allCases);
         //删除非case的node
         allCases=testService.getValidCases(allCases);
         if(allCases.size()==0){
@@ -152,7 +152,6 @@ public class JenkinsServiceImpl implements JenkinsService {
         return result;
     }
     public String getTestReport(String jobName,Integer buildId) throws Exception{
-        MavenJobWithDetails job=getJenkinsServer().getMavenJob(jobName);
         return jProperty.getProperty("jenkins.host")+"/userContent/"+jobName+String.valueOf(buildId)+".html";
     }
     public List<AgentPojo> getAllAgents(){

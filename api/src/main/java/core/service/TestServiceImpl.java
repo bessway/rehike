@@ -51,6 +51,9 @@ public class TestServiceImpl implements TestService {
 
     public HierachyPojo addNode(HierachyPojo node) {
         node.setLabel("new node" + String.valueOf(new Date().getTime()));
+        if(node.getParentId().equals("null")){
+            node.setParentId(null);
+        }
         testDao.addNode(node);
         return testDao.getNodeByLabel(node.getLabel());
     }
@@ -60,27 +63,34 @@ public class TestServiceImpl implements TestService {
     }
 
     //复制子节点
-    public HierachyPojo CopyNode(String nodeId, HierachyPojo parentNode) {
-           HierachyPojo node = new HierachyPojo();
-           node.setParentId(parentNode.getRefId());
-           node.setLabel("new node" + String.valueOf(new Date().getTime()));
-           testDao.addNode(node);
-           HierachyPojo newCase=testDao.getNodeByLabel(node.getLabel());
+    public HierachyPojo copyNode(HierachyPojo oldNode, String targetNodeId) {
+        HierachyPojo newNode = new HierachyPojo();
+        newNode.setParentId(targetNodeId);
+        newNode.setLabel("copied node" + String.valueOf(new Date().getTime())+oldNode.getLabel());
+        testDao.addNode(newNode);
+        HierachyPojo newCase=testDao.getNodeByLabel(newNode.getLabel());
 
         //更新case表
-        CasePojo oldCaseDetail= testDao.getCaseDetail(nodeId);
+        CasePojo oldCaseDetail= testDao.getCaseDetail(oldNode.getRefId());
         if(oldCaseDetail!=null){
             testDao.updateCaseSteps(newCase.getRefId(), oldCaseDetail.getSortedSteps());
         }
       
         //更新data表
-        CaseDataPojo caseData = dataService.getCaseData(nodeId, "default");
+        CaseDataPojo caseData = dataService.getCaseData(oldNode.getRefId(), "default");
         if(caseData!=null){
             dataService.updateData(newCase.getRefId(),"default", caseData);
         }
-           return newCase;
+        return newCase;
     }
-   
+    public List<HierachyPojo> copyNodes(String targetId,List<HierachyPojo> copiedNodes){
+        List<HierachyPojo> result=new ArrayList<HierachyPojo>();
+        for(HierachyPojo node:copiedNodes){
+            HierachyPojo newnode=copyNode(node,targetId);
+            result.add(newnode);
+        }
+        return result;
+    }
 
     public HierachyPojo updateNodeName(String nodeId, HierachyPojo newName) {
         return testDao.updateCaseName(nodeId, newName.getLabel());
@@ -90,7 +100,7 @@ public class TestServiceImpl implements TestService {
         List<String> allCases=new ArrayList<String>();
         List<String> rootNodeId=new ArrayList<String>();
         rootNodeId.add(nodeId);
-        this.findAllNodes(rootNodeId, allCases);
+        this.findAllSubNodes(rootNodeId, allCases);
         //delete data
         dataService.deleteMultipleCasesData(allCases);
         //delete case
@@ -103,7 +113,7 @@ public class TestServiceImpl implements TestService {
     public List<String> getValidCases(List<String> toValidate){
         return testDao.getValidCases(toValidate);
     }
-    public Boolean findAllNodes(List<String> nodeIds,List<String> allCases){
+    public Boolean findAllSubNodes(List<String> nodeIds,List<String> allCases){
         List<HierachyPojo> subNodes=testDao.getSubNodes(nodeIds);
         if(subNodes!=null && subNodes.size()>0){
             //只要有一个nodeId有子节点，那么这一级node一定不是case
@@ -111,7 +121,7 @@ public class TestServiceImpl implements TestService {
             for(HierachyPojo item:subNodes){
                 ids.add(item.getRefId());
             }
-            this.findAllNodes(ids, allCases);
+            this.findAllSubNodes(ids, allCases);
             allCases.addAll(nodeIds);
         }else{
             //如果没有子节点，则可能是case
@@ -172,6 +182,7 @@ public class TestServiceImpl implements TestService {
         StepDataPojo data=new StepDataPojo();
         data.setsIndex(step.getId());
         data.setResponse(step.getResponse());
+        data.setDesc(step.getDesc());
         if(step.getPage().equals("")){
             data.setTarget("");
         }else{
@@ -289,6 +300,12 @@ public class TestServiceImpl implements TestService {
                 tmp.setResponse(data.getStepsData().get(i).getResponse());
             } else {
                 tmp.setResponse("");
+            }
+            if (data.getStepsData().get(i).getDesc() != null
+                    && !data.getStepsData().get(i).getDesc().equals("")) {
+                tmp.setDesc(data.getStepsData().get(i).getDesc());
+            } else {
+                tmp.setDesc("");
             }
             for (int j = 0; j < data.getStepsData().get(i).getStepParas().size(); j++) {
                 tmp.addPara(j,data.getStepsData().get(i).getStepParas().get(j).getpValue());

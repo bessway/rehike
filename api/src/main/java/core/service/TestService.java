@@ -16,8 +16,9 @@ public interface TestService{
     public HierachyPojo updateNodeName(String nodeId, HierachyPojo newName);
     public Boolean deleteNode(String nodeId);
     public List<String> getValidCases(List<String> toValidate);
-    public Boolean findAllNodes(List<String> nodeIds,List<String> allCases);
+    public Boolean findAllSubNodes(List<String> nodeIds,List<String> allCases);
     public Boolean updateCase(String nodeId, List<StepDetailPojo> steps);
     public List<CasePojo> getCases(List<String> casesId);
-    public HierachyPojo CopyNode(String nodeId, HierachyPojo parentNode);
+    public HierachyPojo copyNode(HierachyPojo nodeId, String targetNodeId);
+    public List<HierachyPojo> copyNodes(String targetId,List<HierachyPojo> copiedNodes);
 }
