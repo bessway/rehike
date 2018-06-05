@@ -28,7 +28,7 @@ public class SeleniumUtils {
     private static Logger logger = Logger.getLogger(SeleniumUtils.class);
     private static Map<String, WebDriver> drivers = new HashMap<String, WebDriver>();
     private static Map<String, WebDriverWait> waits = new HashMap<String, WebDriverWait>();
-    private static Integer maxWait = 10;
+    private static Integer maxWait = 30;
     private static String currDriver="";
 
     public static String assertEqualKey(String target, String attribute, String exValue) throws Exception {
@@ -48,7 +48,10 @@ public class SeleniumUtils {
         }
     }
     public static String clickKey(String target) throws Exception {
-        findElement(target).click();
+        WebElement we=findElement(target);
+        
+        Thread.sleep(500);
+        we.click();
         return Utils.execPass;
     }
     public static String getAttributeKey(String target,String attribute) throws Exception {
@@ -148,7 +151,12 @@ public class SeleniumUtils {
     public static String assertMatchKey(String target, String attribute, String pattern) throws Exception {
         List<WebElement> elements=findElements(target);
         for(WebElement ele:elements){
-            String actual=ele.getAttribute(attribute);
+            String actual=null;
+            if("text".equals(attribute)){
+                actual=ele.getText();
+            }else{
+                actual=ele.getAttribute(attribute);
+            }
             Pattern p=Pattern.compile(pattern);
             Matcher m=p.matcher(actual);
             if(!m.find()){
@@ -208,7 +216,7 @@ public class SeleniumUtils {
     private static List<WebElement> findElements(String xpath) throws Exception{
         List<WebElement> result=null;
         //it will check present display width
-        result=getCurrWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(xpath)));
+        result=getCurrWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
         
         if(result==null||result.size()==0){
             throw new Exception("cannot find the objects "+xpath);
@@ -296,4 +304,17 @@ public class SeleniumUtils {
         driver.manage().window().maximize();
         return driver;
     }
+/*    public static void main(String[] args) throws Exception{
+        try{
+            openSiteKey("http://testcrm.zkh360.com/", "chrome");
+            inputKey("//input[@id='userName']", "test@zkh360.com");
+            inputKey("//input[@id='password']", "shtest");
+            clickKey("//div[@id='loginDiv']/a");
+            assertMatchKey("//span[@class='user-info']/parent::a", "text", ".*测试人员.*");
+        }catch(Exception e){
+            throw e;
+        }finally{
+            closeBrowsersKey(null);
+        }
+    }*/
 }
