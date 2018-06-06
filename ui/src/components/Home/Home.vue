@@ -28,30 +28,101 @@
       @close-on-press-escape=false
       :before-close="closeActionDialog"
       center>
+      <el-tooltip content="复制所有勾选的用例到右键点击的节点" placement="top">
         <el-button @click="handleCopyClick">复制到该节点</el-button>
+      </el-tooltip>
     </el-dialog>
   </el-aside>
 
   <el-container>
     <el-main style="padding-top:5px">
-      <el-tabs @tab-click="handleClickTab" style="margin-top:0px;">
+      <el-tabs @tab-click="handleClickTab" style="margin-top:0px;" value="execute">
+        <el-tab-pane label="用例执行" name="execute">
+          <el-select v-model=selectedOs filterable placeholder="操作系统">
+              <el-option
+                v-for="item in getOs"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+          </el-select>
+          <el-select v-model=selectedBrowser filterable placeholder="浏览器">
+              <el-option
+                v-for="item in getBrowser"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+          </el-select>
+          <el-select v-model=selectedAgent filterable placeholder="任务名">
+              <el-option
+                v-for="item in getAgents"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                :disabled="item.status">
+              </el-option>
+          </el-select>
+          <el-tooltip content="执行所有勾选的用例" placement="top">
+            <el-button type="primary"
+              @click="handleRunClick">运行</el-button>
+          </el-tooltip>
+          <el-button type="primary"
+          @click="debug">debug</el-button>
+          <el-tooltip content="查看所选任务的执行报告" placement="top">
+            <el-button type="primary"
+              @click="getJobDetail" style="float:right">查看详情</el-button>
+          </el-tooltip>
+          <el-tooltip content="刷新所有任务的状态" placement="top">
+            <el-button type="primary"
+              @click="handleRefreshAgent" style="float:right">刷新</el-button>
+          </el-tooltip>
+          
+          <el-table style="width: 100%;padding-top:10px" stripe height="480"
+          :data="executions"
+          :default-sort = "{prop: 'createTime', order: 'descending'}"
+          highlight-current-row
+          ref="executionTable"
+          :row-key="getExecRowKeys"
+          :row-style = "{'text-align':'center'}"
+          @row-click="handleExecRowClick">
+            <el-table-column label="任务名" min-width="100" header-align="center" prop="jobName"></el-table-column>
+            <el-table-column label="任务编号" min-width="100" header-align="center" prop="buildId"></el-table-column>
+            <el-table-column label="创建时间" min-width="100" header-align="center" sortable prop="createTime"></el-table-column>
+            <el-table-column label="状态" min-width="100" header-align="center" prop="buildStatus"></el-table-column>
+            <el-table-column label="成功用例数量" min-width="100" header-align="center" prop="passed"></el-table-column>
+            <el-table-column label="失败用例数量" min-width="100" header-align="center" prop="failed"></el-table-column>
+          </el-table>
+        </el-tab-pane>
         <el-tab-pane label="用例管理" name="case">
           <div>
             <b><font size="4">正在查看 {{selectedNodeType}} </font></b>
-            <el-button size="mini" v-show="isShowAddBtn" icon="el-icon-plus" circle
-            @click="handleAddNodeClick"></el-button>
-            <el-button size="mini" v-show="isShowDelBtn" icon="el-icon-minus" circle
-            @click="handleDelNodeClick"></el-button>
-            <el-button size="mini" v-show="isShowSaveBtn" icon="el-icon-check" circle
-            @click="handleSaveClick"></el-button>
+            <el-tooltip content="在选中的节点内添加一个节点" placement="top">
+              <el-button size="mini" v-show="isShowAddBtn" icon="el-icon-plus" circle
+                @click="handleAddNodeClick"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除选中的节点" placement="top">
+              <el-button size="mini" v-show="isShowDelBtn" icon="el-icon-minus" circle
+                @click="handleDelNodeClick"></el-button>
+            </el-tooltip>
+            <el-tooltip content="保存选中节点的信息" placement="top">
+              <el-button size="mini" v-show="isShowSaveBtn" icon="el-icon-check" circle
+                @click="handleSaveClick"></el-button>
+            </el-tooltip>
             <el-button size="mini" icon="el-icon-question"
             @click="debug"></el-button>
-            <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-up"
-            @click="handleStepUpClick"></el-button>
-            <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-down"
-            @click="handleStepDownClick"></el-button>
-            <el-button style="float:right;padding:5px" size="mini" icon="el-icon-refresh"
-            @click="handleRefreshClick"></el-button>
+            <el-tooltip content="向上移动选中的步骤" placement="top">
+              <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-up"
+                @click="handleStepUpClick"></el-button>
+            </el-tooltip>
+            <el-tooltip content="向下移动选中的步骤" placement="top">
+              <el-button style="float:right;padding:5px" size="mini" icon="el-icon-arrow-down"
+                @click="handleStepDownClick"></el-button>
+            </el-tooltip>
+            <el-tooltip content="放弃当前的改动，重新获取选中节点信息" placement="top">
+              <el-button style="float:right;padding:5px" size="mini" icon="el-icon-refresh"
+                @click="handleRefreshClick"></el-button>
+            </el-tooltip>
             <el-input type="textarea" resize="none" autosize float="left" 
               v-model="caselabel">
             </el-input>
@@ -63,7 +134,6 @@
           ref="caseTable"
           :row-key="getRowKeys"
           fixed
-          :header-cell-style = "getHeaderCellStyle"
           @row-click="handleRowClick">
             <el-table-column label="" prop="id" width="15">
             </el-table-column>
@@ -144,7 +214,8 @@
               <template slot-scope="scope">
                 <el-select filterable v-bind:placeholder="getPlaceHolder(scope.row,scope.column)"
                   v-model=scope.row.response allow-create clearable
-                  v-bind:disabled="isDisableSelect(scope.row,scope.column)">
+                  v-bind:disabled="isDisableSelect(scope.row,scope.column)"
+                  @change="validateResChange(scope.row)">
                   <el-option
                     v-for="item in globalParas"
                     :key="item.value"
@@ -218,11 +289,15 @@
               </template>
             </el-table-column>
             <el-table-column label="" min-width="30px" fixed="right">
-              <template slot-scope="scope">              
+              <template slot-scope="scope">
+                <el-tooltip content="下方添加一行" placement="left">
                   <el-button size="mini" icon="el-icon-circle-plus-outline"
-                  @click="handleAddStepClick(scope.row)"></el-button>
+                    @click="handleAddStepClick(scope.row)"></el-button>
+                </el-tooltip>
+                <el-tooltip content="删除当前行" placement="left">
                   <el-button size="mini" icon="el-icon-remove-outline"
-                  @click="handleDelStepClick(scope.row)"></el-button>
+                    @click="handleDelStepClick(scope.row)"></el-button>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -231,56 +306,7 @@
         <el-tab-pane label="对象管理" name="object">对象管理</el-tab-pane>
         <el-tab-pane label="数据管理" name="data">数据管理</el-tab-pane>
         <el-tab-pane-- label="节点管理" name="node">节点管理</el-tab-pane-->
-        <el-tab-pane label="用例执行" name="execute">
-          <el-select v-model=selectedOs filterable placeholder="操作系统">
-              <el-option
-                v-for="item in getOs"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-          </el-select>
-          <el-select v-model=selectedBrowser filterable placeholder="浏览器">
-              <el-option
-                v-for="item in getBrowser"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-          </el-select>
-          <el-select v-model=selectedAgent filterable placeholder="任务名">
-              <el-option
-                v-for="item in getAgents"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                :disabled="item.status">
-              </el-option>
-          </el-select>
-          <el-button type="primary"
-          @click="handleRunClick">运行</el-button>
-          <el-button type="primary"
-          @click="handleLocalRunClick">本地运行</el-button>
-          <el-button type="primary"
-          @click="getJobDetail" style="float:right">查看详情</el-button>
-          <el-button type="primary"
-          @click="handleRefreshAgent" style="float:right">刷新</el-button>
-          <el-table style="width: 100%;padding-top:10px" stripe height="480"
-          :data="executions"
-          :default-sort = "{prop: 'createTime', order: 'descending'}"
-          highlight-current-row
-          ref="executionTable"
-          :row-key="getExecRowKeys"
-          :row-style = "{'text-align':'center'}"
-          @row-click="handleExecRowClick">
-            <el-table-column label="任务名" min-width="100" header-align="center" prop="jobName"></el-table-column>
-            <el-table-column label="任务编号" min-width="100" header-align="center" prop="buildId"></el-table-column>
-            <el-table-column label="创建时间" min-width="100" header-align="center" sortable prop="createTime"></el-table-column>
-            <el-table-column label="状态" min-width="100" header-align="center" prop="buildStatus"></el-table-column>
-            <el-table-column label="成功用例数量" min-width="100" header-align="center" prop="passed"></el-table-column>
-            <el-table-column label="失败用例数量" min-width="100" header-align="center" prop="failed"></el-table-column>
-          </el-table>
-        </el-tab-pane>
+
       </el-tabs>
     </el-main>
   </el-container>
@@ -298,6 +324,7 @@ const defaultTableData =
 const emptyTableData = '{"steps": []}';
 const emptyNode = '{"label":"","refId":""}';
 var paraCount = 4;
+var haveCachedDataChange=false;
 export default {
   data() {
     return {
@@ -307,7 +334,7 @@ export default {
       },
       selectedNode: null,
       caselabel: null,
-      selectedRowId: null,
+      selectedRow: null,
       actions: null,
       strctureObjects: null,
       globalParas: null,
@@ -320,6 +347,10 @@ export default {
       selectedExecRowData: null,
       targetNode: null
     };
+  },
+  mounted:function(){
+    this.loadAgents();
+    this.loadExecutions();
   },
   //如果函数的依赖有变化，则按逻辑同步更新computed属性
   //即selectedNode有变化，则执行函数更新isShowAddBtn
@@ -461,31 +492,6 @@ export default {
   },
 
   methods: {
-    /*    renderContent(h, { node, data, store }) {
-      if(this.popvisible){
-        return (
-          <el-popover
-            placement="bottom"
-            title="标题"
-            width="200"
-            trigger="manual"
-            value={this.popvisible}
-            content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-            <span slot="reference">{node.label}</span>
-          </el-popover>
-  //        <span v-popover={this.$refs.popover}>{node.label}</span>
-        );
-      }else{
-        return (<span>{node.label}</span>);
-      }  
-    },*/
-    getHeaderCellStyle(style) {
-      var result;
-      if (style.columnIndex > 0 && style.columnIndex < 12) {
-        result = { "padding-left": style.columnIndex + "px" };
-      }
-      return result;
-    },
     //设置table的key，用于排序
     getRowKeys(row) {
       return row.id;
@@ -629,18 +635,31 @@ export default {
         this.loadActions();
         this.loadObjects();
         this.loadGlobalParas();
-        this.selectedRow = null;
       } else if (tab.name === "execute") {
         this.loadAgents();
         this.loadExecutions();
       }
+      this.selectedRow = null;
+      this.$refs.caseTable.setCurrentRow();
+      this.selectedExecRowData=null;
+      this.$refs.executionTable.setCurrentRow();
     },
     //选择node后记载详细信息
     handleClickNode(data, node) {
+      if(haveCachedDataChange){
+        alert("已放弃当前所有修改");
+      }
       this.selectedNode = node;
       this.loadCaseDetail();
       this.selectedRow = null;
       this.caselabel = node.label;
+      if(haveCachedDataChange){
+        this.strctureObjects=null;
+        this.loadObjects();
+      }
+      this.globalParas=null;
+      this.loadGlobalParas();
+      haveCachedDataChange=false;
     },
     handleRightClick(ev, data, node, component) {
       this.targetNode = node;
@@ -732,22 +751,26 @@ export default {
         function(response) {
           var result = {};
           for (var obj in response) {
-            var tmp = result;
             var target = obj.split(".");
-            if (tmp[target[0]] == undefined) {
-              tmp[target[0]] = {};
-            }
-            tmp = tmp[target[0]];
-            if (tmp[target[1]] == undefined) {
-              tmp[target[1]] = {};
-            }
-            tmp = tmp[target[1]];
-            tmp[target[2]] = response[obj];
+            this.addToStrctureObject(result,target[0],target[1],target[2],response[obj]);
           }
           this.strctureObjects = result;
         }.bind(this),
         this.popup.bind(this)
       );
+    },
+    addToStrctureObject(obj,page,type,name,path){
+      var tmp=obj;
+      if (tmp[page] == undefined) {
+        tmp[page] = {};
+      }
+      tmp = tmp[page];
+      if (tmp[type] == undefined) {
+        tmp[type] = {};
+      }
+      tmp = tmp[type];
+
+      tmp[name] = path;
     },
     //获取global parameter list
     loadGlobalParas() {
@@ -777,14 +800,14 @@ export default {
         return;
       }
       //已经加载过的不再重新加载
-      if (
+/*      if (
         this.selectedNode.data.caseDetail != undefined &&
         this.selectedNode.data.caseDetail != null &&
         JSON.stringify(this.selectedNode.data.caseDetail) !== defaultTableData
       ) {
         this.showingCaseDetail = this.selectedNode.data.caseDetail;
         return;
-      }
+      }*/
       HomeData.getCaseDetail(
         this.selectedNode.data.refId,
         function(response) {
@@ -894,50 +917,52 @@ export default {
       this.showingCaseDetail.steps.splice(index, 1);
     },
     handleRowClick(row, event,column) {
-      this.selectedRowId = row;
+      this.selectedRow = row;
     },
     //向上移动step   BUG
     handleStepUpClick() {
-      if(this.selectedRowId==null){
+      if(this.selectedRow==null){
         alert("需要先选择一行");
         return;
       }
-      if(this.selectedRowId.id==0){
+      if(this.selectedRow.id==0){
         return;
       }
-      var selectedIndex=this.selectedRowId.id;
+      var selectedIndex=this.selectedRow.id;
       var nextStep=this.showingCaseDetail.steps[selectedIndex-1];
       
-      //this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex]);
-      this.showingCaseDetail.steps[selectedIndex-1]=this.selectedRowId;
+      this.showingCaseDetail.steps[selectedIndex-1]=this.selectedRow;
       this.showingCaseDetail.steps[selectedIndex]=nextStep;
       this.showingCaseDetail.steps[selectedIndex].id=selectedIndex;
       this.showingCaseDetail.steps[selectedIndex-1].id=selectedIndex-1;
-      //this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex-1]);
       //必须新建数组，否则vue不会重新渲染
       this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
+      //这可能是elementui的bug，如果oldCurrentRow和newCurrentRow是一个，会跳过渲染
+      //所以这里先把currentRow设置到别的行，以便nexttick中的setCurrentRow能够生效
       this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex]);
+      //vue是异步渲染，在每个tick开始前会搜集所有的数据变化，放入队列，多次修改仅最后一次生效，然后统一渲染
+      //所以如果要在数据变化后的基础上做修改，需要放在nexttick
       this.$nextTick(function() {
         this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex-1]);
       });
     },
     //向下移动step  BUG
     handleStepDownClick() {
-      if(this.selectedRowId==null){
+      if(this.selectedRow==null){
         alert("需要先选择一行");
         return;
       }
-      if(this.selectedRowId.id==this.showingCaseDetail.steps.length-1){
+      if(this.selectedRow.id==this.showingCaseDetail.steps.length-1){
         return;
       }
-      var selectedIndex=this.selectedRowId.id;
+      var selectedIndex=this.selectedRow.id;
       var nextStep=this.showingCaseDetail.steps[selectedIndex+1];
       
-      this.showingCaseDetail.steps[selectedIndex+1]=this.selectedRowId;
+      this.showingCaseDetail.steps[selectedIndex+1]=this.selectedRow;
       this.showingCaseDetail.steps[selectedIndex]=nextStep;
       this.showingCaseDetail.steps[selectedIndex].id=selectedIndex;
       this.showingCaseDetail.steps[selectedIndex+1].id=selectedIndex+1;
-      //必须新建数组，否则vue不会重新渲染
+
       this.showingCaseDetail.steps = this.showingCaseDetail.steps.slice(0);
       this.$refs.caseTable.setCurrentRow(this.showingCaseDetail.steps[selectedIndex]);
       this.$nextTick(function() {
@@ -951,6 +976,13 @@ export default {
       }
       this.$refs.casetree.getCurrentNode().caseDetail = null;
       this.loadCaseDetail(this.$refs.casetree.currentNode.node);
+      if(haveCachedDataChange){
+        this.strctureObjects=null;
+        this.loadObjects();
+      }
+      this.globalParas=null;
+      this.loadGlobalParas();
+      haveCachedDataChange=false;
     },
     //保存steps
     handleSaveClick() {
@@ -985,6 +1017,7 @@ export default {
           this.popup.bind(this)
         );
       }
+      haveCachedDataChange=false;
     },
     //添加一个新的node
     handleAddNodeClick() {
@@ -1019,8 +1052,8 @@ export default {
         .catch(() => {});
     },
 
-    handleExecRowClick(value, row) {
-      this.selectedExecRowData = value;
+    handleExecRowClick(row, event, column) {
+      this.selectedExecRowData = row;
     },
     //重新选操作后清空后面所有的字段
     handleActionChange(row) {
@@ -1028,7 +1061,7 @@ export default {
       row.type = "";
       row.name = "";
       row.path = "";
-      for (var i = 0; i < this.paraCount; i++) {
+      for (var i = 0; i < paraCount; i++) {
         row.paras[i] = "";
       }
       row.response = "";
@@ -1041,22 +1074,43 @@ export default {
     },
     //重新选type后情空对象名和xpath
     handleTypeChange(row) {
+      if(row.page==null||row.page==undefined||row.page==""){
+        alert("需要先选择页面");
+      }
       row.name = "";
       row.path = "";
     },
     //xpath跟着对象名变化
     handleNameChange(row) {
+      if(row.page==null||row.page==undefined||row.page==""){
+        alert("需要先选择页面");
+      }
+      if(row.type==null||row.type==undefined||row.type==""){
+        alert("需要先选择类型");
+      }
+      //如果缓存中找不到这个对象，说明是要新建对象
       if (
         this.strctureObjects[row.page] == undefined ||
-        this.strctureObjects[row.page][row.type] == undefined
+        this.strctureObjects[row.page][row.type] == undefined ||
+        this.strctureObjects[row.page][row.type][row.name]==undefined
       ) {
-        //row.path == "";
+        //如果xpath已经有值，则说明是先输入的path，保留这个值
+        if(row.path!=""){
+          //如果当前page+type下path已经存在，不允许重复添加
+          var objs=this.strctureObjects[row.page][row.type];
+          for(var key in objs){
+            if(objs[key]==row.path){
+              alert(row.path+"已经存在:"+row.page+"."+row.type+"."+key);
+              row.name="";
+              return;
+            }
+          }
+          this.addToStrctureObject(this.strctureObjects,row.page,row.type,row.name,row.path);
+          haveCachedDataChange=true;
+        }
         return;
-      }
-      var result = this.strctureObjects[row.page][row.type][row.name];
-
-      if (result != undefined && result != null) {
-        row.path = result;
+      }else{
+        row.path=this.strctureObjects[row.page][row.type][row.name];
       }
     },
     //对象名跟着xpath变化
@@ -1073,10 +1127,43 @@ export default {
               break;
             }
           }
+          if(isFound){break;}
+        }
+        if(isFound){break;}
+      }
+      //没找到则说明是新抓取的xpath，如果之前已经选取了name，则认为是要更新已有的对象
+      if (!isFound && row.name != "") {
+        alert("当前xpath的修改会影响所有使用该对象的用例，请谨慎确认后保存！");
+        this.addToStrctureObject(this.strctureObjects,row.page,row.type,row.name,row.path);
+        haveCachedDataChange=true;
+        for(var i=0;i<this.showingCaseDetail.steps.length;i++){
+          var step=this.showingCaseDetail.steps[i];
+          if(step.page==row.page&&step.type==row.type&&step.name==row.name&&step.path!=row.path){
+            step.path=row.path;
+          }
         }
       }
-      if (!isFound && row.name != "") {
-        alert("当前xpath的修改会影响所有使用该对象的用例，请谨慎确认！");
+    },
+    validateResChange(row){
+      var l=row.response.length;
+      if(row.response.substring(0,2)!="%%" && row.response.substring(0,2)!="@@" && row.response.substring(l,l-2)!="%%"&& row.response.substring(l,l-2)!="@@"){
+        alert("返回值变量名必须是%%name%%或者@@name@@");
+        row.response="";
+      }
+      var isFound=false;
+      if(row.response.substring(0,2)=="%%"){
+        for(var i=0;i<this.globalParas.length;i++){
+          if(this.globalParas[i].value==row.response){
+            isFound=true;
+            break;
+          }
+        }
+        if(!isFound){
+          let tmp = {};
+          tmp.label = row.response;
+          tmp.value = row.response;
+          this.globalParas.push(tmp);
+        }
       }
     },
     //获取最新的任务执行状态以及可用的agent机器
@@ -1149,6 +1236,8 @@ export default {
       //this.$refs.casetree.currentNode.node.store.load(this.$refs.casetree.currentNode.node,resolve);
       console.log(document.querySelector("main"));
       console.log(this.showingCaseDetail);
+      console.log(this.globalParas);
+      console.log(this.strctureObjects);
     }
   }
 };
