@@ -101,4 +101,8 @@ public class TestDaoImpl implements TestDao{
         Query query=Query.query(Criteria.where("caseId").in(casesId));
         return mongoTemplate.find(query, CasePojo.class);
     }
+    public List<HierachyPojo> getNodes(List<String> casesId){
+        Query query=Query.query(Criteria.where("_id").in(casesId));
+        return mongoTemplate.find(query, HierachyPojo.class);
+    }
 }

@@ -165,7 +165,17 @@ public class TestServiceImpl implements TestService {
         return true;
     }
     public List<CasePojo> getCases(List<String> casesId){
-        return testDao.getCases(casesId);
+        List<HierachyPojo> nodes=testDao.getNodes(casesId);
+        List<CasePojo> cases=testDao.getCases(casesId);
+        for(CasePojo casz:cases){
+            for(HierachyPojo node:nodes){
+                if(casz.getCaseId().equals(node.getRefId())){
+                    casz.setDesc(node.getLabel());
+                    break;
+                }
+            }
+        }
+        return cases;
     }
     public ObjectPojo extractObj(StepDetailPojo step) {
         if (step.getPage() == null || step.getPage().equals("")) {

@@ -315,7 +315,7 @@ public class SeleniumUtils {
             inputKey("//input[@id='userName']", "test@zkh360.com");
             inputKey("//input[@id='password']", "shtest");
             clickKey("//div[@id='loginDiv']/a");
-            assertMatchKey("//span[@class='user-info']/parent::a", "text", ".*测试人员.*");
+            assertMatchKey("//span[@class='user-info']/parent::a", "text", "[\\s\\S]*测试人员[\\s\\S]*");
         }catch(Exception e){
             throw e;
         }finally{

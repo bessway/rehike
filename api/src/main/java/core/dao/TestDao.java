@@ -20,4 +20,5 @@ public interface TestDao{
     public Boolean updateCaseSteps(String caseId,List<StepPojo> steps);
     public List<String> getValidCases(List<String> toValidate);
     public List<CasePojo> getCases(List<String> casesId);
+    public List<HierachyPojo> getNodes(List<String> casesId);
 }

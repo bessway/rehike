@@ -8,7 +8,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection="cases")
 public class CasePojo{
     private String caseId=null;
+    private String desc=null;
     private ArrayList<StepPojo> steps=null;
+    public String getDesc(){
+        return this.desc;
+    }
+    public void setDesc(String desc){
+        this.desc=desc;
+    }
     public String getCaseId(){
         return this.caseId;
     }

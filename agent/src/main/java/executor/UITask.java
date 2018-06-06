@@ -60,7 +60,7 @@ public class UITask implements Executor<CasePojo, CaseDataPojo> {
         String taskResult = Utils.execPass;
         for (CasePojo casz : this.tests) {
             //一个addSubTest必须对应到一个completeTestReport
-            ReportUtils.addSubTest(casz.getCaseId());
+            ReportUtils.addSubTest(casz.getDesc());
             if (checkStopExec()) {
                 this.suite.setFroceStop(true);
                 taskResult = Utils.execException;
