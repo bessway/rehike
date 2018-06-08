@@ -647,7 +647,10 @@ export default {
     //选择node后记载详细信息
     handleClickNode(data, node) {
       if(haveCachedDataChange){
-        alert("已放弃当前所有修改");
+        alert("有未保存的修改，请先保存或者丢弃");
+        this.$refs.casetree.setCurrentNode(this.selectedNode.data);
+        
+        return;
       }
       this.selectedNode = node;
       this.loadCaseDetail();
@@ -1238,6 +1241,8 @@ export default {
       console.log(this.showingCaseDetail);
       console.log(this.globalParas);
       console.log(this.strctureObjects);
+      console.log(this.$refs.casetree.getCurrentNode());
+      console.log(this.selectedNode);
     }
   }
 };

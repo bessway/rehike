@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -296,7 +295,7 @@ public class TestServiceImpl implements TestService {
                 tmp.setName(target[2]);
 
                 if (Utils.objectsMap == null) {
-                    Utils.objectsMap=(Hashtable<String,String>)objService.getAllObjects();
+                    objService.getAllObjects();
                 }
                 tmp.setPath(Utils.objectsMap.get(data.getStepsData().get(i).getTarget()));
             } else {

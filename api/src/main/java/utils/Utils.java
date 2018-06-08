@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 
 public class Utils{
     private static Logger logger=Logger.getLogger(Utils.class);
+    //缓存object,仅用于判断是否需要更新或添加object
+    //添加或更新object时也会更新这个缓存
     public static Hashtable<String,String> objectsMap=null;
     public enum ExecStatus{
         READYTOSTART,
