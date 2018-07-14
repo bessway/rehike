@@ -3,7 +3,6 @@ package utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -22,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +52,12 @@ public class SeleniumUtils {
         WebElement we=findElement(target);
         //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
         we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+        Thread.sleep(500);
+        we.click();
+        return Utils.execPass;
+    }
+    public static String clickNotVisibleKey(String target) throws Exception {
+        WebElement we=findElement(target);
         Thread.sleep(500);
         we.click();
         return Utils.execPass;
@@ -206,6 +212,24 @@ public class SeleniumUtils {
             throw new Exception("assert equal failed: actual = "+actual);
         }
     }
+    public static String closeAlertKey() throws Exception{
+        getCurrDriver().switchTo().alert().accept();
+        return Utils.execPass;
+    }
+    public static String closeAndSwithToTabKey() throws Exception{
+        Set<String> handles = getCurrDriver().getWindowHandles();
+        if(handles.size()<2){
+            throw new Exception("there is only one tab opened");
+        }
+        for (String s : handles){
+            if(!s.equals(getCurrDriver().getWindowHandle())){
+                getCurrDriver().close();
+                getCurrDriver().switchTo().window(s);
+                break;
+            }
+        }
+        return Utils.execPass;
+    }
     //TO-DO
     public static String postKey(String url, String header, String body) throws Exception {
         return url;
@@ -309,17 +333,34 @@ public class SeleniumUtils {
         driver.manage().window().maximize();
         return driver;
     }
+ /*   
     public static void main(String[] args) throws Exception{
         try{
-            openSiteKey("http://testcrm.zkh360.com/", "chrome");
-            inputKey("//input[@id='userName']", "test@zkh360.com");
-            inputKey("//input[@id='password']", "shtest");
-            clickKey("//div[@id='loginDiv']/a");
-            assertMatchKey("//span[@class='user-info']/parent::a", "text", "[\\s\\S]*测试人员[\\s\\S]*");
+            openSiteKey("http://dev.zkh360.com:89/view/home/index.html", "chrome");
+            clickKey("//a[@class='Login']");
+            inputKey("//input[@id='UserInfoLoginName']", "13020215586");
+            clickKey("//li[@class='add_company']/div[@class='personage']");
+            assertEqualKey("//input[@id='InvoiceTtile']", "placeholder", "请输入真实个人姓名");
+            clickNotVisibleKey("//div[@id='InvoiceBox']");
+            waitVisibleKey("//div[@class='zm_test']");
+            clickKey("//div[@class='zm_test']/ul[1]/li[@class='company_ms']");
+            inputKey("//input[@id='UserInfoPwd']", "zll123456");
+            clickKey("//a[@id='btn_login']");
+            clickKey("//ul[@id='menu-list-container']/li/div/a[text()='劳保']");
+            clickKey("//ul[@id='goodList']/li[1]/div/div[@class='cart']");
+            clickKey("//a[@class='go_cart go']");
+            closeAndSwithToTabKey();
+            waitVisibleKey("//div[@id='div_cart']/div[@class='n_shopcart']");
+            clickKey("//a[@id='goCloseAccount']");
+            waitVisibleKey("//div[@id='div_receiveInfo']/div[@class='n_useraddress block-select default active']");
+            clickKey("//a[@id='btn_approval_order']");
+            clickKey("//div[@class='mb']/div[@class='mbfooter']/a[@class='ensure']");
+            waitVisibleKey("//div[@id='pay_go_memory']/div/div/p[@class='success_msg']");
         }catch(Exception e){
             throw e;
         }finally{
             closeBrowsersKey(null);
         }
     }
+    */
 }
