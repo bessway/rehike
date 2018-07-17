@@ -2,10 +2,13 @@ package executor;
 
 import java.util.Map;
 
+import com.aventstack.extentreports.Status;
+
 import core.pojo.KeyPojo;
 
 import core.pojo.StepDataPojo;
 import core.pojo.StepPojo;
+import utils.ReportUtils;
 
 public class StepExecutor implements Executor<KeyPojo,StepDataPojo>{
     private StepPojo test=null;
@@ -19,6 +22,7 @@ public class StepExecutor implements Executor<KeyPojo,StepDataPojo>{
     
     public String execute(Map<String,String> sPara,Map<String,String> gPara) throws Exception{
         String keyName=this.test.getKey();
+        ReportUtils.addLog(Status.INFO,"Step index: "+String.valueOf(this.data.getsIndex()), null);
         String result=this.getSuccessor(this.getKeyPojo(keyName), this.data).execute(sPara, gPara);
 
         return result;
