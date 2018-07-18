@@ -49,12 +49,25 @@ public class SeleniumUtils {
         }
     }
     public static String clickKey(String target) throws Exception {
-        WebElement we=findElement(target);
-        //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
-        we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
-        we=getCurrWait().until(ExpectedConditions.elementToBeClickable(we));
-        Thread.sleep(500);
-        we.click();
+        Integer sumwait=0;
+        while(sumwait<maxWait*1000){
+            try{
+                WebElement we=findElement(target);
+                //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
+                we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+                Thread.sleep(500);
+                we.click();
+            }catch(Exception e){
+                sumwait=sumwait+200;
+                if(sumwait>maxWait*1000){
+                    throw e;
+                }
+                Thread.sleep(200);
+            }
+        }
+        if(sumwait>maxWait*1000){
+            throw new Exception("cannot find element in 30 seconds "+target);
+        }
         return Utils.execPass;
     }
     public static String clickNotVisibleKey(String target) throws Exception {
@@ -71,11 +84,24 @@ public class SeleniumUtils {
         }
     }
     public static String inputKey(String target, String content) throws Exception {
-        WebElement tmp=findElement(target);
-        tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
-        tmp=getCurrWait().until(ExpectedConditions.elementToBeClickable(tmp));
-        tmp.clear();
-        tmp.sendKeys(content);
+        Integer sumwait=0;
+        while(sumwait<maxWait*1000){
+            try{
+                WebElement tmp=findElement(target);
+                tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
+                tmp.clear();
+                tmp.sendKeys(content);
+            }catch(Exception e){
+                sumwait=sumwait+200;
+                if(sumwait>maxWait*1000){
+                    throw e;
+                }
+                Thread.sleep(200);
+            }
+        }
+        if(sumwait>maxWait*1000){
+            throw new Exception("cannot find element in 30 seconds "+target);
+        }
         return Utils.execPass;
     }
     public static String navigateToKey(String url) throws Exception{
@@ -98,10 +124,23 @@ public class SeleniumUtils {
         return url;
     }
     public static String selectKey(String target,String value) throws Exception{
-        WebElement we=findElement(target);
-        we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
-        we=getCurrWait().until(ExpectedConditions.elementToBeClickable(we));
-        new Select(we).selectByValue(value);
+        Integer sumwait=0;
+        while(sumwait<maxWait*1000){
+            try{
+                WebElement we=findElement(target);
+                we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+                new Select(we).selectByValue(value);
+            }catch(Exception e){
+                sumwait=sumwait+200;
+                if(sumwait>maxWait*1000){
+                    throw e;
+                }
+                Thread.sleep(200);
+            }
+        }
+        if(sumwait>maxWait*1000){
+            throw new Exception("cannot find element in 30 seconds "+target);
+        }
         return Utils.execPass;
     }
     public static String swithToFrameKey(String target) throws Exception{
