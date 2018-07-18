@@ -52,6 +52,7 @@ public class SeleniumUtils {
         WebElement we=findElement(target);
         //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
         we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+        we=getCurrWait().until(ExpectedConditions.elementToBeClickable(we));
         Thread.sleep(500);
         we.click();
         return Utils.execPass;
@@ -72,6 +73,7 @@ public class SeleniumUtils {
     public static String inputKey(String target, String content) throws Exception {
         WebElement tmp=findElement(target);
         tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
+        tmp=getCurrWait().until(ExpectedConditions.elementToBeClickable(tmp));
         tmp.clear();
         tmp.sendKeys(content);
         return Utils.execPass;
@@ -98,6 +100,7 @@ public class SeleniumUtils {
     public static String selectKey(String target,String value) throws Exception{
         WebElement we=findElement(target);
         we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+        we=getCurrWait().until(ExpectedConditions.elementToBeClickable(we));
         new Select(we).selectByValue(value);
         return Utils.execPass;
     }
