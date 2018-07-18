@@ -57,6 +57,7 @@ public class SeleniumUtils {
                 we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
                 Thread.sleep(500);
                 we.click();
+                break;
             }catch(Exception e){
                 sumwait=sumwait+200;
                 if(sumwait>maxWait*1000){
@@ -91,6 +92,7 @@ public class SeleniumUtils {
                 tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
                 tmp.clear();
                 tmp.sendKeys(content);
+                break;
             }catch(Exception e){
                 sumwait=sumwait+200;
                 if(sumwait>maxWait*1000){
@@ -130,6 +132,7 @@ public class SeleniumUtils {
                 WebElement we=findElement(target);
                 we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
                 new Select(we).selectByValue(value);
+                break;
             }catch(Exception e){
                 sumwait=sumwait+200;
                 if(sumwait>maxWait*1000){
