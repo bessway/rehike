@@ -110,6 +110,8 @@ public class SeleniumUtils {
         getCurrDriver().get(url);
         drivers.put(url, drivers.get(currDriver));
         drivers.remove(currDriver);
+        waits.put(url,waits.get(currDriver));
+        waits.remove(currDriver);
         currDriver=url;
         return currDriver;
     }
@@ -378,34 +380,17 @@ public class SeleniumUtils {
         driver.manage().window().maximize();
         return driver;
     }
- /*   
+ 
     public static void main(String[] args) throws Exception{
         try{
-            openSiteKey("http://dev.zkh360.com:89/view/home/index.html", "chrome");
-            clickKey("//a[@class='Login']");
-            inputKey("//input[@id='UserInfoLoginName']", "13020215586");
-            clickKey("//li[@class='add_company']/div[@class='personage']");
-            assertEqualKey("//input[@id='InvoiceTtile']", "placeholder", "请输入真实个人姓名");
-            clickNotVisibleKey("//div[@id='InvoiceBox']");
-            waitVisibleKey("//div[@class='zm_test']");
-            clickKey("//div[@class='zm_test']/ul[1]/li[@class='company_ms']");
-            inputKey("//input[@id='UserInfoPwd']", "zll123456");
-            clickKey("//a[@id='btn_login']");
-            clickKey("//ul[@id='menu-list-container']/li/div/a[text()='劳保']");
-            clickKey("//ul[@id='goodList']/li[1]/div/div[@class='cart']");
-            clickKey("//a[@class='go_cart go']");
-            closeAndSwithToTabKey();
-            waitVisibleKey("//div[@id='div_cart']/div[@class='n_shopcart']");
-            clickKey("//a[@id='goCloseAccount']");
-            waitVisibleKey("//div[@id='div_receiveInfo']/div[@class='n_useraddress block-select default active']");
-            clickKey("//a[@id='btn_approval_order']");
-            clickKey("//div[@class='mb']/div[@class='mbfooter']/a[@class='ensure']");
-            waitVisibleKey("//div[@id='pay_go_memory']/div/div/p[@class='success_msg']");
+            openSiteKey("http://devesp.zkh360.com/user/login?username=ads&password=1234abcd", "chrome");
+            navigateToKey("http://devesp.zkh360.com/page/deliveryAddressEditable");
+            assertMatchKey("//span[text()='安徽省']", "text", "[\\s\\S]*安徽省[\\s\\S]*");
         }catch(Exception e){
             throw e;
         }finally{
             closeBrowsersKey(null);
         }
     }
-    */
+    
 }
