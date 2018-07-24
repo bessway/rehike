@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,6 +131,7 @@ public class SeleniumUtils {
             waits.put(url,wait);
         }
         drivers.get(url).get(url);
+        
         currDriver=url;
         return url;
     }
@@ -385,6 +388,7 @@ public class SeleniumUtils {
             throw new Exception(type + " browser is not supported");
         }
         driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(maxWait*6, TimeUnit.SECONDS);
         return driver;
     }
  
