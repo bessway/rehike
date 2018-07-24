@@ -3,6 +3,7 @@ package utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -58,12 +59,14 @@ public class SeleniumUtils {
                 Thread.sleep(500);
                 we.click();
                 break;
+            }catch(NoSuchElementException nee){
+                throw nee;
             }catch(Exception e){
-                sumwait=sumwait+200;
+                sumwait=sumwait+1000;
                 if(sumwait>maxWait*1000){
                     throw e;
                 }
-                Thread.sleep(200);
+                Thread.sleep(1000);
             }
         }
         if(sumwait>maxWait*1000){
@@ -93,12 +96,14 @@ public class SeleniumUtils {
                 tmp.clear();
                 tmp.sendKeys(content);
                 break;
+            }catch(NoSuchElementException nee){
+                throw nee;
             }catch(Exception e){
-                sumwait=sumwait+200;
+                sumwait=sumwait+1000;
                 if(sumwait>maxWait*1000){
                     throw e;
                 }
-                Thread.sleep(200);
+                Thread.sleep(1000);
             }
         }
         if(sumwait>maxWait*1000){
@@ -135,12 +140,14 @@ public class SeleniumUtils {
                 we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
                 new Select(we).selectByValue(value);
                 break;
+            }catch(NoSuchElementException nee){
+                throw nee;
             }catch(Exception e){
-                sumwait=sumwait+200;
+                sumwait=sumwait+1000;
                 if(sumwait>maxWait*1000){
                     throw e;
                 }
-                Thread.sleep(200);
+                Thread.sleep(1000);
             }
         }
         if(sumwait>maxWait*1000){
