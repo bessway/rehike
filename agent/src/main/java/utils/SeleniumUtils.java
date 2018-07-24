@@ -125,7 +125,7 @@ public class SeleniumUtils {
         if (!drivers.containsKey(url)) {
             driver = launchBrowser(browserType);
             drivers.put(url, driver);
-            WebDriverWait wait=new WebDriverWait(driver, maxWait);
+            WebDriverWait wait=new WebDriverWait(driver, maxWait,500);
             waits.put(url,wait);
         }
         drivers.get(url).get(url);
