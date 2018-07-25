@@ -137,7 +137,9 @@
           @row-click="handleRowClick">
             <el-table-column label="" prop="id" width="30">
             </el-table-column>
-			<el-table-column label="描述" min-width="100" header-align="center">
+            <el-table-column label="" type="selection" width="30">
+            </el-table-column>
+			      <el-table-column label="描述" min-width="100" header-align="center">
               <template slot-scope="scope">
                 <el-input type="textarea" resize="none" autosize min-height="40px" style="padding-top:5px"
                   v-model=scope.row.desc>
@@ -288,7 +290,7 @@
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="" min-width="30px" fixed="right">
+            <el-table-column label="" min-width="60px" fixed="right">
               <template slot-scope="scope">
                 <el-tooltip content="下方添加一行" placement="left">
                   <el-button size="mini" icon="el-icon-circle-plus-outline"
@@ -297,6 +299,10 @@
                 <el-tooltip content="删除当前行" placement="left">
                   <el-button size="mini" icon="el-icon-remove-outline"
                     @click="handleDelStepClick(scope.row)"></el-button>
+                </el-tooltip>
+                <el-tooltip content="插入勾选的行" placement="left">
+                  <el-button size="mini" icon="el-icon-arrow-down"
+                    @click="handleInsStepClick(scope.row)"></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -905,6 +911,38 @@ export default {
         tmpcase.steps[0]
       );
     },
+    handleInsStepClick(row){
+      console.log(row.id);
+      var selected=[];
+      for (var i = 0; i < this.$refs.caseTable.selection.length; i++) {
+        var id=this.$refs.caseTable.selection[i].id;
+        var tmp=0;
+        for(var j=0;j<selected.length;j++){
+          if(id<selected[j]){
+            tmp=selected[j];
+            selected[j]=id;
+            id=tmp;
+          }
+        }
+        selected.push(id);
+      }
+
+      for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
+        if (this.showingCaseDetail.steps[i].id > row.id) {
+          this.showingCaseDetail.steps[i].id =
+            this.showingCaseDetail.steps[i].id + selected.length;
+        }
+      }
+      for(var j=0;j<selected.length;j++){
+        var newone=JSON.parse(JSON.stringify(this.showingCaseDetail.steps[selected[j]]));
+        newone.id=row.id+j+1;
+        this.$set(
+          this.showingCaseDetail.steps,
+          this.showingCaseDetail.steps.length,
+          newone
+        );
+      }
+    },
     //删除step
     handleDelStepClick(row) {
       var index = null;
@@ -922,7 +960,7 @@ export default {
     handleRowClick(row, event,column) {
       this.selectedRow = row;
     },
-    //向上移动step   BUG
+    //向上移动step
     handleStepUpClick() {
       if(this.selectedRow==null){
         alert("需要先选择一行");
@@ -1243,6 +1281,7 @@ export default {
       console.log(this.strctureObjects);
       console.log(this.$refs.casetree.getCurrentNode());
       console.log(this.selectedNode);
+      console.log(this.$refs.caseTable.data);
     }
   }
 };
