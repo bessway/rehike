@@ -135,7 +135,14 @@
           :row-key="getRowKeys"
           fixed
           @row-click="handleRowClick">
-            <el-table-column label="" prop="id" width="15">
+            <el-table-column label="" prop="id" width="30">
+            </el-table-column>
+			<el-table-column label="描述" min-width="100" header-align="center">
+              <template slot-scope="scope">
+                <el-input type="textarea" resize="none" autosize min-height="40px" style="padding-top:5px"
+                  v-model=scope.row.desc>
+                </el-input>
+              </template>
             </el-table-column>
             <el-table-column label="操作" min-width="140" header-align="center">
               <template slot-scope="scope">
@@ -279,13 +286,6 @@
                     :value="item.value">
                   </el-option>
                 </el-select>
-              </template>
-            </el-table-column>
-            <el-table-column label="描述" min-width="150" header-align="center">
-              <template slot-scope="scope">
-                <el-input type="textarea" resize="none" autosize min-height="40px" style="padding-top:5px"
-                  v-model=scope.row.desc>
-                </el-input>
               </template>
             </el-table-column>
             <el-table-column label="" min-width="30px" fixed="right">
