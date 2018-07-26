@@ -36,20 +36,58 @@ public class SeleniumUtils {
     private static String currDriver="";
 
     public static String assertEqualKey(String target, String attribute, String exValue) throws Exception {
-        String actual=getAttributeKey(target, attribute);
-        if(exValue.equals(actual)){
-            return Utils.execPass;
-        }else{
+        String actual=null;
+        Integer sumwait=0;
+        while(sumwait<maxWait*1000){
+            try{
+                actual=getAttributeKey(target, attribute);
+                if(exValue.equals(actual)){
+                    break;
+                }else{
+                    sumwait=sumwait+1000;
+                    Thread.sleep(1000);
+                }
+            }catch(NoSuchElementException nee){
+                throw nee;
+            }catch(Exception e){
+                sumwait=sumwait+1000;
+                if(sumwait>maxWait*1000){
+                    throw e;
+                }
+                Thread.sleep(1000);
+            }
+        }
+        if(sumwait>maxWait*1000){
             throw new Exception("assert equal failed: actual = "+actual);
         }
+        return Utils.execPass;
     }
     public static String assertNotEqualKey(String target, String attribute, String exValue) throws Exception {
-        String actual=getAttributeKey(target, attribute);
-        if(!exValue.equals(actual)){
-            return Utils.execPass;
-        }else{
+        String actual=null;
+        Integer sumwait=0;
+        while(sumwait<maxWait*1000){
+            try{
+                actual=getAttributeKey(target, attribute);
+                if(!exValue.equals(actual)){
+                    break;
+                }else{
+                    sumwait=sumwait+1000;
+                    Thread.sleep(1000);
+                }
+            }catch(NoSuchElementException nee){
+                throw nee;
+            }catch(Exception e){
+                sumwait=sumwait+1000;
+                if(sumwait>maxWait*1000){
+                    throw e;
+                }
+                Thread.sleep(1000);
+            }
+        }
+        if(sumwait>maxWait*1000){
             throw new Exception("assert equal failed: actual = "+actual);
         }
+        return Utils.execPass;
     }
     public static String clickKey(String target) throws Exception {
         Integer sumwait=0;
@@ -219,16 +257,35 @@ public class SeleniumUtils {
     public static String assertMatchKey(String target, String attribute, String pattern) throws Exception {
         List<WebElement> elements=findElements(target);
         for(WebElement ele:elements){
+            Integer sumwait=0;
             String actual=null;
-            if("text".equals(attribute)){
-                actual=ele.getText();
-            }else{
-                actual=ele.getAttribute(attribute);
+            while(sumwait<maxWait*1000){
+                try{
+                    if("text".equals(attribute)){
+                        actual=ele.getText();
+                    }else{
+                        actual=ele.getAttribute(attribute);
+                    }
+                    Pattern p=Pattern.compile(pattern);
+                    Matcher m=p.matcher(actual);
+                    if(m.find()){
+                        break;
+                    }else{
+                        sumwait=sumwait+1000;
+                        Thread.sleep(1000);
+                    }
+                }catch(NoSuchElementException nee){
+                    throw nee;
+                }catch(Exception e){
+                    sumwait=sumwait+1000;
+                    if(sumwait>maxWait*1000){
+                        throw e;
+                    }
+                    Thread.sleep(1000);
+                }
             }
-            Pattern p=Pattern.compile(pattern);
-            Matcher m=p.matcher(actual);
-            if(!m.find()){
-                throw new Exception("assert match failed: actual = "+actual);
+            if(sumwait>maxWait*1000){
+                throw new Exception("assert match failed: actual = "+actual+","+elements.size());
             }
         }
         return Utils.execPass;
