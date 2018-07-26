@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -36,57 +37,23 @@ public class SeleniumUtils {
     private static String currDriver="";
 
     public static String assertEqualKey(String target, String attribute, String exValue) throws Exception {
-        String actual=null;
-        Integer sumwait=0;
-        while(sumwait<maxWait*1000){
-            try{
-                actual=getAttributeKey(target, attribute);
-                if(exValue.equals(actual)){
-                    break;
-                }else{
-                    sumwait=sumwait+1000;
-                    Thread.sleep(1000);
-                }
-            }catch(NoSuchElementException nee){
-                throw nee;
-            }catch(Exception e){
-                sumwait=sumwait+1000;
-                if(sumwait>maxWait*1000){
-                    throw e;
-                }
-                Thread.sleep(1000);
-            }
+        Boolean result=false;
+        if("text".equals(attribute)){
+            getCurrWait().until(ExpectedConditions.textToBe(By.xpath(target), exValue));
+        }else{
+            getCurrWait().until(ExpectedConditions.attributeToBe(By.xpath(target),attribute, exValue));
         }
-        if(sumwait>maxWait*1000){
-            throw new Exception("assert equal failed: actual = "+actual);
-        }
+        
         return Utils.execPass;
     }
     public static String assertNotEqualKey(String target, String attribute, String exValue) throws Exception {
-        String actual=null;
-        Integer sumwait=0;
-        while(sumwait<maxWait*1000){
-            try{
-                actual=getAttributeKey(target, attribute);
-                if(!exValue.equals(actual)){
-                    break;
-                }else{
-                    sumwait=sumwait+1000;
-                    Thread.sleep(1000);
-                }
-            }catch(NoSuchElementException nee){
-                throw nee;
-            }catch(Exception e){
-                sumwait=sumwait+1000;
-                if(sumwait>maxWait*1000){
-                    throw e;
-                }
-                Thread.sleep(1000);
-            }
+        Boolean result=false;
+        if("text".equals(attribute)){
+            getCurrWait().until(ExpectedConditions.not(ExpectedConditions.textToBe(By.xpath(target), exValue)));
+        }else{
+            getCurrWait().until(ExpectedConditions.not(ExpectedConditions.attributeToBe(By.xpath(target),attribute, exValue)));
         }
-        if(sumwait>maxWait*1000){
-            throw new Exception("assert equal failed: actual = "+actual);
-        }
+        
         return Utils.execPass;
     }
     public static String clickKey(String target) throws Exception {
@@ -119,13 +86,6 @@ public class SeleniumUtils {
         Thread.sleep(500);
         we.click();
         return Utils.execPass;
-    }
-    public static String getAttributeKey(String target,String attribute) throws Exception {
-        if("text".equals(attribute)){
-            return findElement(target).getText();
-        }else{
-            return findElement(target).getAttribute(attribute);
-        }
     }
     public static String inputKey(String target, String content) throws Exception {
         Integer sumwait=0;
@@ -288,6 +248,39 @@ public class SeleniumUtils {
                 throw new Exception("assert match failed: actual = "+actual+","+elements.size());
             }
         }
+        return Utils.execPass;
+    }
+    private static String getRandomString(int length){
+        //定义一个字符串（A-Z，a-z，0-9）即62位；
+        String str="zxcvbnmlkjhgfdsaqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+        //由Random生成随机数
+            Random random=new Random();  
+            StringBuffer sb=new StringBuffer();
+            //长度为几就循环几次
+            for(int i=0; i<length; ++i){
+              //产生0-61的数字
+              int number=random.nextInt(62);
+              //将产生的数字通过length次承载到sb中
+              sb.append(str.charAt(number));
+            }
+            //将承载的字符转换成字符串
+            return sb.toString();
+      }
+    public static String getRandomKey(String prefix,String len,String hasChar) throws Exception{
+        String result=null;
+        if("false".equals(hasChar)){
+            result=String.valueOf(new Random().nextInt(Integer.parseInt(len)));
+        }else{
+            result=getRandomString(Integer.parseInt(len));
+        }
+        if(prefix!=null){
+            result=prefix+result;
+        }
+        
+        return result;
+    }
+    public static String assertCountKey(String target,String exCount) throws Exception{
+        getCurrWait().until(ExpectedConditions.numberOfElementsToBe(By.xpath(target), Integer.parseInt(exCount)));
         return Utils.execPass;
     }
     public static String waitEnableKey(String target) throws Exception{
