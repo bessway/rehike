@@ -34,6 +34,7 @@ public class SeleniumUtils {
     private static Map<String, WebDriver> drivers = new HashMap<String, WebDriver>();
     private static Map<String, WebDriverWait> waits = new HashMap<String, WebDriverWait>();
     private static Integer maxWait = 30;
+    private static Integer retryTimes=3;
     private static String currDriver="";
 
     public static String assertEqualKey(String target, String attribute, String exValue) throws Exception {
@@ -58,7 +59,7 @@ public class SeleniumUtils {
     }
     public static String clickKey(String target) throws Exception {
         Integer sumwait=0;
-        while(sumwait<maxWait*1000){
+        while(sumwait<=retryTimes*1000){
             try{
                 WebElement we=findElement(target);
                 //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
@@ -70,13 +71,13 @@ public class SeleniumUtils {
                 throw nee;
             }catch(Exception e){
                 sumwait=sumwait+1000;
-                if(sumwait>maxWait*1000){
+                if(sumwait>retryTimes*1000){
                     throw e;
                 }
                 Thread.sleep(1000);
             }
         }
-        if(sumwait>maxWait*1000){
+        if(sumwait>retryTimes*1000){
             throw new Exception("cannot find element in 30 seconds "+target);
         }
         return Utils.execPass;
@@ -89,7 +90,7 @@ public class SeleniumUtils {
     }
     public static String inputKey(String target, String content) throws Exception {
         Integer sumwait=0;
-        while(sumwait<maxWait*1000){
+        while(sumwait<=retryTimes*1000){
             try{
                 WebElement tmp=findElement(target);
                 tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
@@ -100,13 +101,13 @@ public class SeleniumUtils {
                 throw nee;
             }catch(Exception e){
                 sumwait=sumwait+1000;
-                if(sumwait>maxWait*1000){
+                if(sumwait>retryTimes*1000){
                     throw e;
                 }
                 Thread.sleep(1000);
             }
         }
-        if(sumwait>maxWait*1000){
+        if(sumwait>retryTimes*1000){
             throw new Exception("cannot find element in 30 seconds "+target);
         }
         return Utils.execPass;
@@ -135,7 +136,7 @@ public class SeleniumUtils {
     }
     public static String selectKey(String target,String value) throws Exception{
         Integer sumwait=0;
-        while(sumwait<maxWait*1000){
+        while(sumwait<=retryTimes*1000){
             try{
                 WebElement we=findElement(target);
                 we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
@@ -145,13 +146,13 @@ public class SeleniumUtils {
                 throw nee;
             }catch(Exception e){
                 sumwait=sumwait+1000;
-                if(sumwait>maxWait*1000){
+                if(sumwait>retryTimes*1000){
                     throw e;
                 }
                 Thread.sleep(1000);
             }
         }
-        if(sumwait>maxWait*1000){
+        if(sumwait>retryTimes*1000){
             throw new Exception("cannot find element in 30 seconds "+target);
         }
         return Utils.execPass;
@@ -406,9 +407,6 @@ public class SeleniumUtils {
     private static WebDriver launchBrowser(String type) throws Exception {
         WebDriver driver = null;
         String path = SeleniumUtils.class.getResource("/").toURI().getRawPath();
-        logger.debug(path);
-        logger.debug(System.getProperty("user.dir"));
-        logger.debug(System.getProperty("os.name"));
         switch (type) {
         case "chrome":
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -446,7 +444,7 @@ public class SeleniumUtils {
         try{
             openSiteKey("http://devesp.zkh360.com/user/login?username=ads&password=1234abcd", "chrome");
             navigateToKey("http://devesp.zkh360.com/page/deliveryAddressEditable");
-            assertMatchKey("//span[text()='安徽省']", "text", "[\\s\\S]*安徽省[\\s\\S]*");
+            assertEqualKey("//span[text()='安徽省']", "text", "[\\s\\S]*安徽省[\\s\\S]*");
         }catch(Exception e){
             throw e;
         }finally{
