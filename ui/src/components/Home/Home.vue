@@ -912,36 +912,28 @@ export default {
       );
     },
     handleInsStepClick(row){
-      console.log(row.id);
-      var selected=[];
+      var count=this.$refs.caseTable.selection.length;
+      var len=this.showingCaseDetail.steps.length;
+      for (var i = len-1; i >row.id; i--) {
+        this.showingCaseDetail.steps[i+count]=this.showingCaseDetail.steps[i];
+        this.showingCaseDetail.steps[i+count].id=this.showingCaseDetail.steps[i+count].id+count;
+      }
       for (var i = 0; i < this.$refs.caseTable.selection.length; i++) {
-        var id=this.$refs.caseTable.selection[i].id;
-        var tmp=0;
-        for(var j=0;j<selected.length;j++){
-          if(id<selected[j]){
-            tmp=selected[j];
-            selected[j]=id;
-            id=tmp;
+        for (var j = i+1; j < this.$refs.caseTable.selection.length; j++) {
+          if(this.$refs.caseTable.selection[j].id<this.$refs.caseTable.selection[i].id){
+            var tmp=this.$refs.caseTable.selection[i];
+            this.$refs.caseTable.selection[i]=this.$refs.caseTable.selection[j];
+            this.$refs.caseTable.selection[j]=tmp;
           }
         }
-        selected.push(id);
+      }
+      for (var i = 0; i < this.$refs.caseTable.selection.length; i++) {
+        var newone=JSON.parse(JSON.stringify(this.$refs.caseTable.selection[i]));
+        newone.id=row.id+i+1;
+        this.$set(this.showingCaseDetail.steps, row.id+i+1, newone
+      );
       }
 
-      for (var i = 0; i < this.showingCaseDetail.steps.length; i++) {
-        if (this.showingCaseDetail.steps[i].id > row.id) {
-          this.showingCaseDetail.steps[i].id =
-            this.showingCaseDetail.steps[i].id + selected.length;
-        }
-      }
-      for(var j=0;j<selected.length;j++){
-        var newone=JSON.parse(JSON.stringify(this.showingCaseDetail.steps[selected[j]]));
-        newone.id=row.id+j+1;
-        this.$set(
-          this.showingCaseDetail.steps,
-          this.showingCaseDetail.steps.length,
-          newone
-        );
-      }
     },
     //删除step
     handleDelStepClick(row) {
@@ -1277,11 +1269,7 @@ export default {
       //this.$refs.casetree.currentNode.node.store.load(this.$refs.casetree.currentNode.node,resolve);
       console.log(document.querySelector("main"));
       console.log(this.showingCaseDetail);
-      console.log(this.globalParas);
-      console.log(this.strctureObjects);
-      console.log(this.$refs.casetree.getCurrentNode());
-      console.log(this.selectedNode);
-      console.log(this.$refs.caseTable.data);
+      console.log(this.$refs.caseTable.selection);
     }
   }
 };
