@@ -34,7 +34,6 @@ public class SeleniumUtils {
     private static Map<String, WebDriver> drivers = new HashMap<String, WebDriver>();
     private static Map<String, WebDriverWait> waits = new HashMap<String, WebDriverWait>();
     private static Integer maxWait = 30;
-    private static Integer retryTimes=3;
     private static String currDriver="";
 
     public static String assertEqualKey(String target, String attribute, String exValue) throws Exception {
@@ -59,11 +58,11 @@ public class SeleniumUtils {
     }
     public static String clickKey(String target) throws Exception {
         Integer sumwait=0;
-        while(sumwait<=retryTimes*1000){
+        WebElement we=findElement(target);
+        //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
+        we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+        while(sumwait<=maxWait*1000){
             try{
-                WebElement we=findElement(target);
-                //Object result=((JavascriptExecutor)getCurrDriver()).executeScript("return document.readyState");
-                we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
                 Thread.sleep(500);
                 we.click();
                 break;
@@ -71,13 +70,13 @@ public class SeleniumUtils {
                 throw nee;
             }catch(Exception e){
                 sumwait=sumwait+1000;
-                if(sumwait>retryTimes*1000){
+                if(sumwait>maxWait*1000){
                     throw e;
                 }
                 Thread.sleep(1000);
             }
         }
-        if(sumwait>retryTimes*1000){
+        if(sumwait>maxWait*1000){
             throw new Exception("cannot find element in 30 seconds "+target);
         }
         return Utils.execPass;
@@ -90,10 +89,10 @@ public class SeleniumUtils {
     }
     public static String inputKey(String target, String content) throws Exception {
         Integer sumwait=0;
-        while(sumwait<=retryTimes*1000){
+        WebElement tmp=findElement(target);
+        tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
+        while(sumwait<=maxWait*1000){
             try{
-                WebElement tmp=findElement(target);
-                tmp=getCurrWait().until(ExpectedConditions.visibilityOf(tmp));
                 tmp.clear();
                 tmp.sendKeys(content);
                 break;
@@ -101,13 +100,13 @@ public class SeleniumUtils {
                 throw nee;
             }catch(Exception e){
                 sumwait=sumwait+1000;
-                if(sumwait>retryTimes*1000){
+                if(sumwait>maxWait*1000){
                     throw e;
                 }
                 Thread.sleep(1000);
             }
         }
-        if(sumwait>retryTimes*1000){
+        if(sumwait>maxWait*1000){
             throw new Exception("cannot find element in 30 seconds "+target);
         }
         return Utils.execPass;
@@ -136,23 +135,23 @@ public class SeleniumUtils {
     }
     public static String selectKey(String target,String value) throws Exception{
         Integer sumwait=0;
-        while(sumwait<=retryTimes*1000){
+        WebElement we=findElement(target);
+        we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
+        while(sumwait<=maxWait*1000){
             try{
-                WebElement we=findElement(target);
-                we=getCurrWait().until(ExpectedConditions.visibilityOf(we));
                 new Select(we).selectByValue(value);
                 break;
             }catch(NoSuchElementException nee){
                 throw nee;
             }catch(Exception e){
                 sumwait=sumwait+1000;
-                if(sumwait>retryTimes*1000){
+                if(sumwait>maxWait*1000){
                     throw e;
                 }
                 Thread.sleep(1000);
             }
         }
-        if(sumwait>retryTimes*1000){
+        if(sumwait>maxWait*1000){
             throw new Exception("cannot find element in 30 seconds "+target);
         }
         return Utils.execPass;
