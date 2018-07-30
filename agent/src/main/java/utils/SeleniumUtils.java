@@ -251,7 +251,7 @@ public class SeleniumUtils {
         }
         return Utils.execPass;
     }
-    public static String hardWait(String time) throws Exception {
+    public static String hardWaitKey(String time) throws Exception {
         Thread.sleep(Integer.parseInt(time)*1000);
         return Utils.execPass;
     }
