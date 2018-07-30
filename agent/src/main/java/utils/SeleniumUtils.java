@@ -250,6 +250,48 @@ public class SeleniumUtils {
         }
         return Utils.execPass;
     }
+    public static String hardWait(String time) throws Exception {
+        Thread.sleep(Integer.parseInt(time)*1000);
+        return Utils.execPass;
+    }
+    public static String getAttributeKey(String target, String attribute, String pattern) throws Exception {
+        WebElement ele=findElement(target);
+
+        Integer sumwait=0;
+        String actual=null;
+        String result="";
+        while(sumwait<maxWait*1000){
+            try{
+                if("text".equals(attribute)){
+                    actual=ele.getText();
+                }else{
+                    actual=ele.getAttribute(attribute);
+                }
+            }catch(NoSuchElementException nee){
+                throw nee;
+            }catch(Exception e){
+                sumwait=sumwait+1000;
+                if(sumwait>maxWait*1000){
+                    throw e;
+                }
+                Thread.sleep(1000);
+            }
+        }
+        if(sumwait>maxWait*1000){
+            throw new Exception("get attribute failed: actual = "+actual);
+        }
+        if(pattern!=null && !"".equals(pattern)){
+            Pattern p=Pattern.compile(pattern);
+            Matcher m=p.matcher(actual);
+            if(m.find()){
+                result=m.group(1);
+            }else{
+                throw new Exception("match text failed: actual = "+actual);
+            }
+        }
+        
+        return result;
+    }
     private static String getRandomString(int length){
         //定义一个字符串（A-Z，a-z，0-9）即62位；
         String str="zxcvbnmlkjhgfdsaqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
