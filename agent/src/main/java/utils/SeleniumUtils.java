@@ -162,6 +162,7 @@ public class SeleniumUtils {
         return handler;
     }
     public static String waitVisibleKey(String xpath) throws Exception{
+        Thread.sleep(500);
         List<WebElement> result=null;
         //it will check present display
         result=getCurrWait().until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(xpath)));
@@ -484,8 +485,15 @@ public class SeleniumUtils {
     public static void main(String[] args) throws Exception{
         try{
             openSiteKey("http://devesp.zkh360.com/user/login?username=ads&password=1234abcd", "chrome");
-            navigateToKey("http://devesp.zkh360.com/page/deliveryAddressEditable");
-            assertEqualKey("//span[text()='安徽省']", "text", "[\\s\\S]*安徽省[\\s\\S]*");
+            navigateToKey("http://devesp.zkh360.com/page/quoteList");
+            //assertEqualKey("//span[text()='安徽省']", "text", "[\\s\\S]*安徽省[\\s\\S]*");
+            clickKey("//*[@id='createTimeFrom']");
+            waitVisibleKey("//*[@class='pika-single is-bound']");
+            clickKey("//td[@data-day='27']/button");
+            clickKey("//*[@id='createTimeTo']");
+            waitVisibleKey("//*[@class='pika-single is-bound']");
+            clickKey("//td[@data-day='27' and not(contains(@class,'is-selected'))]/button");
+            
         }catch(Exception e){
             throw e;
         }finally{
