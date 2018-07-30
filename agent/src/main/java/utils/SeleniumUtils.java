@@ -268,6 +268,7 @@ public class SeleniumUtils {
                 }else{
                     actual=ele.getAttribute(attribute);
                 }
+                break;
             }catch(NoSuchElementException nee){
                 throw nee;
             }catch(Exception e){
