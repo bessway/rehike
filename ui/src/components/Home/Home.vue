@@ -913,6 +913,9 @@ export default {
     },
     handleInsStepClick(row){
       var count=this.$refs.caseTable.selection.length;
+	  if(count==0){
+		return;
+	  }
       var len=this.showingCaseDetail.steps.length;
       for (var i = len-1; i >row.id; i--) {
         this.showingCaseDetail.steps[i+count]=this.showingCaseDetail.steps[i];
