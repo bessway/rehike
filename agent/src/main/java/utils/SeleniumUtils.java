@@ -290,6 +290,8 @@ public class SeleniumUtils {
             }else{
                 throw new Exception("match text failed: actual = "+actual);
             }
+        }else{
+            result=actual;
         }
         
         return result;
