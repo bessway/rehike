@@ -6,7 +6,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -487,16 +486,12 @@ public class SeleniumUtils {
  
     public static void main(String[] args) throws Exception{
         try{
+
             openSiteKey("http://devesp.zkh360.com/user/login?username=ads&password=1234abcd", "chrome");
-            navigateToKey("http://devesp.zkh360.com/page/quoteList");
-            //assertEqualKey("//span[text()='安徽省']", "text", "[\\s\\S]*安徽省[\\s\\S]*");
-            clickKey("//*[@id='createTimeFrom']");
-            waitVisibleKey("//*[@class='pika-single is-bound']");
-            clickKey("//td[@data-day='27']/button");
-            clickKey("//*[@id='createTimeTo']");
-            waitVisibleKey("//*[@class='pika-single is-bound']");
-            clickKey("//td[@data-day='27' and not(contains(@class,'is-selected'))]/button");
-            
+            clickKey("//div[@class='index_tab_con']/a[@href='userCenter']");
+            clickKey("//a[@href='deliveryAddressEditable']");
+            clickKey("(//div[@class='contact_con custom_scrollbar'])[1]");
+            clickKey("(//div[@class='editable_btns']/a[@data-bind='click: $root.editContact'])[1]");
         }catch(Exception e){
             throw e;
         }finally{
