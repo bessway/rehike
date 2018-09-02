@@ -12,9 +12,9 @@
     </el-col>
     <el-col :span="20" class="main">
       <el-row class="top-nav">
-        <el-menu class="nav-menu" mode="horizontal">
-          <el-menu-item index="case">用例管理</el-menu-item>
-          <el-menu-item index="execution">用例执行</el-menu-item>
+        <el-menu class="nav-menu" mode="horizontal" router>
+          <el-menu-item index="/case">用例管理</el-menu-item>
+          <el-menu-item index="/execution">用例执行</el-menu-item>
         </el-menu>
       </el-row>
       <el-row class="main-content">
@@ -52,7 +52,7 @@ export default {
     aside {
       height: 100%;
       .el-tree {
-        height: 100%;
+        height: 96%;
         width: 100%;
         background-color: rgb(160, 208, 253);
         border: 1px;

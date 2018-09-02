@@ -9,7 +9,7 @@
       <el-button size="mini">复制</el-button>
     </div>
     <div class="test-detail">
-      <el-col :span="7" class='steps'>
+      <el-col :span="6" class='steps'>
         <el-row>
           <el-button>上移</el-button>
           <el-button>下移</el-button>
@@ -18,14 +18,12 @@
           <el-button>删除</el-button>
           <el-button>引用</el-button>
         </el-row>
-        <el-table :show-header=false highlight-current-row :data=steps
-        :cell-style=stepTableCellStyle>
-          <el-table-column type="selection" width="14px"/>
-          <el-table-column prop="content"/>
-        </el-table>
+        <el-tree :data=steps show-checkbox
+        @node-click='nodeClick'>
+        </el-tree>
       </el-col>
 
-      <el-col :span="12" class='step-editor'>
+      <el-col :span="13" class='step-editor'>
         <el-row class='test-desc'>
           <label>步骤描述:</label>
           <el-input/>
@@ -37,7 +35,7 @@
             </el-option>
           </el-select>
         </el-row>
-        <maineditor/>
+        <router-view/>
       </el-col>
 
       <el-col :span="5" class='paralist'>
@@ -54,16 +52,16 @@
   </div>
 </template>
 <script>
-import maineditor from './MainEditor.vue'
+
 export default {
-  components: {maineditor},
   data () {
     return {
       caseDesc: '',
-      steps: [{content: 'first'}, {content: 'second'}],
+      steps: [{label: 'this is the first step example'}, {label: 'second'}],
       variables: [{name: '%%a%%'}, {name: '%%b%%'}],
       actions: [{name: '1'}, {name: '2'}],
-      action: ''
+      action: '',
+      count: 0
     }
   },
   computed: {
@@ -75,6 +73,14 @@ export default {
       } else {
         return {padding: '0px', margin: '0px', width: '100%'}
       }
+    },
+    nodeClick: function () {
+      if (this.count % 2 === 0) {
+        this.$router.push({path: '/apistep'})
+      } else {
+        this.$router.push({path: '/uistep'})
+      }
+      this.count = this.count + 1
     }
   }
 }
@@ -106,6 +112,20 @@ export default {
   border-right: 1px solid rgba(236, 234, 234, 0.925);
   height: 100%;
   padding-left: 3px;
+  .el-tree {
+      height: 86%;
+      width: 100%;
+      border: 1px;
+      overflow-x: auto;
+      overflow-y: auto;
+      .el-tree-node{
+        min-width:100%;
+        display: inline-block !important;
+        .el-checkbox{
+          width: 14px;
+        }
+      }
+    }
 }
 .step_editor {
   float: right;

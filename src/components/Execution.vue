@@ -1,14 +1,8 @@
 <template>
-  <div class="stepparas">
+  <div class="env">
     <div class="para">
-      <el-input placeholder="P1"></el-input>
-      <el-input placeholder="P2"></el-input>
-      <el-input placeholder="P3"></el-input>
-    </div>
-    <div class="para">
-      <el-input placeholder="P4"></el-input>
-      <el-input placeholder="P5"></el-input>
-      <el-input placeholder="P6"></el-input>
+      <el-input placeholder="浏览器"></el-input>
+      <el-input placeholder="系统"></el-input>
     </div>
   </div>
 </template>
