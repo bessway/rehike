@@ -21,7 +21,9 @@ export default {
   display: flex;
   justify-content: left;
   align-items: left;
-  margin-top: 5px;
+}
+.stepparas {
+  margin-top: 3px;
 }
 .el-input {
   font-size: 12px;

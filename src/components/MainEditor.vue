@@ -12,7 +12,7 @@ export default{
 .main-editor {
   height: 100%;
   .el-textarea__inner {
-    min-height: 400px !important;
+    min-height: 380px !important;
   }
 }
 </style>

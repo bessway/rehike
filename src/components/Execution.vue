@@ -1,6 +1,6 @@
 <template>
-  <div class="env">
-    <div class="para">
+  <div>
+    <div class="env">
       <el-input placeholder="浏览器"></el-input>
       <el-input placeholder="系统"></el-input>
     </div>
@@ -11,7 +11,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.para {
+.env {
   display: flex;
   justify-content: left;
   align-items: left;
