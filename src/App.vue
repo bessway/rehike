@@ -1,12 +1,20 @@
 <template>
-  <el-row class="container">
+  <el-row class="container" id="root">
     <el-col :span="4" class="side">
       <aside :class="{showSidebar:!collapsed}">
         <el-row type="flex" justify="center">
-          <el-button type="info" size="small" icon="el-icon-menu"></el-button>
+          <el-button type="info" size="small" icon="el-icon-menu"
+          @click="debug"></el-button>
           <el-input v-model="filtertext" placeholder="请输入关键词"></el-input>
         </el-row>
-        <el-tree :data=tests show-checkbox>
+        <el-tree
+        show-checkbox
+        lazy
+        :load="loadChildTests"
+        :props="testTreeProp"
+        :highlight-current=true
+        node-key="testId"
+        @node-click="clickTest">
         </el-tree>
       </aside>
     </el-col>
@@ -23,20 +31,6 @@
     </el-col>
   </el-row>
 </template>
-
-<script>
-export default {
-  // name可以随意定，实际不会使用，仅做为一个标示
-  name: 'home',
-  data () {
-    return {
-      filtertext: '',
-      collapsed: false,
-      tests: [{label: '就是看看这个文本的高度是不是像看上去那么小'}]
-    }
-  }
-}
-</script>
 
 <style scoped lang="scss">
 .container {
@@ -58,9 +52,9 @@ export default {
         border: 1px;
         overflow-x: auto;
         overflow-y: auto;
-        .el-tree-node{
+        .el-tree-node {
           min-width:100%;
-          display: inline-block !important;
+          // display: inline-block !important;
         }
       }
     }
@@ -87,3 +81,56 @@ export default {
   }
 }
 </style>
+
+<script>
+import { mapMutations, mapGetters } from 'vuex'
+export default {
+  // name可以随意定，实际不会使用，仅做为一个标示
+  name: 'home',
+  data () {
+    return {
+      filtertext: '',
+      collapsed: false,
+      testTreeProp: {
+        label: 'testDesc'
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions']),
+    ...mapGetters(['getSelectedTest', 'getActions']),
+
+    async loadChildTests (node, resolve) {
+      if (node.level === 0) {
+        var res = await this.API.getChildTests('000000000000000000000000000000')
+        if (res === undefined || res.length === 0) {
+          resolve([{testDesc: 'demo', testId: '000000000000000000000000000000'}])
+        } else {
+          resolve(res)
+        }
+      } else {
+        resolve(await this.API.getChildTests(node.data.testId))
+      }
+    },
+    debug () {
+      console.log('debug')
+    },
+    async loadActions () {
+      if (this.getActions().length === 0) {
+        this.setActions(await this.API.getActions())
+      }
+    },
+    async loadTestParas (testId) {
+      var res = await this.API.getTestParas(testId)
+      this.setTestParas(res)
+    },
+    async clickTest (data, node) {
+      this.loadActions()
+      this.loadTestParas(data.testId)
+      // this.loadTestDetail(data.testId)
+      var res = await this.API.getTestDetail(data.testId)
+      this.setSelectedTest(res)
+    }
+  }
+}
+</script>

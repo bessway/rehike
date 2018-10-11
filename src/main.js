@@ -3,11 +3,15 @@
 import Vue from 'vue'
 import AppVue from './App'
 import router from './router/routers'
+import store from './store/store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+require('./mock')
+var API = require('./api')
+Vue.prototype.API = API
 
 /* eslint-disable no-new */
 new Vue({
@@ -23,8 +27,8 @@ new Vue({
   // 声明需要使用的组件，是components:{AppVue:AppVue}的缩写
   components: { AppVue },
   // 使用AppVue里的html来替换挂载点的元素div
-  template: '<AppVue/>'
-
+  template: '<AppVue/>',
+  store
   /*
   // 另外一种写法，createElement是render的核心方法，Vue编译的时候会把模版里面的节点解析成虚拟dom；
   // 虚拟dom不同于真正的dom，它是一个JavaScript对象。当状态发生变化的时候虚拟dom会进行一个diff判断/运算；

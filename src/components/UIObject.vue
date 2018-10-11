@@ -6,54 +6,19 @@
         @active-item-change="handleItemChange"
         :props="props"
       ></el-cascader>
-      <el-input placeholder="xpath">
+      <el-input placeholder="xpath" v-model="uiObject.uiObjectPath">
         <el-button slot="append" icon="el-icon-search"></el-button>
       </el-input>
     </div>
     <div class="object">
-      <el-input placeholder="页面"></el-input>
-      <el-input placeholder="类型"></el-input>
-      <el-input placeholder="名称"></el-input><br/>
+      <el-input placeholder="页面" v-model="uiObject.uiObjectPage"></el-input>
+      <el-input placeholder="类型" v-model="uiObject.uiObjectType"></el-input>
+      <el-input placeholder="名称" v-model="uiObject.uiObjectName"></el-input><br/>
       <el-button size="mini">添加</el-button><br/>
     </div>
   </div>
 </template>
-<script>
-export default {
-  data () {
-    return {
-      options2: [{
-        label: '江苏',
-        cities: []
-      }, {
-        label: '浙江',
-        cities: []
-      }],
-      props: {
-        value: 'label',
-        children: 'cities'
-      }
-    }
-  },
 
-  methods: {
-    handleItemChange (val) {
-      console.log('active item:', val)
-      setTimeout(_ => {
-        if (val.indexOf('江苏') > -1 && !this.options2[0].cities.length) {
-          this.options2[0].cities = [{
-            label: '南京'
-          }]
-        } else if (val.indexOf('浙江') > -1 && !this.options2[1].cities.length) {
-          this.options2[1].cities = [{
-            label: '杭州'
-          }]
-        }
-      }, 300)
-    }
-  }
-}
-</script>
 <style lang="scss">
 .object {
   display: flex;
@@ -112,3 +77,46 @@ export default {
   width: 100px;
 }
 </style>
+
+<script>
+import { mapGetters } from 'vuex'
+export default {
+  data () {
+    return {
+      options2: [{
+        label: '江苏',
+        cities: []
+      }, {
+        label: '浙江',
+        cities: []
+      }],
+      props: {
+        value: 'label',
+        children: 'cities'
+      }
+    }
+  },
+  computed: {
+    uiObject: function () {
+      return this.getUIObject()
+    }
+  },
+  methods: {
+    ...mapGetters(['getUIObject']),
+    handleItemChange (val) {
+      console.log('active item:', val)
+      setTimeout(_ => {
+        if (val.indexOf('江苏') > -1 && !this.options2[0].cities.length) {
+          this.options2[0].cities = [{
+            label: '南京'
+          }]
+        } else if (val.indexOf('浙江') > -1 && !this.options2[1].cities.length) {
+          this.options2[1].cities = [{
+            label: '杭州'
+          }]
+        }
+      }, 300)
+    }
+  }
+}
+</script>

@@ -1,20 +1,21 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import CaseDetail from '@/components/CaseDetail'
+import TestDetail from '@/components/TestDetail'
 import Execution from '@/components/Execution'
 import UIstep from '@/components/UIStep.vue'
 import APIstep from '@/components/APIStep.vue'
+import RefStep from '@/components/RefStep.vue'
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
-      component: CaseDetail
+      component: TestDetail
     },
     {
       path: '/case',
-      component: CaseDetail,
+      component: TestDetail,
       children: [
         {
           path: '/uistep',
@@ -23,6 +24,10 @@ export default new Router({
         {
           path: '/apistep',
           component: APIstep
+        },
+        {
+          path: '/refstep',
+          component: RefStep
         }
       ]
     },

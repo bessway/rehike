@@ -8,7 +8,7 @@
     <div class="para">
       <el-input placeholder="P4"></el-input>
       <el-input placeholder="P5"></el-input>
-      <el-input placeholder="P6"></el-input>
+      <el-input placeholder="response"></el-input>
     </div>
   </div>
 </template>
