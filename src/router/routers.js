@@ -18,15 +18,15 @@ export default new Router({
       component: TestDetail,
       children: [
         {
-          path: '/uistep',
+          path: '/case/uistep',
           component: UIstep
         },
         {
-          path: '/apistep',
+          path: '/case/apistep',
           component: APIstep
         },
         {
-          path: '/refstep',
+          path: '/case/refstep',
           component: RefStep
         }
       ]

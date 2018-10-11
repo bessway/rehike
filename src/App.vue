@@ -20,7 +20,7 @@
     </el-col>
     <el-col :span="20" class="main">
       <el-row class="top-nav">
-        <el-menu class="nav-menu" mode="horizontal" router>
+        <el-menu class="nav-menu" mode="horizontal" router :default-active="defaultMenu">
           <el-menu-item index="/case">用例管理</el-menu-item>
           <el-menu-item index="/execution">用例执行</el-menu-item>
         </el-menu>
@@ -89,6 +89,7 @@ export default {
   name: 'home',
   data () {
     return {
+      defaultMenu: this.getActiveMenu(),
       filtertext: '',
       collapsed: false,
       testTreeProp: {
@@ -100,7 +101,16 @@ export default {
     ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions']),
     ...mapGetters(['getSelectedTest', 'getActions']),
 
+    getActiveMenu: function () {
+      console.log(this.$route.path)
+      if (this.$route.path.indexOf('/case') > -1) {
+        return '/case'
+      } else {
+        return '/execution'
+      }
+    },
     async loadChildTests (node, resolve) {
+      console.log('test')
       if (node.level === 0) {
         var res = await this.API.getChildTests('000000000000000000000000000000')
         if (res === undefined || res.length === 0) {

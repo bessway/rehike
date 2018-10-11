@@ -244,12 +244,12 @@ export default {
         }
       }
       if (data.stepType === 1) {
-        this.$router.push({path: '/apistep'})
+        this.$router.push({path: '/case/apistep'})
       } else if (data.stepType === 2) {
         this.uiObject = this.loadUIObject(data.uiObjectId)
-        this.$router.push({path: '/uistep'})
+        this.$router.push({path: '/case/uistep'})
       } else if (data.stepType === 3) {
-        this.$router.push({path: '/refstep'})
+        this.$router.push({path: '/case/refstep'})
       }
       this.setSelectedStep(data)
     }
