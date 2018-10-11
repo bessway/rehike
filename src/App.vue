@@ -48,7 +48,7 @@
       .el-tree {
         height: 95%;
         width: 100%;
-        background-color: rgb(169, 196, 221);
+        background-color: rgb(166, 208, 247);
         border: 1px;
         overflow-x: auto;
         overflow-y: auto;
