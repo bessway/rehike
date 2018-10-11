@@ -1,5 +1,5 @@
 <template>
-  <div class="main-editor">
+  <div>
     <uiobject/>
     <paras/>
     <!--el-button ref='topbutton'>格式化</el-button><br/>
@@ -9,12 +9,7 @@
 </template>
 
 <style lang="scss">
-.main-editor {
-  height: 100%;
-  .el-textarea__inner {
-    min-height: 400px !important;
-  }
-}
+
 </style>
 
 <script>

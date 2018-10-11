@@ -46,9 +46,9 @@
     aside {
       height: 100%;
       .el-tree {
-        height: 96%;
+        height: 95%;
         width: 100%;
-        background-color: rgb(160, 208, 253);
+        background-color: rgb(169, 196, 221);
         border: 1px;
         overflow-x: auto;
         overflow-y: auto;
