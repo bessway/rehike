@@ -1,6 +1,6 @@
 <template>
   <div class="main-editor">
-    <el-button ref='topbutton'>格式化</el-button><br/>
+    <el-button ref='topbutton'>JSON格式化</el-button><br/>
     <el-input type="textarea"/>
   </div>
 </template>
@@ -12,7 +12,7 @@ export default{
 .main-editor {
   height: 100%;
   .el-textarea__inner {
-    min-height: 380px !important;
+    min-height: 350px !important;
   }
 }
 </style>

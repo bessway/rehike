@@ -9,7 +9,10 @@ export {
   getActions,
   getUIObject,
   getAction,
-  getTestParas
+  getTestParas,
+  getUIObjectByXpath,
+  createUIObject,
+  getUIPages
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -72,7 +75,7 @@ axios.interceptors.response.use(
     return Promise.reject(err)
   }
 )
-/*
+
 const postRequest = (path, params) => {
   return axios({
     method: 'post',
@@ -83,6 +86,7 @@ const postRequest = (path, params) => {
     }
   })
 }
+/*
 const uploadFileRequest = (path, params) => {
   return axios({
     method: 'post',
@@ -160,6 +164,30 @@ function getActions () {
   return getRequest('/actions').then(
     function (data) {
       return data.action
+    }
+  )
+}
+
+function getUIObjectByXpath (xpath) {
+  return getRequest('/uiobject/path/' + xpath).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function createUIObject (uiobject) {
+  return postRequest('/uiobject', uiobject).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function getUIPages () {
+  return getRequest('/uipages').then(
+    function (data) {
+      return data
     }
   )
 }

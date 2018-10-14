@@ -2,19 +2,27 @@
   <div class="objects-editor">
     <div class="object">
       <el-cascader
-        :options="options2"
+        :options="uiobjects"
         @active-item-change="handleItemChange"
+        @focus="getUIObjectPages"
         :props="props"
-      ></el-cascader>
-      <el-input placeholder="xpath" v-model="uiObject.uiObjectPath">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        :disabled="!editable">
+      </el-cascader>
+      <el-input placeholder="xpath" v-model="localUIobject.uiObjectPath" :disabled="!editable">
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="searchUIObjectByXpath"
+          :disabled="!editable">
+        </el-button>
       </el-input>
     </div>
     <div class="object">
-      <el-input placeholder="页面" v-model="uiObject.uiObjectPage"></el-input>
-      <el-input placeholder="类型" v-model="uiObject.uiObjectType"></el-input>
-      <el-input placeholder="名称" v-model="uiObject.uiObjectName"></el-input><br/>
-      <el-button size="mini">添加</el-button><br/>
+      <el-input placeholder="页面" v-model="localUIobject.uiObjectPage" :disabled="!editable"></el-input>
+      <el-input placeholder="类型" v-model="localUIobject.uiObjectType" :disabled="!editable"></el-input>
+      <el-input placeholder="名称" v-model="localUIobject.uiObjectName" :disabled="!editable"></el-input><br/>
+      <el-button size="mini" @click="createUIObject" :disabled="!editable">添加</el-button><br/>
+      <el-button size="mini" @click="createUIObject" :disabled="!editable">修改</el-button><br/>
     </div>
   </div>
 </template>
@@ -79,30 +87,40 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex'
+import {Message} from 'element-ui'
 export default {
+  props: ['uiobject', 'editable'],
   data () {
     return {
-      options2: [{
-        label: '江苏',
-        cities: []
-      }, {
-        label: '浙江',
-        cities: []
-      }],
+      uiobjects: [],
+      localUIobject: this.uiobject,
       props: {
         value: 'label',
         children: 'cities'
       }
     }
   },
-  computed: {
-    uiObject: function () {
-      return this.getUIObject()
-    }
-  },
   methods: {
-    ...mapGetters(['getUIObject']),
+    async searchUIObjectByXpath () {
+      this.localUIobject = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
+    },
+    async createUIObject () {
+      if (this.uiobject.uiObjectPage === '' ||
+      this.uiobjectuiObjectType === '' ||
+      this.uiobject.uiObjectName === '' ||
+      this.uiobject.uiObjectPath === '') {
+        Message.error({message: 'page type name xpath不能为空!'})
+      } else {
+        var strUIObj = JSON.stringify(this.uiobject)
+        var newUIObj = JSON.parse(strUIObj)
+        delete newUIObj.uiObjectId
+        this.uiobject = await this.API.createUIObject(newUIObj)
+      }
+    },
+    async getUIObjectPages () {
+      console.log('afsag')
+      this.uiobjects = await this.API.getUIPages()
+    },
     handleItemChange (val) {
       console.log('active item:', val)
       setTimeout(_ => {

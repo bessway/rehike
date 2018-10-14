@@ -4,17 +4,18 @@
       <aside :class="{showSidebar:!collapsed}">
         <el-row type="flex" justify="center">
           <el-button type="info" size="small" icon="el-icon-menu"
-          @click="debug"></el-button>
+            @click="debug">
+          </el-button>
           <el-input v-model="filtertext" placeholder="请输入关键词"></el-input>
         </el-row>
         <el-tree
-        show-checkbox
-        lazy
-        :load="loadChildTests"
-        :props="testTreeProp"
-        :highlight-current=true
-        node-key="testId"
-        @node-click="clickTest">
+          show-checkbox
+          lazy
+          :load="loadChildTests"
+          :props="testTreeProp"
+          :highlight-current=true
+          node-key="testId"
+          @node-click="clickTest">
         </el-tree>
       </aside>
     </el-col>
@@ -39,7 +40,7 @@
   bottom: 0px; /*距离容器下边缘40,仅absolute有效*/
   left: 0px;
   right: 0px;
-  overflow: hidden;
+  overflow-y: hidden;
 
   .side {
     height: 100%;
@@ -50,12 +51,7 @@
         width: 100%;
         background-color: rgb(166, 208, 247);
         border: 1px;
-        overflow-x: auto;
-        overflow-y: auto;
-        .el-tree-node {
-          min-width:100%;
-          // display: inline-block !important;
-        }
+        overflow: auto;
       }
     }
     .el-button {
@@ -97,20 +93,21 @@ export default {
       }
     }
   },
+  mounted: function () {
+    this.$router.push('/')
+  },
   methods: {
     ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions']),
     ...mapGetters(['getSelectedTest', 'getActions']),
 
     getActiveMenu: function () {
-      console.log(this.$route.path)
-      if (this.$route.path.indexOf('/case') > -1) {
+      if (this.$route.path.indexOf('/case') >= 0) {
         return '/case'
       } else {
         return '/execution'
       }
     },
     async loadChildTests (node, resolve) {
-      console.log('test')
       if (node.level === 0) {
         var res = await this.API.getChildTests('000000000000000000000000000000')
         if (res === undefined || res.length === 0) {
@@ -122,9 +119,6 @@ export default {
         resolve(await this.API.getChildTests(node.data.testId))
       }
     },
-    debug () {
-      console.log('debug')
-    },
     async loadActions () {
       if (this.getActions().length === 0) {
         this.setActions(await this.API.getActions())
@@ -135,11 +129,18 @@ export default {
       this.setTestParas(res)
     },
     async clickTest (data, node) {
-      this.loadActions()
-      this.loadTestParas(data.testId)
-      // this.loadTestDetail(data.testId)
       var res = await this.API.getTestDetail(data.testId)
       this.setSelectedTest(res)
+      this.loadActions()
+      this.loadTestParas(data.testId)
+      this.$router.push('/')
+      // 这里是把node.data和selectedTest关联，
+      // 从而使node.label(node.data)和testDesc(selectedTest)是同一个数据源
+      node.data = this.getSelectedTest()
+      console.log(this.getSelectedTest())
+    },
+    debug () {
+      console.log(this.getSelectedTest())
     }
   }
 }
