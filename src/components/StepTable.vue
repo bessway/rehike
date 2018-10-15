@@ -174,7 +174,7 @@ export default {
       console.log(this.refTest)
     },
     debug () {
-      console.log(this.$store)
+      console.log('click')
     }
   }
 }

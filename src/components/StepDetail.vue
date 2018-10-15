@@ -19,7 +19,7 @@
       :paras="paras"
       :editable="editable">
     </paras>
-    <maineditor v-if="step.isRefStep !== 1 && editable"/>
+    <maineditor v-if="step.isRefStep !== 1"/>
     <steptable
       v-if="step.isRefStep === 1"
       :selectedTest="refTest"

@@ -12,7 +12,8 @@ export {
   getTestParas,
   getUIObjectByXpath,
   createUIObject,
-  getUIPages
+  getUIPages,
+  getUIObjectsByPage
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -187,7 +188,15 @@ function createUIObject (uiobject) {
 function getUIPages () {
   return getRequest('/uipages').then(
     function (data) {
-      return data
+      return data.page
+    }
+  )
+}
+
+function getUIObjectsByPage (page) {
+  return getRequest('/uiobjects/page/' + page).then(
+    function (data) {
+      return data.uiobject
     }
   )
 }

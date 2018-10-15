@@ -2,10 +2,9 @@
   <div class="objects-editor">
     <div class="object">
       <el-cascader
-        :options="uiobjects"
+        :options="getUIObjPages()"
         @active-item-change="handleItemChange"
-        @focus="getUIObjectPages"
-        :props="props"
+        :props="searchProps"
         :disabled="!editable">
       </el-cascader>
       <el-input placeholder="xpath" v-model="localUIobject.uiObjectPath" :disabled="!editable">
@@ -87,26 +86,33 @@
 </style>
 
 <script>
+import {mapGetters} from 'vuex'
 import {Message} from 'element-ui'
 export default {
   props: ['uiobject', 'editable'],
   data () {
     return {
-      uiobjects: [],
       localUIobject: this.uiobject,
-      props: {
+      searchProps: {
         value: 'label',
-        children: 'cities'
+        children: 'objects'
       }
     }
   },
+  watch: {
+    uiobject: function () {
+      this.localUIobject = this.uiobject
+    }
+  },
   methods: {
+    ...mapGetters(['getUIObjPages']),
     async searchUIObjectByXpath () {
+      // 不能直接修改props
       this.localUIobject = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
     },
     async createUIObject () {
       if (this.uiobject.uiObjectPage === '' ||
-      this.uiobjectuiObjectType === '' ||
+      this.uiobject.uiObjectType === '' ||
       this.uiobject.uiObjectName === '' ||
       this.uiobject.uiObjectPath === '') {
         Message.error({message: 'page type name xpath不能为空!'})
@@ -117,19 +123,20 @@ export default {
         this.uiobject = await this.API.createUIObject(newUIObj)
       }
     },
-    async getUIObjectPages () {
-      console.log('afsag')
-      this.uiobjects = await this.API.getUIPages()
-    },
     handleItemChange (val) {
-      console.log('active item:', val)
+      if (!this.getUIObjPages().length) {
+        this.API.getUIObjectsByPage(val[0])
+      }
       setTimeout(_ => {
-        if (val.indexOf('江苏') > -1 && !this.options2[0].cities.length) {
-          this.options2[0].cities = [{
+        console.log('active item:', val[0])
+        console.log(this.getUIObjPages()[0])
+        if (val[0].indexOf('a') > -1 && !this.getUIObjPages()[0].objects.length) {
+          this.getUIObjPages()[0].objects = [{
             label: '南京'
           }]
-        } else if (val.indexOf('浙江') > -1 && !this.options2[1].cities.length) {
-          this.options2[1].cities = [{
+          console.log(this.getUIObjPages())
+        } else if (val.indexOf('浙江') > -1 && !this.options2[1].objects.length) {
+          this.options2[1].objects = [{
             label: '杭州'
           }]
         }

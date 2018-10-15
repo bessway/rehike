@@ -97,8 +97,8 @@ export default {
     this.$router.push('/')
   },
   methods: {
-    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions']),
-    ...mapGetters(['getSelectedTest', 'getActions']),
+    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages']),
+    ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages']),
 
     getActiveMenu: function () {
       if (this.$route.path.indexOf('/case') >= 0) {
@@ -134,10 +134,18 @@ export default {
       this.loadActions()
       this.loadTestParas(data.testId)
       this.$router.push('/')
+      this.loadUIObjectPages()
       // 这里是把node.data和selectedTest关联，
       // 从而使node.label(node.data)和testDesc(selectedTest)是同一个数据源
       node.data = this.getSelectedTest()
       console.log(this.getSelectedTest())
+    },
+    async loadUIObjectPages () {
+      if (!this.getUIObjPages().length) {
+        var pages = await this.API.getUIPages()
+        this.setUIObjectPages(pages)
+      }
+      console.log(this.getUIObjPages())
     },
     debug () {
       console.log(this.getSelectedTest())
