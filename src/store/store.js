@@ -8,7 +8,8 @@ export default new Vuex.Store({
     checkedTests: [],
     testParas: [],
     actions: [],
-    uiobjectPages: []
+    uiobjectPages: [],
+    activeEditor: {}
   },
   getters: {
     getSelectedTest: state => {
@@ -22,6 +23,9 @@ export default new Vuex.Store({
     },
     getUIObjPages: state => {
       return state.uiobjectPages
+    },
+    getActiveEditor: state => {
+      return state.activeEditor
     }
   },
   mutations: {
@@ -37,6 +41,9 @@ export default new Vuex.Store({
     },
     setUIObjectPages (state, pages) {
       state.uiobjectPages = pages
+    },
+    setActiveEditor (state, editor) {
+      state.activeEditor = editor
     }
   }
 })

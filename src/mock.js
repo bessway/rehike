@@ -70,8 +70,7 @@ const uiobjects = {
 
 const uiPages = {
   'page|0-100': [{
-    label: '@name(20)',
-    objects: []
+    label: '@name(20)'
   }]
 }
 

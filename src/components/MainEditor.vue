@@ -1,13 +1,10 @@
 <template>
   <div class="main-editor">
     <el-button ref='topbutton'>JSON格式化</el-button><br/>
-    <el-input type="textarea"/>
+    <el-input type="textarea" v-model="content.value"/>
   </div>
 </template>
-<script>
-export default{
-}
-</script>
+
 <style lang="scss">
 .main-editor {
   height: 100%;
@@ -16,3 +13,18 @@ export default{
   }
 }
 </style>
+
+<script>
+import { mapMutations, mapGetters } from 'vuex'
+export default {
+  data () {
+    return {
+      content: this.getActiveEditor()
+    }
+  },
+  methods: {
+    ...mapMutations(['setActiveEditor']),
+    ...mapGetters(['getActiveEditor'])
+  }
+}
+</script>

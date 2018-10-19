@@ -15,7 +15,8 @@
       style="height: 85%; overflow-y: auto"
       @expand-change="showStepDetail"
       row-key="id"
-      :expand-row-keys="onlyExpanded">
+      :expand-row-keys="onlyExpanded"
+      ref="stepstable">
       <el-table-column
         type="index"
         width="25">
@@ -97,7 +98,7 @@ export default {
     }
   },
   methods: {
-    ...mapGetters(['getActions', 'getTestParas']),
+    ...mapGetters(['getActions', 'getTestParas', 'getSelectedTest']),
     hideBbutton () {
       if (this.editable) {
         return 'display:none'
@@ -174,7 +175,9 @@ export default {
       console.log(this.refTest)
     },
     debug () {
-      console.log('click')
+      console.log(this.getSelectedTest())
+      console.log(this.$refs.stepstable.bodyWrapper.scrollTop)
+      this.$refs.stepstable.bodyWrapper.scrollTop = 300
     }
   }
 }
