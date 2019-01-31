@@ -7,7 +7,7 @@
       <el-button>添加</el-button>
       <el-button>删除</el-button>
       <el-button>引用</el-button>
-      <el-button @click="debug">保存</el-button>
+      <el-button @click="debug">保存用例&参数</el-button>
     </el-row>
     <el-table
       :show-header=false
@@ -178,6 +178,7 @@ export default {
       console.log(this.getSelectedTest())
       console.log(this.$refs.stepstable.bodyWrapper.scrollTop)
       this.$refs.stepstable.bodyWrapper.scrollTop = 300
+      console.log(this.selectedStep.refParas)
     }
   }
 }

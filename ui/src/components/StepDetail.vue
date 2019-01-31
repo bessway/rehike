@@ -19,7 +19,22 @@
       :paras="paras"
       :editable="editable">
     </paras>
-    <maineditor v-if="step.isRefStep !== 1"/>
+    <div class="para" v-if="step.isRefStep === 1 && index % 2 == 0" :key="index" v-for="(item, index) in step.refParas">
+      <label>{{step.refParas[index].name+":"}}</label>
+      <el-input v-model="step.refParas[index].value" :disabled="!editable"/>
+      <label v-if="index+1 < step.refParas.length">{{step.refParas[index+1].name+":"}}</label>
+      <el-input v-if="index+1 < step.refParas.length" v-model="step.refParas[index+1].value" :disabled="!editable"/>
+    </div>
+    <div class="para" v-if="editable">
+      <el-input placeholder="已上传的文件地址" readonly></el-input>
+      <el-upload
+        class="upload"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :limit="1">
+        <el-button size="small" type="primary">上传</el-button>
+      </el-upload>
+    </div>
+    <maineditor v-if="step.isRefStep !== 1 && editable"/>
     <steptable
       v-if="step.isRefStep === 1"
       :selectedTest="refTest"

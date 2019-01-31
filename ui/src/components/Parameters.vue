@@ -6,37 +6,41 @@
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p1.paraName">
+        v-model="localParas.p1.paraName"
+        @focus="clickPara">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数2"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p2.paraName">
+        v-model="localParas.p2.paraName"
+        @focus="clickPara">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数3"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p3.paraName">
+        v-model="localParas.p3.paraName"
+        @focus="clickPara">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数4"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p4.paraName">
+        v-model="localParas.p4.paraName"
+        @focus="clickPara">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数5"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p5.paraName">
+        v-model="localParas.p5.paraName"
+        @focus="clickPara">
       </el-autocomplete>
-      <el-button size="small" @click="debug">Debug</el-button>
     </div>
     <div class="para" v-if="editable">
       <el-autocomplete
@@ -47,49 +51,35 @@
         v-model="localParas.response.paraName"
         @focus="clickPara">
       </el-autocomplete>
-      <el-input placeholder="已上传的文件地址" readonly></el-input>
-      <el-upload
-        class="upload"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :limit="1">
-        <el-button size="small" type="primary">上传</el-button>
-      </el-upload>
-    </div>
-    <div class="para" v-if="!editable">
-      <el-input
-        v-model="localParas.p1.paraName" readonly
-        @focus="clickPara">
-      </el-input>
-      <el-input
-        v-model="localParas.p2.paraName" readonly
-        @focus="clickPara">
-      </el-input>
-      <el-input
-        v-model="localParas.p3.paraName" readonly
-        @focus="clickPara">
-      </el-input>
-      <el-input
-        v-model="localParas.p4.paraName" readonly
-        @focus="clickPara">
-      </el-input>
-      <el-input
-        v-model="localParas.p5.paraName" readonly
-        @focus="clickPara">
-      </el-input>
       <el-button size="small" @click="debug">Debug</el-button>
     </div>
     <div class="para" v-if="!editable">
       <el-input
-        v-model="localParas.response.paraName" readonly
+        v-model="localParas.p1.paraName" :disabled=!editable
         @focus="clickPara">
       </el-input>
-      <el-input placeholder="已上传的文件地址" readonly></el-input>
-      <el-upload
-        class="upload"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :limit="1">
-        <el-button size="small" type="primary">上传</el-button>
-      </el-upload>
+      <el-input
+        v-model="localParas.p2.paraName" :disabled=!editable
+        @focus="clickPara">
+      </el-input>
+      <el-input
+        v-model="localParas.p3.paraName" :disabled=!editable
+        @focus="clickPara">
+      </el-input>
+      <el-input
+        v-model="localParas.p4.paraName" :disabled=!editable
+        @focus="clickPara">
+      </el-input>
+      <el-input
+        v-model="localParas.p5.paraName" :disabled=!editable
+        @focus="clickPara">
+      </el-input>
+    </div>
+    <div class="para" v-if="!editable">
+      <el-input
+        v-model="localParas.response.paraName" :disabled=!editable>
+      </el-input>
+      <el-button size="small" @click="debug">Debug</el-button>
     </div>
   </div>
 </template>
@@ -102,13 +92,21 @@
   .el-input {
     font-size: 12px;
     min-width: 150px;
+    padding-left: 5px;
     .el-input__inner {
       height: 28px;
       margin-top: 0px;
       padding: 0px;
       font-size: 12px;
     }
-}
+  }
+  label {
+    font-size: 12px;
+    height: 30px;
+    margin-top: 5px;
+    margin-left: 10px;
+    font-weight: bold;
+  }
 }
 .stepparas {
   margin-top: 3px;
@@ -143,7 +141,7 @@ export default {
       }
     },
     clickPara () {
-      console.log('test')
+
     },
     debug () {
       console.log(this.editable)

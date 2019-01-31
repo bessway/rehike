@@ -131,7 +131,7 @@ function getChildTests (parentId) {
 }
 
 function getTestDetail (testId) {
-  return getRequest('/test/' + testId).then(
+  return getRequest('/tests/detail/' + testId).then(
     function (data) {
       return data
     }
@@ -146,7 +146,7 @@ function getTestParas (testId) {
 }
 
 function getUIObject (uiObjectId) {
-  return getRequest('/uiobject/' + uiObjectId).then(
+  return getRequest('/uiobjects/' + uiObjectId).then(
     function (data) {
       return data
     }
@@ -154,7 +154,7 @@ function getUIObject (uiObjectId) {
 }
 
 function getAction (actionId) {
-  return getRequest('/action/' + actionId).then(
+  return getRequest('/actions/' + actionId).then(
     function (data) {
       return data
     }
@@ -170,7 +170,7 @@ function getActions () {
 }
 
 function getUIObjectByXpath (xpath) {
-  return getRequest('/uiobject/path/' + xpath).then(
+  return getRequest('/uiobjects/path/' + xpath).then(
     function (data) {
       return data
     }
@@ -178,7 +178,7 @@ function getUIObjectByXpath (xpath) {
 }
 
 function createUIObject (uiobject) {
-  return postRequest('/uiobject', uiobject).then(
+  return postRequest('/uiobjects', uiobject).then(
     function (data) {
       return data
     }

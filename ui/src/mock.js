@@ -27,8 +27,33 @@ const testDetail = {
     stepDesc: '@csentence(0, 50)',
     uiObjectId: '@string(30)',
     refTestId: '@string(30)',
-    'isRefStep|0': 100,
+    'isRefStep|0-1': 100,
     'stepParaIds|0-5': ['@string(30)'],
+    refParas: [{
+      id: 'id1',
+      value: 'value1',
+      name: 'name1'
+    },
+    {
+      id: 'id2',
+      value: 'value2',
+      name: 'name2'
+    },
+    {
+      id: 'id3',
+      value: 'value3',
+      name: 'name3'
+    },
+    {
+      id: 'id4',
+      value: 'value4',
+      name: 'name4'
+    },
+    {
+      id: 'id5',
+      value: 'value5',
+      name: 'name5'
+    }],
     resParaId: '@string(30)'
   }],
   status: 'success'
@@ -87,12 +112,12 @@ Mock.setup({
 })
 
 Mock.mock(process.env.API_BASE + '/api/v2' + '/error', 'get', error)
-Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/test/' + '[\\s\\S]{30}'), 'get', testDetail)
+Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/tests/detail/' + '[\\s\\S]{30}'), 'get', testDetail)
 Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/tests/' + '[\\s\\S]{30}'), 'get', tests)
 Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/testparas/' + '[\\s\\S]{30}'), 'get', testParas)
 Mock.mock(process.env.API_BASE + '/api/v2' + '/actions', 'get', actions)
-Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/uiobject/' + '[\\s\\S]{30}'), 'get', uiobject)
+Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/uiobjects/' + '[\\s\\S]{30}'), 'get', uiobject)
 Mock.mock(process.env.API_BASE + '/api/v2' + '/uipages', 'get', uiPages)
-Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/uiobject/path/' + '[\\s\\S]{30}'), 'get', uiobject)
-Mock.mock(process.env.API_BASE + '/api/v2' + '/uiobject', 'post', uiobject)
+Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/uiobjects/path/' + '[\\s\\S]{30}'), 'get', uiobject)
+Mock.mock(process.env.API_BASE + '/api/v2' + '/uiobjects', 'post', uiobject)
 Mock.mock(RegExp(process.env.API_BASE + '/api/v2' + '/uiobjects/page/' + '[\\s\\S]*'), 'get', uiobjects)

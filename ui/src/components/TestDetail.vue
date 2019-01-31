@@ -3,7 +3,7 @@
     <div class='test-desc'>
       <label>用例描述:</label>
       <el-input v-model="getSelectedTest().testDesc" ></el-input>
-      <el-button size="mini" @click="debug">保存</el-button>
+      <el-button size="mini" @click="debug">debug</el-button>
       <el-button size="mini">刷新</el-button>
       <el-button size="mini">新建</el-button>
       <el-button size="mini">复制</el-button>
@@ -17,6 +17,7 @@
         <el-row>
           <el-button>添加</el-button>
           <el-button>删除</el-button>
+          <el-button>设置为入参</el-button>
         </el-row>
         <el-table
           :show-header=false
