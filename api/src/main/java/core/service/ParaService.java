@@ -1,10 +1,8 @@
 package core.service;
 
 import java.util.List;
-import java.util.Map;
 
 import core.pojo.Para;
-import core.pojo.Test;
 
 
 public interface ParaService{

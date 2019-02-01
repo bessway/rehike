@@ -19,11 +19,29 @@
       :paras="paras"
       :editable="editable">
     </paras>
-    <div class="para" v-if="step.isRefStep === 1 && index % 2 == 0" :key="index" v-for="(item, index) in step.refParas">
-      <label>{{step.refParas[index].name+":"}}</label>
-      <el-input v-model="step.refParas[index].value" :disabled="!editable"/>
-      <label v-if="index+1 < step.refParas.length">{{step.refParas[index+1].name+":"}}</label>
-      <el-input v-if="index+1 < step.refParas.length" v-model="step.refParas[index+1].value" :disabled="!editable"/>
+    <div v-if="step.isRefStep === 1">
+      <div class="para" :key="index" v-for="(item, index) in step.refParas">
+        <label v-if="index % 2 === 0">{{step.refParas[index].name+":"}}</label>
+        <!--el-input v-if="index % 2 === 0" v-model="step.refParas[index].value" :disabled="!editable"/-->
+        <el-autocomplete
+          :disabled="!editable"
+          v-if="index % 2 === 0"
+          value-key='paraName'
+          :fetch-suggestions="paraSearch"
+          :trigger-on-focus="false"
+          v-model="step.refParas[index].value">
+        </el-autocomplete>
+        <label v-if="index+1 < step.refParas.length && index % 2 === 0">{{step.refParas[index+1].name+":"}}</label>
+        <!--el-input v-if="index+1 < step.refParas.length && index % 2 === 0" v-model="step.refParas[index+1].value" :disabled="!editable"/-->
+        <el-autocomplete
+          :disabled="!editable"
+          v-if="index+1 < step.refParas.length && index % 2 === 0"
+          value-key='paraName'
+          :fetch-suggestions="paraSearch"
+          :trigger-on-focus="false"
+          v-model="step.refParas[index+1].value">
+        </el-autocomplete>
+      </div>
     </div>
     <div class="para" v-if="editable">
       <el-input placeholder="已上传的文件地址" readonly></el-input>
@@ -92,10 +110,25 @@ import uiobject from './UIObject.vue'
 import paras from './Parameters.vue'
 import maineditor from './MainEditor.vue'
 import steptable from './StepTable.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'stepdetail',
   components: {uiobject, paras, maineditor, steptable},
-  props: ['action', 'uiobject', 'step', 'paras', 'refTest', 'editable']
+  props: ['action', 'uiobject', 'step', 'paras', 'refTest', 'editable'],
+  methods: {
+    ...mapGetters(['getTestParas']),
+
+    paraSearch (queryString, callback) {
+      var results = queryString ? this.getTestParas().filter(this.createFilter(queryString)) : this.getTestParas()
+      // 调用 callback 返回建议列表的数据
+      callback(results)
+    },
+    createFilter (queryString) {
+      return (para) => {
+        return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
+      }
+    }
+  }
 }
 </script>
