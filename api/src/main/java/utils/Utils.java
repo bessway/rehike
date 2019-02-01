@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class Utils{
@@ -27,8 +28,6 @@ public class Utils{
     public final static String execPass="exec pass";
     public final static String execFail="exec fail";
     public final static String execException="exec stopped";
-    public final static String gParaSymbol="%%";
-    public final static String sParaSymbol="@@";
 
     public static void addToObjectMap(String key, String value){
         if(objectsMap==null){
@@ -43,5 +42,16 @@ public class Utils{
         Properties result= new Properties();
         result.load(io);
         return result;
+    }
+    public static String escapeExprSpecialWord(String keyword) {
+        if (StringUtils.isNotBlank(keyword)) {
+            String[] fbsArr = { "\\", "$", "(", ")", "*", "+", ".", "[", "]", "?", "^", "{", "}", "|" };
+            for (String key : fbsArr) {
+                if (keyword.contains(key)) {
+                    keyword = keyword.replace(key, "\\" + key);
+                }
+            }
+        }
+        return keyword;
     }
 }

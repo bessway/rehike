@@ -1,23 +1,24 @@
 package core.pojo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StepDetail{
-    private Integer id = null;
+    private Integer index = null;
     private Action action = null;
     private String stepDesc = null;
-    private UiObject uiObject = null;
+    private Uiobject uiObject = null;
     private String refTestId = null;
     private List<Para> stepParas = null;
     private Para resPara = null;
     /*0:ui, 1:api, 2:ref*/
     private Integer stepType = null;
 
-    public void setId(Integer id){
-        this.id=id;
+    public void setIndex(Integer index){
+        this.index=index;
     }
-    public Integer getId(){
-        return this.id;
+    public Integer getIndex(){
+        return this.index;
     }
 
     public void setAction(Action action){
@@ -34,10 +35,10 @@ public class StepDetail{
         return this.stepDesc;
     }
 
-    public void setUiObject(UiObject uiObject){
+    public void setUiObject(Uiobject uiObject){
         this.uiObject=uiObject;
     }
-    public UiObject getUiObject(){
+    public Uiobject getUiobject(){
         return this.uiObject;
     }
 
@@ -67,5 +68,20 @@ public class StepDetail{
     }
     public Integer getStepType(){
         return this.stepType;
+    }
+    public StepDetail(Step step){
+        this.index=step.getIndex();
+        this.action=new Action(step.getActionId());
+        this.stepDesc=step.getStepDesc();
+        this.uiObject=new Uiobject(step.getUiObjectId());
+        this.refTestId=step.getRefTestId();
+        this.resPara=new Para(step.getResParaId(),step.getIndex(), step.getRefTestId());
+        if(step.getParas()!=null & step.getParas().size()!=0){
+            stepParas = new ArrayList<Para>();
+            for(Long item:step.getParas()){
+                Para p=new Para(item, step.getIndex(), step.getRefTestId());
+                stepParas.add(p);
+            }
+        }
     }
 }

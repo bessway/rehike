@@ -1,7 +1,6 @@
 package core.pojo;
 
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection="parameters")
 public class Para{
@@ -60,5 +59,13 @@ public class Para{
     }
     public Integer getStepId(){
         return this.stepId;
+    }
+    public Para(Long paraId, Integer stepId, String refTestId){
+        this.paraId=paraId;
+        /*只有引用的步骤需要记录stepId*/
+        if(refTestId!=null && !"".equals(refTestId)){
+            this.stepId=stepId;
+            this.refTestId=refTestId;
+        }
     }
 }

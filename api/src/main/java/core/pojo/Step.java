@@ -8,8 +8,8 @@ public class Step{
     private String stepDesc = null;
     private String uiObjectId = null;
     private String refTestId = null;
-    private List<String> paras = null;
-    private String resParaId = null;
+    private List<Long> paras = null;
+    private Long resParaId = null;
     /*0:ui, 1:api, 2:ref*/
     private Integer stepType = null;
 
@@ -48,17 +48,17 @@ public class Step{
         return this.refTestId;
     }
 
-    public void setParas(List<String> paras){
+    public void setParas(List<Long> paras){
         this.paras=paras;
     }
-    public List<String> getParas(){
+    public List<Long> getParas(){
         return this.paras;
     }
 
-    public void setResParaId(String resParaId){
+    public void setResParaId(Long resParaId){
         this.resParaId=resParaId;
     }
-    public String getResParaId(){
+    public Long getResParaId(){
         return this.resParaId;
     }
 

@@ -52,10 +52,6 @@ public class LogAspect{
         this.logger.debug(request.getMethod() + " " + request.getRequestURI().toString());
         this.logger.debug(Arrays.toString(point.getArgs()));
     }
-    @AfterReturning(returning="ret", pointcut="controller()")
-    public void doAfterController(Object ret){
-        this.logger.debug(String.valueOf(ret));
-    }
 
     @Pointcut("execution(public * core.dao..*.*(..))")
     public void dao(){}

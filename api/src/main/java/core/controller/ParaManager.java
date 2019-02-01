@@ -22,23 +22,26 @@ public class ParaManager{
 
     @RequestMapping(value="/para",method=RequestMethod.POST)
     public String createTestPara(HttpServletResponse res, @RequestBody Para newPara){
-        return gson.toJson(paraService.createTestPara(newPara));
+        String ret = gson.toJson(paraService.createTestPara(newPara));
+        return ret;
     }
 
     @RequestMapping(value="/{srcTestId}/formalpara/{tarTestId}/step/{stepId}",method=RequestMethod.POST)
     public String addRefParasToStep(HttpServletResponse res, @PathVariable String srcTestId, @PathVariable String tarTestId, @PathVariable Integer stepId){
-        return gson.toJson(paraService.copyRefParasToStep(srcTestId, tarTestId, stepId));
+        String ret = gson.toJson(paraService.copyRefParasToStep(srcTestId, tarTestId, stepId));
+        return ret;
     }
 
     @RequestMapping(value="/formalparas",method=RequestMethod.PUT)
     public String setFormalParas(HttpServletResponse res, @RequestBody List<Para> paras){
         paraService.setParasFormal(paras);
-        return "true";
+        return "pass";
     }
 
     @RequestMapping(value="/values",method=RequestMethod.PUT)
     public String setParasValue(HttpServletResponse res, @RequestBody List<Para> paras){
         paraService.setParasValue(paras);
-        return "true";
+        String ret = "true";
+        return ret;
     }
 }

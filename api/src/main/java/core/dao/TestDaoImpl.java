@@ -1,7 +1,7 @@
 package core.dao;
 
 import java.util.List;
-
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -43,5 +43,14 @@ public class TestDaoImpl implements TestDao{
         Update update = Update.update("testDesc", t.getTestDesc());
         update.set("steps", t.getSteps());
         mongoTemplate.findAndModify(query, update, Test.class);
+    }
+    public Test getTestById(String testId){
+        Query query = Query.query(Criteria.where("_id").is(testId));
+        return mongoTemplate.findOne(query, Test.class);
+    }
+    public List<Test> searchPublicTest(String key){
+        Pattern pattern = Pattern.compile("[\\s\\S]*" + key + "[\\s\\S]*");
+        Query query = Query.query(Criteria.where("isRefered").is(1).and("testDesc").regex(pattern));
+        return mongoTemplate.find(query, Test.class);
     }
 }

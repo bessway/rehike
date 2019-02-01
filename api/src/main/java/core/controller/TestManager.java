@@ -6,9 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-import core.pojo.Step;
 import core.pojo.Test;
-import core.pojo.TestDetail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,18 +27,32 @@ public class TestManager {
 
     @RequestMapping(value="/{parentId}",method=RequestMethod.GET)
     public String getTestsByParentId(HttpServletResponse res, @PathVariable String parentId){
-        List<Test> ret=testService.getTestsByParentId(parentId);
-        return this.gson.toJson(ret);
+        String ret = this.gson.toJson(testService.getTestsByParentId(parentId));
+        return ret;
     }
 
     @RequestMapping(value="/test",method=RequestMethod.POST)
     public String addNewTest(HttpServletResponse res, @RequestBody Test newTest){
-        return gson.toJson(testService.createTest(newTest));
+        String ret = gson.toJson(testService.createTest(newTest));
+        return ret;
     }
 
     @RequestMapping(value="/testdetail",method=RequestMethod.PUT)
     public String saveTestDetail(HttpServletResponse res, @RequestBody Test test){
         testService.saveTest(test);
-        return "true";
+        String ret = "true";
+        return ret;
+    }
+
+    @RequestMapping(value="/public",method=RequestMethod.POST)
+    public String searchPublicTest(HttpServletResponse res, @RequestBody String key){
+        String ret = gson.toJson(testService.searchPublicTest(key));
+        return ret;
+    }
+    /*暂不实现*/
+    @RequestMapping(value="/testdetail/{testId}")
+    public String getTestDetail(HttpServletResponse res, @PathVariable String testId){
+
+        return null;
     }
 }

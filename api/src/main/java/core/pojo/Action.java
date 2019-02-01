@@ -2,10 +2,15 @@ package core.pojo;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+@Document(collection="actions")
 public class Action{
+    @Field("_id")
     private String actionId = null;
     private String actionName = null;
-    private Integer hasUiObj = null;
+    private Integer hasUIObject = null;
     private Integer hasResponse = null;
     private List<ActionPara> actionParas = null;
 
@@ -23,11 +28,11 @@ public class Action{
         return this.actionName;
     }
 
-    public void setHasUiObj(Integer hasUiObj){
-        this.hasUiObj=hasUiObj;
+    public void setHasUIObject(Integer hasUIObject){
+        this.hasUIObject=hasUIObject;
     }
-    public Integer getHasUiObj(){
-        return this.hasUiObj;
+    public Integer getHasUIObject(){
+        return this.hasUIObject;
     }
 
     public void setHasResponse(Integer hasResponse){
@@ -42,5 +47,8 @@ public class Action{
     }
     public List<ActionPara> getActionParas(){
         return this.actionParas;
+    }
+    public Action(String actionId){
+        this.actionId=actionId;
     }
 }

@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 
 import core.dao.TestDao;
 import core.pojo.Para;
+import core.pojo.StepDetail;
 import core.pojo.Test;
-
+import core.pojo.TestDetail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +51,12 @@ public class TestServiceImpl implements TestService {
     }
     public void saveTest(Test test){
         testDao.updateTest(test);
+    }
+    public List<Test> searchPublicTest(String key){
+        return testDao.searchPublicTest(Utils.escapeExprSpecialWord(key));
+    }
+    public TestDetail getCaseDetail(String testId){
+        return null;
     }
     private Long calTestId(String objectId){
         String idString=objectId.substring(objectId.length()-6);

@@ -1,19 +1,20 @@
 package core.pojo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestDetail{
-    private Long id = null;
+    private Long index = null;
     private String testId = null;
     private String testDesc = null;
     private String parentId = null;
     private List<StepDetail> steps = null;
 
-    public void setId(Long id){
-        this.id=id;
+    public void setIndex(Long index){
+        this.index=index;
     }
-    public Long getId(){
-        return this.id;
+    public Long getIndex(){
+        return this.index;
     }
 
     public void setTestId(String testId){
@@ -42,5 +43,18 @@ public class TestDetail{
     }
     public List<StepDetail> getSteps(){
         return this.steps;
+    }
+
+    public TestDetail(Test test){
+        this.testId=test.getTestId();
+        this.index=test.getIndex();
+        this.parentId=test.getParentId();
+        this.testDesc=test.getTestDesc();
+        if(test.getSteps()==null || test.getSteps().size()==0){
+            steps=new ArrayList<StepDetail>();
+            for(Step item:test.getSteps()){
+                steps.add(new StepDetail(item));
+            }
+        }
     }
 }
