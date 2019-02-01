@@ -17,9 +17,12 @@ public class UiobjectDaoImpl implements UiobjectDao{
     @Autowired
     MongoTemplate mongoTemplate = null;
 
-    public Uiobject createUiobject(Uiobject newObj){
+    public void createUiobject(Uiobject newObj){
         mongoTemplate.insert(newObj);
-        Query query = Query.query(Criteria.where("uiObjectPage").is(newObj.getUiObjectPage()).and("uiObjectType").is(newObj.getUiObjectType()).and("uiObjectName").is(newObj.getUiObjectName()));
+        
+    }
+    public Uiobject findObjByName(String page,String type,String name){
+        Query query = Query.query(Criteria.where("uiObjectPage").is(page).and("uiObjectType").is(type).and("uiObjectName").is(name));
         return mongoTemplate.findOne(query, Uiobject.class);
     }
     public List<Uiobject> getObjectsByPage(String page){

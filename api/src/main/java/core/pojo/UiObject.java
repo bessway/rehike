@@ -49,4 +49,5 @@ public class Uiobject{
     public Uiobject(String objId){
         this.uiObjectId=objId;
     }
+    public Uiobject(){}
 }

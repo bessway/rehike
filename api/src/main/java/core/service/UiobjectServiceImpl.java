@@ -23,7 +23,8 @@ public class UiobjectServiceImpl implements UiobjectService{
         return objDao.searchObjectByPath(Utils.escapeExprSpecialWord(path));
     }
     public Uiobject createObject(Uiobject newObj){
-        return objDao.createUiobject(newObj);
+        objDao.createUiobject(newObj);
+        return objDao.findObjByName(newObj.getUiObjectPage(), newObj.getUiObjectType(), newObj.getUiObjectName());
     }
     public void updateObject(Uiobject obj){
         objDao.updateObject(obj);

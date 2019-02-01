@@ -2,6 +2,8 @@ package core.controller;
 
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,34 +24,36 @@ import core.service.UiobjectService;
 public class UiobjectManager{
     @Autowired
     private UiobjectService uiObjService = null;
-    private Gson gson = new Gson();
+    //private Gson gson = new Gson();
     
     @RequestMapping("/page/{page}")
-    public String getObjectsByPage(HttpServletResponse res,@PathVariable String page){
-        String ret = gson.toJson(uiObjService.getObjectsByPage(page));
-        return ret;
+    public List<Uiobject> getObjectsByPage(@PathVariable String page){
+        //String ret = gson.toJson(uiObjService.getObjectsByPage(page));
+        //return ret;
+        return uiObjService.getObjectsByPage(page);
     }
 
     @RequestMapping(value="/object",method=RequestMethod.POST)
-    public String createObj(HttpServletResponse res, @RequestBody Uiobject newObj){
-        String ret = gson.toJson(uiObjService.createObject(newObj));
-        return ret;
+    public Uiobject createObj( @RequestBody Uiobject newObj){
+        //String ret = gson.toJson(uiObjService.createObject(newObj));
+        //return ret;
+        return uiObjService.createObject(newObj);
     }
 
     @RequestMapping(value="/path",method=RequestMethod.POST)
-    public List<Uiobject> searchObjByPath(HttpServletResponse res, @RequestBody String path){
+    public List<Uiobject> searchObjByPath(@RequestBody String path){
         //String ret = gson.toJson(uiObjService.searchObjByPath(path));
         return uiObjService.searchObjByPath(path);
     }
     @RequestMapping(value="/object",method=RequestMethod.PUT)
-    public String updateObj(HttpServletResponse res, @RequestBody Uiobject obj){
+    public String updateObj( @RequestBody Uiobject obj){
         uiObjService.updateObject(obj);
-        String ret= "true";
-        return ret;
+        return "success";
     }
     @RequestMapping("/structedpage/{page}")
-    public String getStructedObjByPage(HttpServletResponse res,@PathVariable String page){
-        String ret = gson.toJson(uiObjService.getStructedObjByPage(page));
-        return ret;
+    public Map<String, Object> getStructedObjByPage(@PathVariable String page){
+        //String ret = gson.toJson(uiObjService.getStructedObjByPage(page));
+        //return ret;
+        return uiObjService.getStructedObjByPage(page);
     }
 }
