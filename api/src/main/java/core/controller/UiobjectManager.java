@@ -3,6 +3,7 @@ package core.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import core.pojo.Uiobject;
 import core.service.UiobjectService;
+
 
 @RestController
 @RequestMapping("/api/v2/objects")
@@ -43,4 +45,9 @@ public class UiobjectManager{
     public Map<String, Object> getStructedObjByPage(@PathVariable String page){
         return uiObjService.getStructedObjByPage(page);
     }
+    @RequestMapping(value="/pages", method=RequestMethod.GET)
+    public Set<String> getPages() {
+        return uiObjService.getPages();
+    }
+    
 }

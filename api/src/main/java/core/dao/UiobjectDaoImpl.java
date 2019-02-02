@@ -42,4 +42,10 @@ public class UiobjectDaoImpl implements UiobjectDao{
         update.set("uiObjectPath", obj.getUiObjectPath());
         mongoTemplate.findAndModify(query, update, Uiobject.class);
     }
+    public List<Uiobject> getPages(){
+        Query query = new Query();
+        query.fields().include("uiObjectPage");
+        query.fields().exclude("_id");
+        return mongoTemplate.find(query, Uiobject.class);
+    }
 }

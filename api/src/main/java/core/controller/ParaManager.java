@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/api/v2/paras")
 public class ParaManager{
@@ -39,4 +40,10 @@ public class ParaManager{
         paraService.setParasValue(paras);
         return "success";
     }
+
+    @RequestMapping(value="/test/{testId}", method=RequestMethod.GET)
+    public List<Para> requestMethodName(@PathVariable String testId) {
+        return paraService.getTestParas(testId);
+    }
+    
 }

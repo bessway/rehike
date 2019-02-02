@@ -13,7 +13,8 @@ export {
   getUIObjectByXpath,
   createUIObject,
   getUIPages,
-  getUIObjectsByPage
+  getUIObjectsByPage,
+  createTest
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -52,10 +53,11 @@ axios.interceptors.response.use(
       this.loadingInstance = undefined
     }
     if (res.status && res.status === 200 && res.data.status === 'failed') {
-      Message.error({message: res.data.msg})
+      Message.error({message: res.data.error})
       return
     }
-    return res.data
+    console.log(res.data.data)
+    return res.data.data
   },
   err => {
     loadCount--
@@ -125,20 +127,20 @@ const getRequest = (path) => {
 function getChildTests (parentId) {
   return getRequest('/tests/' + parentId).then(
     function (data) {
-      return data.tests
+      return data
     }
   )
 }
 
 function getTestDetail (testId) {
-  return getRequest('/tests/detail/' + testId).then(
+  return getRequest('/tests/testdetail/' + testId).then(
     function (data) {
       return data
     }
   )
 }
 function getTestParas (testId) {
-  return getRequest('/testparas/' + testId).then(
+  return getRequest('/paras/test/' + testId).then(
     function (data) {
       return data.para
     }
@@ -162,15 +164,23 @@ function getAction (actionId) {
 }
 
 function getActions () {
-  return getRequest('/actions').then(
+  return getRequest('/actions/all').then(
     function (data) {
-      return data.action
+      return data
     }
   )
 }
 
 function getUIObjectByXpath (xpath) {
   return getRequest('/uiobjects/path/' + xpath).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function createTest (test) {
+  return postRequest('/tests/test', test).then(
     function (data) {
       return data
     }
@@ -186,9 +196,9 @@ function createUIObject (uiobject) {
 }
 
 function getUIPages () {
-  return getRequest('/uipages').then(
+  return getRequest('/objects/pages').then(
     function (data) {
-      return data.page
+      return data
     }
   )
 }

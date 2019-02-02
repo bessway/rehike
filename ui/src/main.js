@@ -9,7 +9,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-require('./mock')
+// require('./mock')
 var API = require('./api')
 Vue.prototype.API = API
 

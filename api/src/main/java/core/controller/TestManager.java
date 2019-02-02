@@ -42,8 +42,7 @@ public class TestManager {
     }
     /*暂不实现*/
     @RequestMapping(value="/testdetail/{testId}")
-    public String getTestDetail( @PathVariable String testId){
-
-        return null;
+    public Test getTestDetail( @PathVariable String testId){
+        return testService.getTestDetail(testId) ;
     }
 }

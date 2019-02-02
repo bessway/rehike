@@ -1,6 +1,8 @@
 package core.service;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +41,12 @@ public class UiobjectServiceImpl implements UiobjectService{
             }
         }
         return ret;
+    }
+    public Set<String> getPages(){
+        List<Uiobject> ret = objDao.getPages();
+        Set<String> temp = new HashSet<String>();
+        ret.forEach((item)->temp.add(item.getUiObjectPage()));
+        return temp;
     }
     private void addToStructObjects(Map<String, Object>ret, Uiobject obj){
         Map<String,Object> temp = ret;

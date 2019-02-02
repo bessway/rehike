@@ -2,6 +2,7 @@ package core.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -24,7 +25,12 @@ public class AllResponseBodyAdvice implements ResponseBodyAdvice{
             result.put("status","failed");
             result.put("error", ((Exception)o).getMessage());
             return result;
+        }else if(o instanceof LinkedHashMap){
+            if(((LinkedHashMap)o).containsKey("path")){
+                return o;
+            }
         }
+
         result = new HashMap<String,Object>();
         result.put("status","success");
         result.put("data", o);

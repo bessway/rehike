@@ -8,6 +8,10 @@
           </el-button>
           <el-input v-model="filtertext" placeholder="请输入关键词"></el-input>
         </el-row>
+        <el-row>
+          <el-button class="operator" type="info" size="mini">删除</el-button>
+          <el-button class="operator" type="info" size="mini" @click="addChildNode">添加</el-button>
+        </el-row>
         <el-tree
           show-checkbox
           lazy
@@ -15,7 +19,8 @@
           :props="testTreeProp"
           :highlight-current=true
           node-key="testId"
-          @node-click="clickTest">
+          @node-click="clickTest"
+          ref="testTree">
         </el-tree>
       </aside>
     </el-col>
@@ -47,7 +52,7 @@
     aside {
       height: 100%;
       .el-tree {
-        height: 95%;
+        height: 90%;
         width: 100%;
         background-color: rgb(166, 208, 247);
         border: 1px;
@@ -59,7 +64,12 @@
       padding-left: 3px;
       padding-right: 3px;
       margin: 0px;
-      height: 30px;
+      height: 25px;
+      width: 25px;
+    }
+    .operator {
+      width: 30px;
+      background-color: rgb(166, 208, 247);
     }
   }
   .main {
@@ -89,17 +99,30 @@ export default {
       filtertext: '',
       collapsed: false,
       testTreeProp: {
-        label: 'testDesc'
+        label: this.testLabel
       }
     }
   },
   mounted: function () {
     this.$router.push('/')
   },
+  computed: {
+    isAddTestHere: function () {
+      return this.getNewTest()
+    }
+  },
+  watch: {
+    isAddTestHere: function (parentId) {
+      this.goNewNode(parentId, undefined)
+    }
+  },
   methods: {
     ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages']),
-    ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages']),
+    ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages', 'getNewTest', 'getCopyTest']),
 
+    testLabel: function (data, node) {
+      return data.index + ' - ' + data.testDesc
+    },
     getActiveMenu: function () {
       if (this.$route.path.indexOf('/case') >= 0) {
         return '/case'
@@ -109,12 +132,7 @@ export default {
     },
     async loadChildTests (node, resolve) {
       if (node.level === 0) {
-        var res = await this.API.getChildTests('000000000000000000000000000000')
-        if (res === undefined || res.length === 0) {
-          resolve([{testDesc: 'demo', testId: '000000000000000000000000000000'}])
-        } else {
-          resolve(res)
-        }
+        resolve(await this.API.getChildTests('000000000000000000000000000000'))
       } else {
         resolve(await this.API.getChildTests(node.data.testId))
       }
@@ -138,17 +156,40 @@ export default {
       // 这里是把node.data和selectedTest关联，
       // 从而使node.label(node.data)和testDesc(selectedTest)是同一个数据源
       node.data = this.getSelectedTest()
-      console.log(this.getSelectedTest())
     },
     async loadUIObjectPages () {
-      if (!this.getUIObjPages().length) {
+      if (this.getUIObjPages().length === 0) {
         var pages = await this.API.getUIPages()
         this.setUIObjectPages(pages)
       }
-      console.log(this.getUIObjPages())
+    },
+    async goNewNode (parentId, oldTestId) {
+      var newTest = await this.API.createTest({'parentId': parentId})
+      if (parentId === '000000000000000000000000000000') {
+        this.$router.go(0)
+      } else {
+        this.$refs.testTree.insertAfter(newTest, this.$refs.testTree.currentNode.node.data)
+        console.log(this.$refs.testTree.currentNode.node.data)
+        // this.$nextTick(function () { this.$refs.testTree.setCurrentNode(newTest) })
+        this.$refs.testTree.setCurrentNode(newTest)
+        console.log(this.$refs.testTree.currentNode.node.data)
+      }
+    },
+    async addChildNode () {
+      var parentId = '000000000000000000000000000000'
+      if (this.$refs.testTree.currentNode !== null) {
+        parentId = this.$refs.testTree.currentNode.node.data.testId
+      }
+      var newTest = await this.API.createTest({'parentId': parentId})
+      if (parentId === '000000000000000000000000000000') {
+        this.$router.go(0)
+      } else {
+        this.$refs.testTree.append(newTest, this.$refs.testTree.currentNode.node.data)
+      }
     },
     debug () {
       console.log(this.getSelectedTest())
+      console.log(this.$refs.testTree)
     }
   }
 }

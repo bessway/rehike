@@ -23,7 +23,7 @@ public class TestServiceImpl implements TestService {
         if("000000000000000000000000000000".equals(parentId) && (ret==null || ret.size()==0)){
             Test newTest = new Test();
             newTest.setParentId(parentId);
-            newTest.setTestDesc("first test");
+            newTest.setTestDesc("new project");
             if(ret==null){
                 ret=new ArrayList<Test>();
             }
@@ -34,7 +34,11 @@ public class TestServiceImpl implements TestService {
     }
     public Test createTest(Test newTest){
         if(newTest.getTestDesc()==null ||"".equals(newTest.getTestDesc())){
-            newTest.setTestDesc(String.valueOf(new Date().getTime()));
+            if("000000000000000000000000000000".equals(newTest.getParentId())){
+                newTest.setTestDesc("new project" + String.valueOf(new Date().getTime()));
+            }else{
+                newTest.setTestDesc("new test" + String.valueOf(new Date().getTime()));
+            }
         }
         newTest.setStatus(1);
         newTest.setIsRefered(0);
@@ -48,8 +52,11 @@ public class TestServiceImpl implements TestService {
     public List<Test> searchPublicTest(String key){
         return testDao.searchPublicTest(Utils.escapeExprSpecialWord(key));
     }
-    public TestDetail getCaseDetail(String testId){
+    public TestDetail getTestContent(String testId){
         return null;
+    }
+    public Test getTestDetail(String testId){
+        return testDao.getTestById(testId);
     }
     private Long calTestId(String objectId){
         String idString=objectId.substring(objectId.length()-6);

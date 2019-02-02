@@ -9,7 +9,9 @@ export default new Vuex.Store({
     testParas: [],
     actions: [],
     uiobjectPages: [],
-    activeEditor: {}
+    activeEditor: {},
+    newTest: '',
+    copyTest: ''
   },
   getters: {
     getSelectedTest: state => {
@@ -26,6 +28,12 @@ export default new Vuex.Store({
     },
     getActiveEditor: state => {
       return state.activeEditor
+    },
+    getNewTest: state => {
+      return state.newTest
+    },
+    getCopyTest: state => {
+      return state.copyTest
     }
   },
   mutations: {
@@ -44,6 +52,12 @@ export default new Vuex.Store({
     },
     setActiveEditor (state, editor) {
       state.activeEditor = editor
+    },
+    setNewTest (state, testId) {
+      state.newTest = testId
+    },
+    setCopyTest (state, testId) {
+      state.copyTest = testId
     }
   }
 })

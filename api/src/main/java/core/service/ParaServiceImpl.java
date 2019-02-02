@@ -43,4 +43,7 @@ public class ParaServiceImpl implements ParaService {
     public void setParasValue(List<Para> paras){
         paraDao.bulkSetParasValue(paras);
     }
+    public List<Para> getTestParas(String testId){
+        return paraDao.getParasByTest(testId);
+    }
 }

@@ -59,4 +59,9 @@ public class ParaDaoImpl implements ParaDao{
         });
         bulkops.execute();
     }
+    public List<Para> getParasByTest(String testId){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("refTestId").is(null));
+        List<Para> ret = mongoTemplate.find(query, Para.class);
+        return ret;
+    }
 }

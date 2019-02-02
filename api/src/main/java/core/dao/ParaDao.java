@@ -12,4 +12,5 @@ public interface ParaDao{
     public List<Para> findStepParas(String testId, Integer stepId);
     public void bulkSetParasFormal(String testId, List<Long> paraId);
     public void bulkSetParasValue(List<Para> paras);
+    public List<Para> getParasByTest(String testId);
 }

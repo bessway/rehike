@@ -1,0 +1,905 @@
+{
+	"info": {
+		"_postman_id": "37a518c9-8356-42ee-8764-82e7ae4326db",
+		"name": "auto",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "dingding",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"msgtype\": \"text\",\n     \"text\": {\n         \"content\": \"http://118.178.133.96:8080/jenkins/userContent/auto_psq95.html\"\n     },\n     \"at\": {\n         \"atMobiles\": [\n             \n         ], \n         \"isAtAll\": false\n     }\n }"
+				},
+				"url": {
+					"raw": "https://oapi.dingtalk.com/robot/send?access_token=1308705f879bf96928ad6b9e7a49879eceb37517ec9306e595d12460b2303f6c",
+					"protocol": "https",
+					"host": [
+						"oapi",
+						"dingtalk",
+						"com"
+					],
+					"path": [
+						"robot",
+						"send"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "1308705f879bf96928ad6b9e7a49879eceb37517ec9306e595d12460b2303f6c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get tests",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"msgtype\": \"text\",\n     \"text\": {\n         \"content\": \"http://118.178.133.96:8080/jenkins/userContent/auto_psq95.html\"\n     },\n     \"at\": {\n         \"atMobiles\": [\n             \n         ], \n         \"isAtAll\": false\n     }\n }"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/tests/000000000000000000000000000000",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"tests",
+						"000000000000000000000000000000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"testDesc\": \"new test\",\n    \"parentId\": \"5c51181481baa321b05df2fc\"\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/tests/test",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"tests",
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create test para",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"testId\": \"5c51205581baa365c446fd33\",\n    \"paraName\": \"thirdpara\"\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/paras/para",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"paras",
+						"para"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "copy ref paras",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/paras/5c51205581baa365c446fd33/formalpara/5c517e7581baa3d6cc1842d6/step/0",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"paras",
+						"5c51205581baa365c446fd33",
+						"formalpara",
+						"5c517e7581baa3d6cc1842d6",
+						"step",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set formal para",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\n    \"testId\": \"5c51205581baa365c446fd33\",\n    \"paraId\":1548845867191\n},{\n    \"testId\": \"5c51205581baa365c446fd33\",\n    \"paraId\":1548845874412\n}]"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/paras/formalparas",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"paras",
+						"formalparas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "save test detail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"testId\": \"5c525d5a81baa37e3cc1856f\",\n    \"testDesc\": \"fly1 test\",\n    \"steps\": [\n        {\n            \"id\": 0,\n            \"stepDesc\": \"first step\",\n            \"stepType\": 0\n        },\n        {\n            \"id\": 1,\n            \"stepDesc\": \"second step\",\n            \"stepType\": 0\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/tests/testdetail",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"tests",
+						"testdetail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all actions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"testId\": \"5c517e7581baa3d6cc1842d6\",\n        \"paraId\": 1548845874412,\n        \"refTestId\": \"5c51205581baa365c446fd33\",\n        \"stepId\": 0,\n        \"paraValue\": \"first value\"\n    },\n    {\n        \"testId\": \"5c51205581baa365c446fd33\",\n        \"paraId\": 1548845867191,\n        \"paraValue\": \"second value\"\n    }\n]"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/actions/all",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"actions",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set para value",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"testId\": \"5c517e7581baa3d6cc1842d6\",\n        \"paraId\": 1548845874412,\n        \"refTestId\": \"5c51205581baa365c446fd33\",\n        \"stepId\": 0,\n        \"paraValue\": \"first value\"\n    },\n    {\n        \"testId\": \"5c51205581baa365c446fd33\",\n        \"paraId\": 1548845867191,\n        \"paraValue\": \"second value\"\n    }\n]"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/paras/values",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"paras",
+						"values"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search object",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "login"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/objects/path",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"objects",
+						"path"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get object in page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "%login%"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/objects/page/%E7%99%BB%E5%BD%95%E9%A1%B5",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"objects",
+						"page",
+						"%E7%99%BB%E5%BD%95%E9%A1%B5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create object",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"uiObjectPage\": \"头部\",\n    \"uiObjectType\": \"链接\",\n    \"uiObjectName\": \"我的订单\",\n    \"uiObjectPath\": \"//a[contains(@href,'myOrders.html')]\"\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/objects/object",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"objects",
+						"object"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get structed objects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "%login%"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/objects/structedpage/%E7%99%BB%E5%BD%95%E9%A1%B5",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"objects",
+						"structedpage",
+						"%E7%99%BB%E5%BD%95%E9%A1%B5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update object",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"uiObjectId\" : \"5c53e8065eeb29500ccbb13c\",\r\n    \"uiObjectPage\" : \"头部\",\r\n    \"uiObjectType\" : \"链接\",\r\n    \"uiObjectName\" : \"我的订单\",\r\n    \"uiObjectPath\" : \"//a[contains(@href,'myOrders')]\"\r\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/objects/object",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"objects",
+						"object"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search public test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "测试"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/tests/public",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"tests",
+						"public"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get test paras",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "%login%"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/paras/test/23423525235",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"paras",
+						"test",
+						"23423525235"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get test detail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"msgtype\": \"text\",\n     \"text\": {\n         \"content\": \"http://118.178.133.96:8080/jenkins/userContent/auto_psq95.html\"\n     },\n     \"at\": {\n         \"atMobiles\": [\n             \n         ], \n         \"isAtAll\": false\n     }\n }"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/tests/testdetail/5c5504825eeb291c80690beb",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"tests",
+						"testdetail",
+						"5c5504825eeb291c80690beb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get pages",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "de5dc29a-a7c8-484d-a0e4-33b514203197",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"msgtype\": \"text\",\n     \"text\": {\n         \"content\": \"http://118.178.133.96:8080/jenkins/userContent/auto_psq95.html\"\n     },\n     \"at\": {\n         \"atMobiles\": [\n             \n         ], \n         \"isAtAll\": false\n     }\n }"
+				},
+				"url": {
+					"raw": "127.0.0.1:8081/api/v2/objects/pages",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v2",
+						"objects",
+						"pages"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

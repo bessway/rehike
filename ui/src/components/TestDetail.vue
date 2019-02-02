@@ -3,9 +3,8 @@
     <div class='test-desc'>
       <label>用例描述:</label>
       <el-input v-model="getSelectedTest().testDesc" ></el-input>
-      <el-button size="mini" @click="debug">debug</el-button>
       <el-button size="mini">刷新</el-button>
-      <el-button size="mini">新建</el-button>
+      <el-button size="mini" @click="addNextTest">下一个</el-button>
       <el-button size="mini">复制</el-button>
       <el-button size="mini">预览</el-button>
     </div>
@@ -17,7 +16,7 @@
         <el-row>
           <el-button>添加</el-button>
           <el-button>删除</el-button>
-          <el-button>设置为入参</el-button>
+          <el-button>置为入参</el-button>
         </el-row>
         <el-table
           :show-header=false
@@ -109,7 +108,7 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import steptable from './StepTable.vue'
 export default {
   components: {steptable},
@@ -125,6 +124,7 @@ export default {
   },
   methods: {
     ...mapGetters(['getSelectedTest', 'getTestParas']),
+    ...mapMutations(['setNewTest', 'setCopyTest']),
 
     paraTableCellStyle: function ({row, column, rowIndex, columnIndex}) {
       if (column.type === 'selection') {
@@ -132,6 +132,9 @@ export default {
       } else {
         return {padding: '0px', margin: '0px', width: '100%'}
       }
+    },
+    addNextTest () {
+      this.setNewTest(this.getSelectedTest().parentId)
     },
     debug () {
     }
