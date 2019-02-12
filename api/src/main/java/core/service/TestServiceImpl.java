@@ -58,6 +58,9 @@ public class TestServiceImpl implements TestService {
     public Test getTestDetail(String testId){
         return testDao.getTestById(testId);
     }
+    public void setTestToRef(String testId){
+        testDao.setTestToRef(testId);
+    }
     private Long calTestId(String objectId){
         String idString=objectId.substring(objectId.length()-6);
         Long index=Long.valueOf(idString, 16);

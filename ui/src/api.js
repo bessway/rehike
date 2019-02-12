@@ -14,7 +14,15 @@ export {
   createUIObject,
   getUIPages,
   getUIObjectsByPage,
-  createTest
+  createTest,
+  copyTest,
+  searchTest,
+  createTestPara,
+  copyFormalParas,
+  setFormalParas,
+  updateTest,
+  setParasValue,
+  getRefStepParas
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -89,6 +97,17 @@ const postRequest = (path, params) => {
     }
   })
 }
+
+const putRequest = (path, params) => {
+  return axios({
+    method: 'put',
+    url: path,
+    data: params,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+}
 /*
 const uploadFileRequest = (path, params) => {
   return axios({
@@ -97,16 +116,6 @@ const uploadFileRequest = (path, params) => {
     data: params,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
-  })
-}
-const putRequest = (path, params) => {
-  return axios({
-    method: 'put',
-    url: path,
-    data: params,
-    headers: {
-      'Content-Type': 'application/json'
     }
   })
 }
@@ -142,13 +151,13 @@ function getTestDetail (testId) {
 function getTestParas (testId) {
   return getRequest('/paras/test/' + testId).then(
     function (data) {
-      return data.para
+      return data
     }
   )
 }
 
 function getUIObject (uiObjectId) {
-  return getRequest('/uiobjects/' + uiObjectId).then(
+  return getRequest('/objects/uiobject/' + uiObjectId).then(
     function (data) {
       return data
     }
@@ -172,7 +181,7 @@ function getActions () {
 }
 
 function getUIObjectByXpath (xpath) {
-  return getRequest('/uiobjects/path/' + xpath).then(
+  return postRequest('/objects/path', xpath).then(
     function (data) {
       return data
     }
@@ -188,7 +197,7 @@ function createTest (test) {
 }
 
 function createUIObject (uiobject) {
-  return postRequest('/uiobjects', uiobject).then(
+  return postRequest('/objects/uiobject', uiobject).then(
     function (data) {
       return data
     }
@@ -204,9 +213,73 @@ function getUIPages () {
 }
 
 function getUIObjectsByPage (page) {
-  return getRequest('/uiobjects/page/' + page).then(
+  return getRequest('/objects/page/' + page).then(
     function (data) {
-      return data.uiobject
+      return data
+    }
+  )
+}
+
+function copyTest (testsId) {
+  return postRequest('/tests/test/copy', testsId).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function searchTest (testDesc) {
+  return postRequest('/tests/public', testDesc).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function createTestPara (newPara) {
+  return postRequest('/paras/para', newPara).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function copyFormalParas (srcTestId, tarTestId, stepId) {
+  return postRequest('/paras/' + srcTestId + '/formalpara/' + tarTestId + '/step/' + stepId).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function setFormalParas (paras) {
+  return putRequest('/paras/formalparas', paras).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function updateTest (test) {
+  return putRequest('/tests/testdetail', test).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function setParasValue (paras) {
+  return putRequest('/paras/values', paras).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function getRefStepParas (testId, stepId) {
+  return getRequest('/paras/test/' + testId + '/step/' + stepId).then(
+    function (data) {
+      return data
     }
   )
 }

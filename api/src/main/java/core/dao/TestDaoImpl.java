@@ -53,4 +53,9 @@ public class TestDaoImpl implements TestDao{
         Query query = Query.query(Criteria.where("isRefered").is(1).and("testDesc").regex(pattern));
         return mongoTemplate.find(query, Test.class);
     }
+    public void setTestToRef(String testId){
+        Query query = Query.query(Criteria.where("_id").is(testId));
+        Update update = Update.update("isRefered", 1);
+        mongoTemplate.findAndModify(query, update, Test.class);
+    }
 }

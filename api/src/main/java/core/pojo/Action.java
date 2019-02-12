@@ -13,6 +13,9 @@ public class Action{
     private Integer hasUIObject = null;
     private Integer hasResponse = null;
     private List<ActionPara> actionParas = null;
+    private String regFunc = null;
+    // 1=ui, 2=api, 3=ref
+    private Integer actionType = null;
 
     public void setActionId(String actionId){
         this.actionId=actionId;
@@ -50,5 +53,17 @@ public class Action{
     }
     public Action(String actionId){
         this.actionId=actionId;
+    }
+    public String getRegFunc () {
+        return this.regFunc;
+    }
+    public void setRegFunc (String regFunc) {
+        this.regFunc = regFunc;
+    }
+    public Integer getActionType () {
+        return this.actionType;
+    }
+    public void setActionType (Integer actionType) {
+        this.actionType = actionType;
     }
 }

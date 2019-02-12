@@ -13,4 +13,5 @@ public interface TestService{
     public Test getTestDetail(String testsId);
     public TestDetail getTestContent(String testId);
     public List<Test> searchPublicTest(String key);
+    public void setTestToRef(String testId);
 }

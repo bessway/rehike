@@ -1,7 +1,7 @@
 <template>
   <div class="main-editor">
-    <el-button ref='topbutton'>JSON格式化</el-button><br/>
-    <el-input type="textarea" v-model="content.value"/>
+    <el-button ref='topbutton' @click="debug">JSON格式化</el-button><br/>
+    <el-input type="textarea" v-model="content.paraValue"/>
   </div>
 </template>
 
@@ -17,14 +17,17 @@
 <script>
 import { mapMutations, mapGetters } from 'vuex'
 export default {
-  data () {
-    return {
-      content: this.getActiveEditor()
+  computed: {
+    content: function () {
+      return this.getActiveEditor()
     }
   },
   methods: {
     ...mapMutations(['setActiveEditor']),
-    ...mapGetters(['getActiveEditor'])
+    ...mapGetters(['getActiveEditor']),
+    debug () {
+      console.log(this.content)
+    }
   }
 }
 </script>

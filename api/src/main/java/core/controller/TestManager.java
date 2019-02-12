@@ -40,7 +40,7 @@ public class TestManager {
     public List<Test> searchPublicTest( @RequestBody String key){
         return testService.searchPublicTest(key);
     }
-    /*暂不实现*/
+
     @RequestMapping(value="/testdetail/{testId}")
     public Test getTestDetail( @PathVariable String testId){
         return testService.getTestDetail(testId) ;

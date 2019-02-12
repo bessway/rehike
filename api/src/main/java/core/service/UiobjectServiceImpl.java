@@ -48,6 +48,9 @@ public class UiobjectServiceImpl implements UiobjectService{
         ret.forEach((item)->temp.add(item.getUiObjectPage()));
         return temp;
     }
+    public Uiobject getObjectById(String objId){
+        return objDao.getObjectById(objId);
+    }
     private void addToStructObjects(Map<String, Object>ret, Uiobject obj){
         Map<String,Object> temp = ret;
         if(!temp.containsKey(obj.getUiObjectPage())){

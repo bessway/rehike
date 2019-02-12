@@ -9,4 +9,5 @@ public interface UiobjectDao{
     public List<Uiobject> searchObjectByPath(String path);
     public void updateObject(Uiobject obj);
     public List<Uiobject> getPages();
+    public Uiobject getObjectById(String objId);
 }

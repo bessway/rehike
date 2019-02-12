@@ -2,26 +2,34 @@
   <div>
     <el-row class='test-desc'>
       <label>步骤描述:</label>
-      <el-input v-model="step.stepDesc" :disabled="!editable || step.isRefStep === 1"></el-input>
+      <el-input v-model="step.stepDesc" :disabled="!editable || step.stepType === 2"></el-input>
       <el-select
         placeholder='操作'
-        v-model="action.actionName"
-        :disabled="!editable || step.isRefStep === 1">
+        v-model="step.actionId"
+        :disabled="!editable || step.stepType === 2">
+        <el-option
+          v-for="item in getActions()"
+          :key="item.actionId"
+          :label="item.actionName"
+          :value="item.actionId">
+        </el-option>
       </el-select>
+      <el-button size="small" type="primary" @click="debug">debug</el-button>
     </el-row>
     <uiobject
-      v-if="step.isRefStep !== 1 && action.hasUIObject === 1"
+      v-if="step.stepType !== 2 && action.hasUIObject === 1"
+      :step="step"
       :uiobject="uiobject"
       :editable="editable">
     </uiobject>
     <paras
-      v-if="step.isRefStep !== 1"
-      :paras="paras"
+      v-if="step.stepType !== 2"
+      :step="step"
       :editable="editable">
     </paras>
-    <div v-if="step.isRefStep === 1">
-      <div class="para" :key="index" v-for="(item, index) in step.refParas">
-        <label v-if="index % 2 === 0">{{step.refParas[index].name+":"}}</label>
+    <div v-if="step.stepType === 2">
+      <div class="para" :key="index" v-for="(item, index) in refParas">
+        <label v-if="index % 2 === 0">{{refParas[index].paraName+":"}}</label>
         <!--el-input v-if="index % 2 === 0" v-model="step.refParas[index].value" :disabled="!editable"/-->
         <el-autocomplete
           :disabled="!editable"
@@ -29,17 +37,17 @@
           value-key='paraName'
           :fetch-suggestions="paraSearch"
           :trigger-on-focus="false"
-          v-model="step.refParas[index].value">
+          v-model="refParas[index].paraValue">
         </el-autocomplete>
-        <label v-if="index+1 < step.refParas.length && index % 2 === 0">{{step.refParas[index+1].name+":"}}</label>
+        <label v-if="index+1 < refParas.length && index % 2 === 0">{{refParas[index+1].paraName+":"}}</label>
         <!--el-input v-if="index+1 < step.refParas.length && index % 2 === 0" v-model="step.refParas[index+1].value" :disabled="!editable"/-->
         <el-autocomplete
           :disabled="!editable"
-          v-if="index+1 < step.refParas.length && index % 2 === 0"
+          v-if="index+1 < refParas.length && index % 2 === 0"
           value-key='paraName'
           :fetch-suggestions="paraSearch"
           :trigger-on-focus="false"
-          v-model="step.refParas[index+1].value">
+          v-model="refParas[index+1].paraValue">
         </el-autocomplete>
       </div>
     </div>
@@ -52,9 +60,9 @@
         <el-button size="small" type="primary">上传</el-button>
       </el-upload>
     </div>
-    <maineditor v-if="step.isRefStep !== 1 && editable"/>
+    <maineditor v-if="step.stepType !== 2 && editable"/>
     <steptable
-      v-if="step.isRefStep === 1"
+      v-if="step.stepType === 2"
       :selectedTest="refTest"
       :editable="false">
     </steptable>
@@ -111,14 +119,42 @@ import paras from './Parameters.vue'
 import maineditor from './MainEditor.vue'
 import steptable from './StepTable.vue'
 import { mapGetters } from 'vuex'
+import { Message } from 'element-ui'
 
 export default {
   name: 'stepdetail',
   components: {uiobject, paras, maineditor, steptable},
-  props: ['action', 'uiobject', 'step', 'paras', 'refTest', 'editable'],
+  // props: ['action', 'uiobject', 'step', 'paras', 'refTest', 'editable'],
+  props: ['step', 'uiobject', 'refTest', 'refParas', 'editable'],
+  computed: {
+    action: function () {
+      return this.findAction(this.step.actionId)
+    }
+  },
   methods: {
-    ...mapGetters(['getTestParas']),
+    ...mapGetters(['getTestParas', 'getActions']),
 
+    findAction (actionId) {
+      var defaultAction = {actionId: '', actionName: '', hasUIObject: 1, actionType: 1}
+      if (actionId === undefined || actionId === '') {
+        return defaultAction
+      }
+      for (var i = 0; i < this.getActions().length; i++) {
+        if (actionId === this.getActions()[i].actionId) {
+          return this.getActions()[i]
+        }
+      }
+      Message.error({message: '找不到' + actionId + '对应的操作!'})
+      return defaultAction
+    },
+    // async loadRefTest () {
+    //   if (this.step.stepType !== 2 || this.step.refTestId === undefined || this.step.refTestId === '') {
+    //     return {}
+    //   } else {
+    //     var refTestDetail = await this.API.getTestDetail(this.step.refTestId)
+    //     return refTestDetail
+    //   }
+    // },
     paraSearch (queryString, callback) {
       var results = queryString ? this.getTestParas().filter(this.createFilter(queryString)) : this.getTestParas()
       // 调用 callback 返回建议列表的数据
@@ -128,6 +164,10 @@ export default {
       return (para) => {
         return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
       }
+    },
+    debug () {
+      console.log(this.action)
+      console.log(this.step)
     }
   }
 }

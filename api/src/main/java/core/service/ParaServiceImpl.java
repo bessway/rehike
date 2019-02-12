@@ -15,6 +15,8 @@ import java.util.List;
 public class ParaServiceImpl implements ParaService {
     @Autowired
     private ParaDao paraDao = null;
+    @Autowired
+    private TestService testService = null;
     
     public Para createTestPara(Para newPara){
         newPara.setParaId(new Date().getTime());
@@ -39,6 +41,7 @@ public class ParaServiceImpl implements ParaService {
             ids.add(item.getParaId());
         }
         paraDao.bulkSetParasFormal(paras.get(0).getTestId(), ids);
+        testService.setTestToRef(paras.get(0).getTestId());
     }
     public void setParasValue(List<Para> paras){
         paraDao.bulkSetParasValue(paras);

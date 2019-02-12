@@ -48,4 +48,8 @@ public class UiobjectDaoImpl implements UiobjectDao{
         query.fields().exclude("_id");
         return mongoTemplate.find(query, Uiobject.class);
     }
+    public Uiobject getObjectById(String objId){
+        Query query = Query.query(Criteria.where("_id").is(objId));
+        return mongoTemplate.findOne(query, Uiobject.class);
+    }
 }

@@ -3,10 +3,10 @@
     <div class='test-desc'>
       <label>用例描述:</label>
       <el-input v-model="getSelectedTest().testDesc" ></el-input>
-      <el-button size="mini">刷新</el-button>
-      <el-button size="mini" @click="addNextTest">下一个</el-button>
-      <el-button size="mini">复制</el-button>
-      <el-button size="mini">预览</el-button>
+      <el-button :disabled="isTestSelected()" size="mini">刷新</el-button>
+      <el-button :disabled="isTestSelected()" size="mini" @click="addNextTest">下一个</el-button>
+      <el-button :disabled="isTestSelected()" size="mini" @click="copyNextTest">复制</el-button>
+      <el-button :disabled="isTestSelected()" size="mini" @click="debug">预览</el-button>
     </div>
     <div class="test-detail">
       <el-col :span="19" class='steps-wrapper'>
@@ -14,18 +14,39 @@
       </el-col>
       <el-col :span="5" class='paralist'>
         <el-row>
-          <el-button>添加</el-button>
-          <el-button>删除</el-button>
-          <el-button>置为入参</el-button>
+          <el-button :disabled="isTestSelected()" @click="toAddPara">添加</el-button>
+          <el-button :disabled="isTestSelected()" @click="delParaFromTest">删除</el-button>
+          <el-button :disabled="isTestSelected()" @click="setParaFormal">置为入参</el-button>
         </el-row>
         <el-table
           :show-header=false
           :data=testVariables
           highlight-current-row
           :cell-style=paraTableCellStyle
+          @row-click="clickPara"
+          @select="setMultiSelect"
+          ref="parastable"
           style="height: 85%; overflow-y: auto">
           <el-table-column prop="paraName"/>
+          <el-table-column
+            type="selection"
+            width="15">
+          </el-table-column>
         </el-table>
+        <el-dialog title="添加参数"
+          :visible.sync="addParaVisible"
+          :close-on-click-modal=false
+          :close-on-press-escape=false
+          :show-close=false>
+          <div class='test-desc'>
+            <label>参数名:</label>
+            <el-input v-model="newPara.paraName" autocomplete="off"></el-input>
+          </div>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="cancelAddPara">取 消</el-button>
+            <el-button type="primary" @click="addParaToTest">确 定</el-button>
+          </div>
+        </el-dialog>
       </el-col>
     </div>
   </div>
@@ -114,7 +135,10 @@ export default {
   components: {steptable},
   data () {
     return {
-      action: {}
+      action: {},
+      addParaVisible: false,
+      newPara: {},
+      checkedParas: []
     }
   },
   computed: {
@@ -124,7 +148,7 @@ export default {
   },
   methods: {
     ...mapGetters(['getSelectedTest', 'getTestParas']),
-    ...mapMutations(['setNewTest', 'setCopyTest']),
+    ...mapMutations(['setIsAddNewTest', 'setActiveEditor']),
 
     paraTableCellStyle: function ({row, column, rowIndex, columnIndex}) {
       if (column.type === 'selection') {
@@ -134,9 +158,52 @@ export default {
       }
     },
     addNextTest () {
-      this.setNewTest(this.getSelectedTest().parentId)
+      if (this.getSelectedTest().testId !== undefined) {
+        this.setIsAddNewTest(this.getSelectedTest().testId)
+      }
+    },
+    copyNextTest () {
+      if (this.getSelectedTest().testId !== undefined) {
+        this.setIsAddNewTest('copy' + this.getSelectedTest().testId)
+      }
+    },
+    isTestSelected () {
+      return Object.keys(this.getSelectedTest()).length === 0
+    },
+    toAddPara () {
+      this.addParaVisible = true
+      this.newPara = {}
+    },
+    cancelAddPara () {
+      this.addParaVisible = false
+      this.newPara = {}
+    },
+    async addParaToTest () {
+      this.addParaVisible = false
+      this.newPara.testId = this.getSelectedTest().testId
+      this.newPara.isFormalPara = 0
+      this.newPara = await this.API.createTestPara(this.newPara)
+      this.getTestParas().push(this.newPara)
+    },
+    setMultiSelect (selection, row) {
+      this.checkedParas = selection
+    },
+    async delParaFromTest () {
+      // await this.API.delTestParas(this.checkedParas)
+      // this.checkedParas = []
+      // this.$refs.parastable.clearSelection()
+    },
+    async setParaFormal () {
+      await this.API.setFormalParas(this.checkedParas)
+      this.checkedParas.forEach(element => {
+        element.isFormalPara = 1
+      })
+    },
+    clickPara (row, event, column) {
+      this.setActiveEditor(row)
     },
     debug () {
+      console.log(this.getTestParas())
     }
   }
 }

@@ -5,17 +5,27 @@
         v-model="keyPage"
         @change="loadObjectsByPage">
         <el-option
-        v-for="item in getUIObjPages()"
-        :key="item.label"
-        :label="item.label"
-        :value="item.label">
-      </el-option>
+          v-for="item in getUIObjPages()"
+          :key="item"
+          :value="item">
+        </el-option>
       </el-select>
       <el-select placeholder="选择类型" :disabled="!editable"
         v-model="keyType">
+        <el-option
+          v-for="item in getUIObjTypes()"
+          :key="item"
+          :value="item">
+        </el-option>
       </el-select>
       <el-select placeholder="选择名称" :disabled="!editable"
-        v-model="keyName">
+        v-model="keyName"
+        @change="setSelectedObj">
+        <el-option
+          v-for="item in getUIObjNames()"
+          :key="item"
+          :value="item">
+        </el-option>
       </el-select>
       <el-autocomplete class="xpath" placeholder="搜索xpath" :disabled="!editable"
         :trigger-on-focus="false"
@@ -28,7 +38,7 @@
       <el-input placeholder="名称" v-model="localUIobject.uiObjectName" :disabled="!editable"></el-input>
       <el-input class="xpath" placeholder="xpath" v-model="localUIobject.uiObjectPath" :disabled="!editable"></el-input><br/>
       <el-button size="mini" @click="createUIObject" :disabled="!editable">添加</el-button><br/>
-      <el-button size="mini" @click="createUIObject" :disabled="!editable">修改</el-button><br/>
+      <el-button size="mini" @click="debug" :disabled="!editable">修改</el-button><br/>
     </div>
   </div>
 </template>
@@ -105,7 +115,7 @@
 import {mapGetters} from 'vuex'
 import {Message} from 'element-ui'
 export default {
-  props: ['uiobject', 'editable'],
+  props: ['step', 'uiobject', 'editable'],
   data () {
     return {
       keyPage: '',
@@ -113,16 +123,16 @@ export default {
       keyName: '',
       pageobjects: {},
       pathobjects: [],
-      localUIobject: this.uiobject,
-      searchProps: {
-        value: 'label',
-        children: 'objects'
-      }
+      localUIobject: this.uiobject
     }
   },
   watch: {
     uiobject: function () {
-      this.localUIobject = this.uiobject
+      if (this.uiobject === null) {
+        this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
+      } else {
+        this.localUIobject = this.uiobject
+      }
     }
   },
   methods: {
@@ -132,25 +142,35 @@ export default {
       this.pathobjects = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
     },
     async createUIObject () {
-      if (this.uiobject.uiObjectPage === '' ||
-      this.uiobject.uiObjectType === '' ||
-      this.uiobject.uiObjectName === '' ||
-      this.uiobject.uiObjectPath === '') {
-        Message.error({message: 'page type name xpath不能为空!'})
+      if (this.localUIobject.uiObjectPage === '' ||
+      this.localUIobject.uiObjectType === '' ||
+      this.localUIobject.uiObjectName === '' ||
+      this.localUIobject.uiObjectPath === '') {
+        Message.error({message: '页面 类型 名称 地址 不能为空!'})
       } else {
-        var strUIObj = JSON.stringify(this.uiobject)
+        var strUIObj = JSON.stringify(this.localUIobject)
         var newUIObj = JSON.parse(strUIObj)
         delete newUIObj.uiObjectId
         this.localUIobject = await this.API.createUIObject(newUIObj)
+        this.step.uiObjectId = this.localUIobject.uiObjectId
       }
     },
+    // async loadUIObject () {
+    //   if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== '') {
+    //     var res = await this.API.getUIObject(this.step.uiObjectId)
+    //     console.log(res)
+    //     return res
+    //   } else {
+    //     return {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
+    //   }
+    // },
     async loadObjectsByPage (val) {
       if (!this.pageobjects[val]) {
         var res = await this.API.getUIObjectsByPage(val)
         var result = {}
-        for (var obj in res) {
+        res.forEach(obj => {
           this.addToStrctureObject(result, obj['uiObjectPage'], obj['uiObjectType'], obj['uiObjectName'], obj['uiObjectPath'], obj['uiObjectId'])
-        }
+        })
         this.pageobjects = result
       }
     },
@@ -165,6 +185,31 @@ export default {
       }
       tmp = tmp[type]
       tmp[name] = {uiObjectPath: path, uiObjectId: id}
+    },
+    getUIObjTypes () {
+      if (this.pageobjects[this.keyPage] !== undefined) {
+        return Object.keys(this.pageobjects[this.keyPage])
+      } else {
+        return {}
+      }
+    },
+    getUIObjNames () {
+      if (this.pageobjects[this.keyPage] !== undefined && this.pageobjects[this.keyPage][this.keyType] !== undefined) {
+        return Object.keys(this.pageobjects[this.keyPage][this.keyType])
+      } else {
+        return {}
+      }
+    },
+    setSelectedObj (val) {
+      this.localUIobject = this.pageobjects[this.keyPage][this.keyType][val]
+      this.localUIobject['uiObjectPage'] = this.keyPage
+      this.localUIobject['uiObjectType'] = this.keyType
+      this.localUIobject['uiObjectName'] = val
+      this.step.uiObjectId = this.localUIobject.uiObjectId
+    },
+    debug () {
+      console.log(this.localUIobject)
+      console.log(this.pageobjects)
     }
   }
 }

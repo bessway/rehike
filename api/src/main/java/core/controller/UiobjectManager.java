@@ -27,7 +27,7 @@ public class UiobjectManager{
         return uiObjService.getObjectsByPage(page);
     }
 
-    @RequestMapping(value="/object",method=RequestMethod.POST)
+    @RequestMapping(value="/uiobject",method=RequestMethod.POST)
     public Uiobject createObj( @RequestBody Uiobject newObj){
         return uiObjService.createObject(newObj);
     }
@@ -36,18 +36,25 @@ public class UiobjectManager{
     public List<Uiobject> searchObjByPath(@RequestBody String path){
         return uiObjService.searchObjByPath(path);
     }
-    @RequestMapping(value="/object",method=RequestMethod.PUT)
+
+    @RequestMapping(value="/uiobject",method=RequestMethod.PUT)
     public String updateObj( @RequestBody Uiobject obj){
         uiObjService.updateObject(obj);
         return "success";
     }
+
     @RequestMapping("/structedpage/{page}")
     public Map<String, Object> getStructedObjByPage(@PathVariable String page){
         return uiObjService.getStructedObjByPage(page);
     }
+
     @RequestMapping(value="/pages", method=RequestMethod.GET)
     public Set<String> getPages() {
         return uiObjService.getPages();
     }
-    
+
+    @RequestMapping("/uiobject/{objId}")
+    public Uiobject getObjectById(@PathVariable String objId){
+        return uiObjService.getObjectById(objId);
+    }
 }

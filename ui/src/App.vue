@@ -108,20 +108,20 @@ export default {
   },
   computed: {
     isAddTestHere: function () {
-      return this.getNewTest()
+      return this.getIsAddNewTest()
     }
   },
   watch: {
-    isAddTestHere: function (parentId) {
-      this.goNewNode(parentId, undefined)
+    isAddTestHere: function (selectedTestId) {
+      this.goNewNode(selectedTestId)
     }
   },
   methods: {
     ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages']),
-    ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages', 'getNewTest', 'getCopyTest']),
+    ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages', 'getIsAddNewTest']),
 
     testLabel: function (data, node) {
-      return data.index + ' - ' + data.testDesc
+      return data.index + '-' + data.testDesc
     },
     getActiveMenu: function () {
       if (this.$route.path.indexOf('/case') >= 0) {
@@ -163,33 +163,39 @@ export default {
         this.setUIObjectPages(pages)
       }
     },
-    async goNewNode (parentId, oldTestId) {
-      var newTest = await this.API.createTest({'parentId': parentId})
+    async goNewNode (selectedTestId) {
+      if (this.$refs.testTree.getCurrentNode() === null) {
+        return
+      }
+      var parentId = this.$refs.testTree.getCurrentNode().parentId
+      var newTest = {}
+      if (selectedTestId.substring(0, 4) === 'copy') {
+        newTest = await this.API.copyTest([{'testId': selectedTestId}])
+      } else {
+        newTest = await this.API.createTest({'parentId': parentId})
+      }
       if (parentId === '000000000000000000000000000000') {
         this.$router.go(0)
       } else {
-        this.$refs.testTree.insertAfter(newTest, this.$refs.testTree.currentNode.node.data)
-        console.log(this.$refs.testTree.currentNode.node.data)
-        // this.$nextTick(function () { this.$refs.testTree.setCurrentNode(newTest) })
-        this.$refs.testTree.setCurrentNode(newTest)
-        console.log(this.$refs.testTree.currentNode.node.data)
+        this.$refs.testTree.insertAfter(newTest, this.$refs.testTree.getCurrentNode())
+        this.$refs.testTree.setCurrentKey(newTest.testId)
+        this.setSelectedTest(newTest)
       }
     },
     async addChildNode () {
       var parentId = '000000000000000000000000000000'
-      if (this.$refs.testTree.currentNode !== null) {
-        parentId = this.$refs.testTree.currentNode.node.data.testId
+      if (this.$refs.testTree.getCurrentNode() !== null) {
+        parentId = this.$refs.testTree.getCurrentNode().testId
       }
       var newTest = await this.API.createTest({'parentId': parentId})
       if (parentId === '000000000000000000000000000000') {
         this.$router.go(0)
       } else {
-        this.$refs.testTree.append(newTest, this.$refs.testTree.currentNode.node.data)
+        this.$refs.testTree.append(newTest, this.$refs.testTree.getCurrentNode())
       }
     },
     debug () {
       console.log(this.getSelectedTest())
-      console.log(this.$refs.testTree)
     }
   }
 }

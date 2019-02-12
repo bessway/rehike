@@ -42,7 +42,7 @@ public class ParaManager{
     }
 
     @RequestMapping(value="/test/{testId}", method=RequestMethod.GET)
-    public List<Para> requestMethodName(@PathVariable String testId) {
+    public List<Para> getTestParas(@PathVariable String testId) {
         return paraService.getTestParas(testId);
     }
     

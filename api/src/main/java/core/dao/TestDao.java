@@ -13,4 +13,5 @@ public interface TestDao{
     public void updateTest(Test t);
     public Test getTestById(String testId);
     public List<Test> searchPublicTest(String key);
+    public void setTestToRef(String testId);
 }

@@ -7,7 +7,7 @@
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
         v-model="localParas.p1.paraName"
-        @focus="clickPara">
+        @select="selectP1">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数2"
@@ -15,7 +15,7 @@
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
         v-model="localParas.p2.paraName"
-        @focus="clickPara">
+        @select="selectP2">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数3"
@@ -23,7 +23,7 @@
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
         v-model="localParas.p3.paraName"
-        @focus="clickPara">
+        @select="selectP3">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数4"
@@ -31,7 +31,7 @@
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
         v-model="localParas.p4.paraName"
-        @focus="clickPara">
+        @select="selectP4">
       </el-autocomplete>
       <el-autocomplete
         placeholder="参数5"
@@ -39,7 +39,7 @@
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
         v-model="localParas.p5.paraName"
-        @focus="clickPara">
+        @select="selectP5">
       </el-autocomplete>
     </div>
     <div class="para" v-if="editable">
@@ -49,30 +49,25 @@
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
         v-model="localParas.response.paraName"
-        @focus="clickPara">
+        @select="selectRes">
       </el-autocomplete>
       <el-button size="small" @click="debug">Debug</el-button>
     </div>
     <div class="para" v-if="!editable">
       <el-input
-        v-model="localParas.p1.paraName" :disabled=!editable
-        @focus="clickPara">
+        v-model="localParas.p1.paraName" :disabled=!editable>
       </el-input>
       <el-input
-        v-model="localParas.p2.paraName" :disabled=!editable
-        @focus="clickPara">
+        v-model="localParas.p2.paraName" :disabled=!editable>
       </el-input>
       <el-input
-        v-model="localParas.p3.paraName" :disabled=!editable
-        @focus="clickPara">
+        v-model="localParas.p3.paraName" :disabled=!editable>
       </el-input>
       <el-input
-        v-model="localParas.p4.paraName" :disabled=!editable
-        @focus="clickPara">
+        v-model="localParas.p4.paraName" :disabled=!editable>
       </el-input>
       <el-input
-        v-model="localParas.p5.paraName" :disabled=!editable
-        @focus="clickPara">
+        v-model="localParas.p5.paraName" :disabled=!editable>
       </el-input>
     </div>
     <div class="para" v-if="!editable">
@@ -115,18 +110,19 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { Message } from 'element-ui'
 export default {
-  props: ['paras', 'editable'],
+  props: ['step', 'editable'],
   data () {
     return {
-      localParas: this.paras
+      localParas: this.findParas()
     }
   },
-  watch: {
-    paras: function () {
-      this.localParas = this.paras
-    }
-  },
+  // watch: {
+  //   paras: function () {
+  //     this.localParas = this.paras
+  //   }
+  // },
   methods: {
     ...mapGetters(['getTestParas']),
 
@@ -140,11 +136,58 @@ export default {
         return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
       }
     },
-    clickPara () {
-
+    findParas () {
+      var paras = {p1: {}, p2: {}, p3: {}, p4: {}, p5: {}, response: {}}
+      var temp = {}
+      if (this.step.paras !== undefined) {
+        var ids = []
+        if (this.step.paras.length > 0) {
+          ids = this.step.paras.slice(0)
+        }
+        if (this.step.resParaId !== undefined) {
+          ids.push(this.step.resParaId)
+        }
+        ids.forEach((paraId, index) => {
+          for (var i = 0; i < this.getTestParas().length; i++) {
+            if (paraId === this.getTestParas()[i].paraId) {
+              temp = this.getTestParas()[i]
+              break
+            }
+          }
+          if (temp.length === 0) {
+            temp = {paraName: '', paraId: ''}
+            Message.error({message: '找不到' + paraId + '对应的参数!'})
+          }
+          if (index === ids.length - 1) {
+            paras['response'] = temp
+          } else {
+            paras['p' + (index + 1)] = temp
+          }
+        })
+      }
+      console.log(paras)
+      return paras
+    },
+    selectP1 (para) {
+      this.step.paras[0] = para.paraId
+    },
+    selectP2 (para) {
+      this.step.paras[1] = para.paraId
+    },
+    selectP3 (para) {
+      this.step.paras[2] = para.paraId
+    },
+    selectP4 (para) {
+      this.step.paras[3] = para.paraId
+    },
+    selectP5 (para) {
+      this.step.paras[4] = para.paraId
+    },
+    selectRes (para) {
+      this.step.resParaId = para.paraId
     },
     debug () {
-      console.log(this.editable)
+      console.log(this.localParas)
     }
   }
 }
