@@ -84,6 +84,7 @@
   padding-left: 3px;
 }
 .el-table {
+  margin-right: 14px;
   .el-checkbox {
     width: 14px;
   }
@@ -98,7 +99,7 @@
   }
   .el-table__expanded-cell[class*=cell] {
     padding-left: 20px;
-    padding-right: 0px;
+    padding-right: 16px;
     padding-top: 0px;
     padding-bottom: 10px;
   }
@@ -217,7 +218,7 @@ export default {
       } else {
         var refTestDetail = await this.API.getTestDetail(currRow.refTestId)
         this.refTest = refTestDetail
-        var refTestPara = await this.API.getRefStepParas(currRow.testId, currRow.index)
+        var refTestPara = await this.API.getRefStepParas(this.selectedTest.testId, currRow.index)
         this.refParas = refTestPara
       }
       console.log(this.refTest)

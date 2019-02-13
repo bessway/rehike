@@ -41,9 +41,13 @@ public class ParaManager{
         return "success";
     }
 
-    @RequestMapping(value="/test/{testId}", method=RequestMethod.GET)
-    public List<Para> getTestParas(@PathVariable String testId) {
-        return paraService.getTestParas(testId);
+    @RequestMapping(value="/test/{testId}/version/{dataVersion}", method=RequestMethod.GET)
+    public List<Para> getTestParas(@PathVariable String testId, @PathVariable String dataVersion) {
+        return paraService.getTestParas(testId, dataVersion);
     }
     
+    @RequestMapping(value="/test/{testId}/step/{stepId}/versioin/{dataVersion}", method=RequestMethod.GET)
+    public List<Para> getTestRefParas(@PathVariable String testId, @PathVariable Integer stepId, @PathVariable String dataVersion) {
+        return paraService.getTestRefParas(testId, stepId, dataVersion);
+    }
 }

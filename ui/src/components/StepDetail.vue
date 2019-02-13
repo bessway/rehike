@@ -14,6 +14,7 @@
           :value="item.actionId">
         </el-option>
       </el-select>
+      <el-button v-if="step.stepType === 2" size="small" @click="saveRefParaValue">保存</el-button>
       <el-button size="small" type="primary" @click="debug">debug</el-button>
     </el-row>
     <uiobject
@@ -165,9 +166,12 @@ export default {
         return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
       }
     },
+    async saveRefParaValue () {
+      await this.API.setParasValue(this.refParas)
+    },
     debug () {
-      console.log(this.action)
-      console.log(this.step)
+      console.log(this.refTest)
+      console.log(this.refParas)
     }
   }
 }

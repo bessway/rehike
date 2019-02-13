@@ -1,6 +1,7 @@
 package core.dao;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,12 @@ public class TestDaoImpl implements TestDao{
 
     public List<Test> getTestsByParentId(String parentId){
         Query query = Query.query(Criteria.where("parentId").is(parentId));
+        List<Test> ret = mongoTemplate.find(query, Test.class);
+
+        return ret;
+    }
+    public List<Test> getTestsByParentIds(List<String> parentIds){
+        Query query = Query.query(Criteria.where("parentId").in(parentIds));
         List<Test> ret = mongoTemplate.find(query, Test.class);
 
         return ret;
@@ -47,6 +54,10 @@ public class TestDaoImpl implements TestDao{
     public Test getTestById(String testId){
         Query query = Query.query(Criteria.where("_id").is(testId));
         return mongoTemplate.findOne(query, Test.class);
+    }
+    public List<Test> getTestsById(List<String> testIds){
+        Query query = Query.query(Criteria.where("_id").in(testIds));
+        return mongoTemplate.find(query, Test.class);
     }
     public List<Test> searchPublicTest(String key){
         Pattern pattern = Pattern.compile("[\\s\\S]*" + key + "[\\s\\S]*");

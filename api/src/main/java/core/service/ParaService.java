@@ -10,5 +10,6 @@ public interface ParaService{
     public List<Para> copyRefParasToStep(String srcTestId, String tarTestId, Integer stepId);
     public void setParasFormal(List<Para> paras);
     public void setParasValue(List<Para> paras);
-    public List<Para> getTestParas(String testId);
+    public List<Para> getTestParas(String testId,String dataVersion);
+    public List<Para> getTestRefParas(String testId, Integer stepId,String dataVersion);
 }

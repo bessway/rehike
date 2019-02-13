@@ -53,6 +53,7 @@ public class TestServiceImpl implements TestService {
         return testDao.searchPublicTest(Utils.escapeExprSpecialWord(key));
     }
     public TestDetail getTestContent(String testId){
+        //TODO
         return null;
     }
     public Test getTestDetail(String testId){
@@ -66,5 +67,40 @@ public class TestServiceImpl implements TestService {
         Long index=Long.valueOf(idString, 16);
 
         return index;
+    }
+    public List<String> findAllExecutableTests(List<String> testIds){
+        List<String> result = new ArrayList<String>();
+        List<String> newTestIds = new ArrayList<String>();
+        List<Test> tests = testDao.getTestsById(testIds);
+        for(Test item:tests){
+            //有步骤则是case
+            if(item.getSteps()!=null && item.getSteps().size()>0){
+                result.add(item.getTestId());
+            }else{
+                newTestIds.add(item.getTestId());
+            }
+        }
+        if(newTestIds.size()>0){
+            this.findSubTests(newTestIds, result);
+        }
+        return result;
+    }
+    private void findSubTests(List<String> nodeIds, List<String> result){
+        List<Test> subTests=testDao.getTestsByParentIds(nodeIds);
+        List<String> newTestIds = new ArrayList<String>();
+        for(Test item:subTests){
+            //有步骤则是case
+            if(item.getSteps()!=null && item.getSteps().size()>0){
+                result.add(item.getTestId());
+            }else{
+                newTestIds.add(item.getTestId());
+            }
+        }
+        if(newTestIds.size()>0){
+            this.findSubTests(newTestIds, result);
+        }
+    }
+    public List<Test> getTests(List<String> testIds){
+        return testDao.getTestsById(testIds);
     }
 }

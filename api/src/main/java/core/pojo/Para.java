@@ -11,6 +11,7 @@ public class Para{
     private String refTestId = null;
     private Integer isFormalPara = null;
     private Integer stepId = null;
+    private String dataVersion = null;
 
     public void setTestId(String testId){
         this.testId=testId;
@@ -67,5 +68,11 @@ public class Para{
             this.stepId=stepId;
             this.refTestId=refTestId;
         }
+    }
+    public void setDataVersion(String dataVersion){
+        this.dataVersion=dataVersion;
+    }
+    public String getDataVersion(){
+        return this.dataVersion;
     }
 }

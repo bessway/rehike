@@ -123,11 +123,12 @@ export default {
       keyName: '',
       pageobjects: {},
       pathobjects: [],
-      localUIobject: this.uiobject
+      localUIobject: this.initObject()
     }
   },
   watch: {
     uiobject: function () {
+      console.log(this.uiobject)
       if (this.uiobject === null) {
         this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
       } else {
@@ -140,6 +141,13 @@ export default {
     async searchUIObjectByXpath () {
       // 不能直接修改props
       this.pathobjects = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
+    },
+    initObject () {
+      if (this.uiobject === undefined || this.uiobject === null) {
+        return {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
+      } else {
+        return this.uiobject
+      }
     },
     async createUIObject () {
       if (this.localUIobject.uiObjectPage === '' ||

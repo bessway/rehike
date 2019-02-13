@@ -21,6 +21,9 @@ public class ParaServiceImpl implements ParaService {
     public Para createTestPara(Para newPara){
         newPara.setParaId(new Date().getTime());
         paraDao.createPara(newPara);
+        if(newPara.getDataVersion()==null){
+            newPara.setDataVersion("default");
+        }
         return paraDao.findParaById(newPara);
     }
     public List<Para> copyRefParasToStep(String srcTestId, String tarTestId, Integer stepId){
@@ -30,6 +33,7 @@ public class ParaServiceImpl implements ParaService {
             item.setRefTestId(srcTestId);
             item.setTestId(tarTestId);
             item.setStepId(stepId);
+            item.setDataVersion("default");
         }
         paraDao.bulkCreatePara(paras);
         List<Para> ret = paraDao.findStepParas(tarTestId, stepId);
@@ -46,7 +50,10 @@ public class ParaServiceImpl implements ParaService {
     public void setParasValue(List<Para> paras){
         paraDao.bulkSetParasValue(paras);
     }
-    public List<Para> getTestParas(String testId){
-        return paraDao.getParasByTest(testId);
+    public List<Para> getTestParas(String testId, String dataVersion){
+        return paraDao.getParasByTest(testId, dataVersion);
+    }
+    public List<Para> getTestRefParas(String testId, Integer stepId, String dataVersion){
+        return paraDao.getRefParasByTest(testId, stepId, dataVersion);
     }
 }

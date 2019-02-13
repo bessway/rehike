@@ -144,7 +144,7 @@ export default {
         if (this.step.paras.length > 0) {
           ids = this.step.paras.slice(0)
         }
-        if (this.step.resParaId !== undefined) {
+        if (this.step.resParaId !== undefined && this.step.resParaId !== null) {
           ids.push(this.step.resParaId)
         }
         ids.forEach((paraId, index) => {
@@ -158,9 +158,9 @@ export default {
             temp = {paraName: '', paraId: ''}
             Message.error({message: '找不到' + paraId + '对应的参数!'})
           }
-          if (index === ids.length - 1) {
+          if (index === ids.length - 1 && this.step.resParaId !== undefined && this.step.resParaId !== null) {
             paras['response'] = temp
-          } else {
+          } else if (this.step.paras !== undefined && this.step.paras !== null && this.step.paras.length > 0) {
             paras['p' + (index + 1)] = temp
           }
         })

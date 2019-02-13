@@ -1,6 +1,7 @@
 package core.controller;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import core.pojo.Test;
 
@@ -44,5 +45,17 @@ public class TestManager {
     @RequestMapping(value="/testdetail/{testId}")
     public Test getTestDetail( @PathVariable String testId){
         return testService.getTestDetail(testId) ;
+    }
+
+    @RequestMapping(method=RequestMethod.POST)
+    public List<Test> getTestsDetail( @RequestBody List<String> testIds){
+        return testService.getTests(testIds);
+    }
+
+    @RequestMapping(value="/allsub")
+    public List<String> getSubTests(){
+        List<String> testIds = new ArrayList<String>();
+        testIds.add("5c637a135eeb2960ac1fcc6b");
+        return testService.findAllExecutableTests(testIds) ;
     }
 }
