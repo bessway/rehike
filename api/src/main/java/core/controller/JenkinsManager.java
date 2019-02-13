@@ -67,8 +67,8 @@ public class JenkinsManager{
         jenkinsService.updateExecStatus(suite);
         return "success"; 
     }
-    @RequestMapping(value="/casestatus",method=RequestMethod.PUT)
-    public String updateCaseStatus(@RequestBody Task suite){
+    @RequestMapping(value="/teststatus",method=RequestMethod.PUT)
+    public String updateTestStatus(@RequestBody Task suite){
         String key=(String)suite.getTests().keySet().toArray()[0];
         jenkinsService.updateTestStatus(suite.getJenkinsJobName(), suite.getJenkinsBuildId(), key, suite.getTests().get(key));
         return "success"; 
