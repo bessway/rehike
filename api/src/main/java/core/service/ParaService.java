@@ -12,4 +12,5 @@ public interface ParaService{
     public void setParasValue(List<Para> paras);
     public List<Para> getTestParas(String testId,String dataVersion);
     public List<Para> getTestRefParas(String testId, Integer stepId,String dataVersion);
+    public List<Para> getTestParasWithRef(String testId,String dataVersion);
 }

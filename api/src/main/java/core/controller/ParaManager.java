@@ -50,4 +50,9 @@ public class ParaManager{
     public List<Para> getTestRefParas(@PathVariable String testId, @PathVariable Integer stepId, @PathVariable String dataVersion) {
         return paraService.getTestRefParas(testId, stepId, dataVersion);
     }
+
+    @RequestMapping(value="/test/{testId}/version/{dataVersion}/all", method=RequestMethod.GET)
+    public List<Para> getTestParasWithRef(@PathVariable String testId, @PathVariable String dataVersion) {
+        return paraService.getTestParasWithRef(testId, dataVersion);
+    }
 }

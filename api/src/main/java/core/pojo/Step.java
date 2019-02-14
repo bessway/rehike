@@ -12,6 +12,7 @@ public class Step{
     private Long resParaId = null;
     /*0:ui, 1:api, 2:ref*/
     private Integer stepType = null;
+    //private List<Long> refParas = null;
 
     public void setIndex(Integer index){
         this.index=index;
@@ -68,4 +69,11 @@ public class Step{
     public Integer getStepType(){
         return this.stepType;
     }
+
+    // public void setRefParas(List<Long> refParas){
+    //     this.refParas=refParas;
+    // }
+    // public List<Long> getRefParas(){
+    //     return this.refParas;
+    // }
 }

@@ -69,4 +69,9 @@ public class ParaDaoImpl implements ParaDao{
         List<Para> ret = mongoTemplate.find(query, Para.class);
         return ret;
     }
+    public List<Para> getParasByTestWithRef(String testId, String dataVersion){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("dataVersion").is(dataVersion));
+        List<Para> ret = mongoTemplate.find(query, Para.class);
+        return ret;
+    }
 }

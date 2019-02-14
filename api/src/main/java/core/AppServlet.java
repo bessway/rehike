@@ -20,16 +20,16 @@ import org.springframework.web.filter.CorsFilter;
 public class AppServlet extends SpringBootServletInitializer {
     @Bean  
     public FilterRegistrationBean corsFilter() {  
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();  
-        CorsConfiguration config = new CorsConfiguration();  
-        config.setAllowCredentials(true);  
-        config.addAllowedOrigin("*");  
-        config.addAllowedHeader("*");  
-        config.addAllowedMethod("*");  
-        source.registerCorsConfiguration("/**", config);  
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));  
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);  
-        return bean;  
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
     }
     public static void main(String[] args) {
         SpringApplication.run(applicationClass, args);

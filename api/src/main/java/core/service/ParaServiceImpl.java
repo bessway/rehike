@@ -56,4 +56,7 @@ public class ParaServiceImpl implements ParaService {
     public List<Para> getTestRefParas(String testId, Integer stepId, String dataVersion){
         return paraDao.getRefParasByTest(testId, stepId, dataVersion);
     }
+    public List<Para> getTestParasWithRef(String testId,String dataVersion){
+        return paraDao.getParasByTestWithRef(testId, dataVersion);
+    }
 }
