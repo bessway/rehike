@@ -78,7 +78,7 @@ public class JenkinsServiceImpl implements JenkinsService {
         }
         suite.setTests(null);
         for(String casz:allTests){
-            suite.addTest(casz, Utils.ExecStatus.READYTOSTART);
+            suite.addTest(casz, Utils.ExecStatus.READYTOSTART.name());
         }
     }
     public Task startJob(Task suite) throws Exception {
@@ -92,7 +92,7 @@ public class JenkinsServiceImpl implements JenkinsService {
         MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
         Integer id=job.getNextBuildNumber();
         suite.setJenkinsBuildId(id);
-        suite.setTaskStatus(Utils.ExecStatus.RUNNING);
+        suite.setTaskStatus(Utils.ExecStatus.RUNNING.name());
         suite.setCreateTime(new Date());
         suite.setPassedCnt(0);
         suite.setFailedCnt(0);
@@ -126,10 +126,10 @@ public class JenkinsServiceImpl implements JenkinsService {
         for(Task item:result){
             Integer passed=0;
             Integer failed=0;
-            for(Utils.ExecStatus status:item.getTests().values()){
-                if(Utils.ExecStatus.SUCCESS.equals(status)){
+            for(String status:item.getTests().values()){
+                if(Utils.ExecStatus.SUCCESS.name().equals(status)){
                     passed=passed+1;
-                }else if(Utils.ExecStatus.FAILED.equals(status)){
+                }else if(Utils.ExecStatus.FAILED.name().equals(status)){
                     failed=failed+1;
                 }
             }
@@ -183,7 +183,7 @@ public class JenkinsServiceImpl implements JenkinsService {
     public void updateExecStatus(Task suite){
         jenkinsDao.updateExecutionStatus(suite);
     }
-    public void updateTestStatus(String jobName,Integer taskId,String testId,Utils.ExecStatus status){
+    public void updateTestStatus(String jobName,Integer taskId,String testId,String status){
         jenkinsDao.updateTestStatus(jobName, taskId, testId, status);
     }
     public void updateAgentStatus(String jobName,Integer isFree){

@@ -32,9 +32,9 @@ public class JenkinsDaoImpl implements JenkinsDao{
         return mongoTemplate.find(query, Agent.class);
     }
     public List<Task> getRunningJobs(){
-        List<Utils.ExecStatus> inUseStatus=new ArrayList<Utils.ExecStatus>();
-        inUseStatus.add(Utils.ExecStatus.READYTOSTART);
-        inUseStatus.add(Utils.ExecStatus.RUNNING);
+        List<String> inUseStatus=new ArrayList<String>();
+        inUseStatus.add(Utils.ExecStatus.READYTOSTART.name());
+        inUseStatus.add(Utils.ExecStatus.RUNNING.name());
         Query query=Query.query(Criteria.where("buildStatus").in(inUseStatus));
         query.fields().exclude("_id");
         query.fields().include("jobName");
@@ -61,7 +61,7 @@ public class JenkinsDaoImpl implements JenkinsDao{
         update.set("endTime",suite.getEndTime());
         mongoTemplate.findAndModify(query, update, Task.class);
     }
-    public void updateTestStatus(String jobName,Integer taskId,String caseId,Utils.ExecStatus status){
+    public void updateTestStatus(String jobName,Integer taskId,String caseId,String status){
         Query query=Query.query(Criteria.where("jobName").is(jobName).and("buildId").is(taskId));
         Update update=Update.update("cases."+caseId, status);
         mongoTemplate.findAndModify(query, update, Task.class);

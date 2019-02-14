@@ -24,10 +24,12 @@ public class UiobjectServiceImpl implements UiobjectService{
     public List<Uiobject> searchObjByPath(String path){
         return objDao.searchObjectByPath(Utils.escapeExprSpecialWord(path));
     }
+    //TODO xpath和page.type.name都不能重复
     public Uiobject createObject(Uiobject newObj){
         objDao.createUiobject(newObj);
         return objDao.findObjByName(newObj.getUiObjectPage(), newObj.getUiObjectType(), newObj.getUiObjectName());
     }
+    //TODO xpath和page.type.name都不能重复
     public void updateObject(Uiobject obj){
         objDao.updateObject(obj);
     }

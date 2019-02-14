@@ -19,9 +19,6 @@ public class Utils{
         FAILEDTOSTART,
         FORCESTOP,
     }
-    public final static String execPass="exec pass";
-    public final static String execFail="exec fail";
-    public final static String execException="exec stopped";
 
     public static Properties readPropery(String fileName) throws Exception{
         String path=Utils.class.getResource("/").toURI().getRawPath();

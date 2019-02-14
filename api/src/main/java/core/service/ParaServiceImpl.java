@@ -17,7 +17,7 @@ public class ParaServiceImpl implements ParaService {
     private ParaDao paraDao = null;
     @Autowired
     private TestService testService = null;
-    
+    //TODO 同一个test内，非引用参数名称不能重复
     public Para createTestPara(Para newPara){
         newPara.setParaId(new Date().getTime());
         paraDao.createPara(newPara);
