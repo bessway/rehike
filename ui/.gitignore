@@ -1,8 +1,0 @@
-.DS_Store
-node_modules/
-dist/
-npm-debug.log
-.idea
-src/components/Home/Home.vue.new
-src/components/Home/Home.vue.object
-src/controller/Home/home.js.object
