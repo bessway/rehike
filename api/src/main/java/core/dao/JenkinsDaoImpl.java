@@ -43,7 +43,6 @@ public class JenkinsDaoImpl implements JenkinsDao{
     public List<Task> getAllTasks(Date startDate){
         Query query=Query.query(Criteria.where("createTime").gt(startDate));
         query.fields().exclude("forceStop");
-        query.fields().exclude("paras");
         query.fields().exclude("_id");
         return mongoTemplate.find(query, Task.class);
     }

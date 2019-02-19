@@ -10,7 +10,8 @@ export default new Vuex.Store({
     actions: [],
     uiobjectPages: [],
     activeEditor: {},
-    isAddNewTest: ''
+    isAddNewTest: '',
+    agents: []
   },
   getters: {
     getSelectedTest: state => {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
     },
     getIsAddNewTest: state => {
       return state.isAddNewTest
+    },
+    getAgents: state => {
+      return state.agents
     }
   },
   mutations: {
@@ -51,6 +55,9 @@ export default new Vuex.Store({
     },
     setIsAddNewTest (state, testId) {
       state.isAddNewTest = testId
+    },
+    setAgents (state, agents) {
+      state.agents = agents
     }
   }
 })

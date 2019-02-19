@@ -14,7 +14,6 @@
           :value="item.actionId">
         </el-option>
       </el-select>
-      <el-button v-if="step.stepType === 2" size="small" @click="saveRefParaValue">保存</el-button>
       <el-button size="small" type="primary" @click="debug">debug</el-button>
     </el-row>
     <uiobject
@@ -26,45 +25,36 @@
     <paras
       v-if="step.stepType !== 2"
       :step="step"
+      :testParas="testParas"
       :editable="editable">
     </paras>
     <div v-if="step.stepType === 2">
-      <div class="para" :key="index" v-for="(item, index) in refParas">
-        <label v-if="index % 2 === 0">{{refParas[index].paraName+":"}}</label>
-        <!--el-input v-if="index % 2 === 0" v-model="step.refParas[index].value" :disabled="!editable"/-->
+      <div class="para" :key="index" v-for="(item, index) in referParas">
+        <label v-if="index % 2 === 0">{{referParas[index].paraName+":"}}</label>
         <el-autocomplete
           :disabled="!editable"
           v-if="index % 2 === 0"
           value-key='paraName'
           :fetch-suggestions="paraSearch"
           :trigger-on-focus="false"
-          v-model="refParas[index].paraValue">
+          v-model="referParas[index].paraValue">
         </el-autocomplete>
-        <label v-if="index+1 < refParas.length && index % 2 === 0">{{refParas[index+1].paraName+":"}}</label>
-        <!--el-input v-if="index+1 < step.refParas.length && index % 2 === 0" v-model="step.refParas[index+1].value" :disabled="!editable"/-->
+        <label v-if="index+1 < referParas.length && index % 2 === 0">{{referParas[index+1].paraName+":"}}</label>
         <el-autocomplete
           :disabled="!editable"
-          v-if="index+1 < refParas.length && index % 2 === 0"
+          v-if="index+1 < referParas.length && index % 2 === 0"
           value-key='paraName'
           :fetch-suggestions="paraSearch"
           :trigger-on-focus="false"
-          v-model="refParas[index+1].paraValue">
+          v-model="referParas[index+1].paraValue">
         </el-autocomplete>
       </div>
-    </div>
-    <div class="para" v-if="editable">
-      <el-input placeholder="已上传的文件地址" readonly></el-input>
-      <el-upload
-        class="upload"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :limit="1">
-        <el-button size="small" type="primary">上传</el-button>
-      </el-upload>
     </div>
     <maineditor v-if="step.stepType !== 2 && editable"/>
     <steptable
       v-if="step.stepType === 2"
-      :selectedTest="refTest"
+      :currTest="referTest"
+      :testParas="testParas"
       :editable="false">
     </steptable>
   </div>
@@ -125,15 +115,14 @@ import { Message } from 'element-ui'
 export default {
   name: 'stepdetail',
   components: {uiobject, paras, maineditor, steptable},
-  // props: ['action', 'uiobject', 'step', 'paras', 'refTest', 'editable'],
-  props: ['step', 'uiobject', 'refTest', 'refParas', 'editable'],
+  props: ['step', 'uiobject', 'referTest', 'referParas', 'testParas', 'editable'],
   computed: {
     action: function () {
       return this.findAction(this.step.actionId)
     }
   },
   methods: {
-    ...mapGetters(['getTestParas', 'getActions']),
+    ...mapGetters(['getActions']),
 
     findAction (actionId) {
       var defaultAction = {actionId: '', actionName: '', hasUIObject: 1, actionType: 1}
@@ -157,7 +146,7 @@ export default {
     //   }
     // },
     paraSearch (queryString, callback) {
-      var results = queryString ? this.getTestParas().filter(this.createFilter(queryString)) : this.getTestParas()
+      var results = queryString ? this.testParas.filter(this.createFilter(queryString)) : this.testParas
       // 调用 callback 返回建议列表的数据
       callback(results)
     },
@@ -166,12 +155,11 @@ export default {
         return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
       }
     },
-    async saveRefParaValue () {
-      await this.API.setParasValue(this.refParas)
-    },
     debug () {
-      console.log(this.refTest)
-      console.log(this.refParas)
+      console.log(this.step)
+      console.log(this.referTest)
+      console.log(this.referParas)
+      console.log(this.testParas)
     }
   }
 }

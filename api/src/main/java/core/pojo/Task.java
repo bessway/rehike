@@ -6,8 +6,6 @@ import java.util.HashMap;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import utils.Utils;
-
 @Document(collection="tasks")
 public class Task{
     private String jenkinsJobName=null;

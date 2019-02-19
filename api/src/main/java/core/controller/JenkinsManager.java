@@ -38,15 +38,6 @@ public class JenkinsManager{
     }
     @RequestMapping("/jobdetail/{jobName}/build/{buildId}")
     public String getJobDetail(@PathVariable String jobName,@PathVariable Integer buildId){
-        // BuildPojo suite=new BuildPojo();
-        // suite.setBuildId(buildId);
-        // suite.setJobName(jobName);
-        // try{
-        //     TestReport result= jenkinsService.getTestResult(suite);
-        //     return result.toString();
-        // }catch(Exception e){
-        //     res.sendError(500, e.getMessage());
-        // }
         try{
             return "{\"url\":\""+jenkinsService.getTestReport(jobName,buildId)+"\"}";
         }catch(Exception e){

@@ -57,4 +57,9 @@ public class UiobjectManager{
     public Uiobject getObjectById(@PathVariable String objId){
         return uiObjService.getObjectById(objId);
     }
+
+    @RequestMapping("/uiobject/pageobjects/{objId}")
+    public List<Uiobject> getPageObjById(@PathVariable String objId){
+        return uiObjService.getPageObjById(objId);
+    }
 }

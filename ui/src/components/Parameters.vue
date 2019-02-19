@@ -109,31 +109,35 @@
 </style>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 import { Message } from 'element-ui'
 export default {
-  props: ['step', 'editable'],
+  props: ['step', 'testParas', 'editable'],
   data () {
     return {
       localParas: this.findParas()
     }
   },
-  // watch: {
-  //   paras: function () {
-  //     this.localParas = this.paras
-  //   }
-  // },
+  watch: {
+    testParas: function () {
+      if (this.testParas === undefined || this.testParas.p1 === null) {
+        this.localParas = {p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}}
+      } else {
+        this.localParas = this.findParas()
+      }
+    }
+  },
   methods: {
-    ...mapGetters(['getTestParas']),
+    // ...mapGetters(['getTestParas']),
 
     paraSearch (queryString, callback) {
-      var results = queryString ? this.getTestParas().filter(this.createFilter(queryString)) : this.getTestParas()
+      var results = queryString ? this.testParas.filter(this.createFilter(queryString)) : this.testParas
       // 调用 callback 返回建议列表的数据
       callback(results)
     },
     createFilter (queryString) {
       return (para) => {
-        return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
+        return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0 && (para.refTestId === undefined || para.refTestId === null))
       }
     },
     findParas () {
@@ -148,9 +152,9 @@ export default {
           ids.push(this.step.resParaId)
         }
         ids.forEach((paraId, index) => {
-          for (var i = 0; i < this.getTestParas().length; i++) {
-            if (paraId === this.getTestParas()[i].paraId) {
-              temp = this.getTestParas()[i]
+          for (var i = 0; i < this.testParas.length; i++) {
+            if (paraId === this.testParas[i].paraId) {
+              temp = this.testParas[i]
               break
             }
           }
@@ -158,6 +162,7 @@ export default {
             temp = {paraName: '', paraId: ''}
             Message.error({message: '找不到' + paraId + '对应的参数!'})
           }
+          // response放在最后一个
           if (index === ids.length - 1 && this.step.resParaId !== undefined && this.step.resParaId !== null) {
             paras['response'] = temp
           } else if (this.step.paras !== undefined && this.step.paras !== null && this.step.paras.length > 0) {
@@ -165,7 +170,6 @@ export default {
           }
         })
       }
-      console.log(paras)
       return paras
     },
     selectP1 (para) {
@@ -187,6 +191,7 @@ export default {
       this.step.resParaId = para.paraId
     },
     debug () {
+      console.log(this.testParas)
       console.log(this.localParas)
     }
   }

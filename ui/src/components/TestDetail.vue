@@ -10,7 +10,7 @@
     </div>
     <div class="test-detail">
       <el-col :span="19" class='steps-wrapper'>
-        <steptable :selectedTest="getSelectedTest()" :editable="true"/>
+        <steptable :currTest="getSelectedTest()" :testParas="getTestParas()" :editable="true"/>
       </el-col>
       <el-col :span="5" class='paralist'>
         <el-row>
@@ -143,7 +143,7 @@ export default {
   },
   computed: {
     testVariables: function () {
-      return this.getTestParas()
+      return this.getTestParas().filter(this.notFormalFilter())
     }
   },
   methods: {
@@ -155,6 +155,11 @@ export default {
         return {padding: '0px', margin: '0px', width: '14px'}
       } else {
         return {padding: '0px', margin: '0px', width: '100%'}
+      }
+    },
+    notFormalFilter () {
+      return (para) => {
+        return (para.refTestId === undefined || para.refTestId === null)
       }
     },
     addNextTest () {

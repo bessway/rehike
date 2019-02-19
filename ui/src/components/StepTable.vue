@@ -1,6 +1,6 @@
 <template>
   <el-col :span=24 class='steps'>
-    <el-row v-if="editable">
+    <el-row class="para" v-if="editable">
       <el-button :disabled="isTestSelected()" @click="moveUpSteps">上移</el-button>
       <el-button :disabled="isTestSelected()" @click="moveDownSteps">下移</el-button>
       <el-button :disabled="isTestSelected()" @click="debug">复制</el-button>
@@ -8,10 +8,17 @@
       <el-button :disabled="isTestSelected()" @click="delSteps">删除</el-button>
       <el-button :disabled="isTestSelected()" @click="refPublicTest">引用</el-button>
       <el-button :disabled="isTestSelected()" @click="saveTestValue">保存用例&参数</el-button>
+      <el-input placeholder="已上传的文件地址" readonly></el-input>
+      <el-upload
+        class="upload"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :limit="1">
+        <el-button size="small" type="primary">上传</el-button>
+      </el-upload>
     </el-row>
     <el-table
       :show-header=false
-      :data="selectedTest.steps"
+      :data="currTest.steps"
       style="height: 85%; overflow-y: auto"
       @expand-change="showStepDetail"
       row-key="index"
@@ -25,19 +32,12 @@
       <el-table-column
         type="expand"
         width="15">
-        <!--stepdetail
-          :action="action"
-          :paras="paras"
-          :uiobject="uiobject"
-          :refTest="refTest"
-          :step="selectedStep"
-          :editable="editable">
-        </stepdetail-->
         <stepdetail
           :step="selectedStep"
           :uiobject="uiobject"
-          :refTest="refTest"
-          :refParas="refParas"
+          :referTest="refTest"
+          :referParas="formalParas"
+          :testParas="refTestParas"
           :editable="editable">
         </stepdetail>
       </el-table-column>
@@ -108,11 +108,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import { Message } from 'element-ui'
 
 export default {
   name: 'steptable',
-  props: ['selectedTest', 'editable'],
+  props: ['currTest', 'testParas', 'editable'],
   beforeCreate: function () {
     // 循环调用组件时，组件比vue实例后创建，官方文档里写组件必须先于实例化引入，所以说组件没有正确的引入。
     // 所以这里异步引入，或者可以在main.js全局引入Vue.component('stepdetail', StepDetail)
@@ -121,12 +120,11 @@ export default {
   data () {
     return {
       onlyExpanded: [],
-      // action: {actionId: '', actionName: '', hasUIObject: 1, actionType: 1},
-      // paras: {p1: {paraName: '', paraId: ''}, p2: {paraName: '', paraId: ''}, p3: {paraName: '', paraId: ''}, p4: {paraName: '', paraId: ''}, p5: {paraName: '', paraId: ''}, response: {paraName: '', paraId: ''}},
       selectedStep: {},
       uiobject: {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''},
-      refTest: {},
-      refParas: [],
+      refTest: {steps: []},
+      formalParas: [],
+      refTestParas: [],
       checkedStep: [],
       searchResult: [],
       toRefTest: {},
@@ -135,67 +133,19 @@ export default {
     }
   },
   methods: {
-    ...mapGetters(['getTestParas']),
+    ...mapGetters(['getTestParas', 'getSelectedTest']),
     hideBbutton () {
       if (this.editable) {
         return 'display:none'
       }
     },
-    // findAcion (currRow) {
-    //   if (currRow.actionId === undefined || currRow.actionId === '') {
-    //     this.action = {actionId: '', actionName: '', hasUIObject: 1, actionType: 1}
-    //     return
-    //   }
-    //   for (var i = 0; i < this.getActions().length; i++) {
-    //     // if (currRow.actionId === this.getActions()[i].actionId) {
-    //     if (currRow.actionId.indexOf(this.getActions()[i].actionId.substring(0, 1)) >= 0) {
-    //       console.log(this.getActions()[i])
-    //       this.action = this.getActions()[i]
-    //       return
-    //     }
-    //   }
-    //   Message.error({message: '找不到' + currRow.actionId + '对应的操作!'})
-    //   this.action = {actionId: '', actionName: '', hasUIObject: 1, actionType: 1}
-    // },
-    // findParas (currRow) {
-    //   var paras = {p1: {}, p2: {}, p3: {}, p4: {}, p5: {}, response: {}}
-    //   var temp = {}
-    //   if (currRow.paras.length > 0) {
-    //     var ids = currRow.paras.slice(0)
-    //     ids.push(currRow.resParaId)
-    //     ids.forEach((paraId, index) => {
-    //       for (var i = 0; i < this.getTestParas().length; i++) {
-    //         if (paraId === this.getTestParas()[i].paraId) {
-    //         // if (paraId.indexOf(this.getTestParas()[i].paraId.substring(0, 1)) >= 0) {
-    //           temp = this.getTestParas()[i]
-    //           break
-    //         }
-    //       }
-    //       if (temp.length === 0) {
-    //         temp = {paraName: '', paraId: ''}
-    //         Message.error({message: '找不到' + paraId + '对应的参数!'})
-    //       }
-    //       if (index === ids.length - 1) {
-    //         paras['response'] = temp
-    //       } else {
-    //         paras['p' + (index + 1)] = temp
-    //       }
-    //     })
-    //   }
-    //   console.log(paras)
-    //   this.paras = paras
-    // },
     async showStepDetail (currRow, expandedRows) {
-      console.log(currRow.index + ' ' + this.selectedStep.index)
       // 重复点击时还原数据
       if (currRow.index === this.selectedStep.index) {
         this.selectedStep = {}
         return
       }
       this.selectedStep = currRow
-      console.log(this.selectedStep)
-      // this.findAcion(currRow)
-      // this.findParas(currRow)
       await this.loadUIObject(currRow)
       await this.loadRefTest(currRow)
       // 在递归引用里面不能使用router，因为每次都会push到第一层的地址，导致没法显示子组件
@@ -205,7 +155,7 @@ export default {
       this.onlyExpanded = [currRow.index]
     },
     async loadUIObject (currRow) {
-      if (currRow.uiObjectId !== undefined && currRow.uiObjectId !== '') {
+      if (currRow.uiObjectId !== undefined && currRow.uiObjectId !== null) {
         var res = await this.API.getUIObject(this.selectedStep.uiObjectId)
         this.uiobject = res
       } else {
@@ -213,25 +163,33 @@ export default {
       }
     },
     async loadRefTest (currRow) {
-      if (currRow.stepType !== 2 || currRow.refTestId === undefined || currRow.refTestId === '') {
+      // 如果不是refstep, 则refTest={}
+      if (currRow.stepType !== 2 || currRow.refTestId === undefined || currRow.refTestId === null) {
+        this.refTestParas = this.testParas.slice(0)
         this.refTest = {}
       } else {
-        var refTestDetail = await this.API.getTestDetail(currRow.refTestId)
-        this.refTest = refTestDetail
-        var refTestPara = await this.API.getRefStepParas(this.selectedTest.testId, currRow.index)
-        this.refParas = refTestPara
+        this.formalParas = []
+        this.refTest = await this.API.getTestDetail(currRow.refTestId)
+        this.refTestParas = await this.API.getTestParasAll(currRow.refTestId, 'default')
+        console.log(currRow)
+        console.log(this.testParas)
+        this.testParas.forEach(item => {
+          if (item.stepId === currRow.index && item.refTestId !== undefined && item.refTestId !== null) {
+            this.formalParas.push(item)
+          }
+        })
+        console.log(this.formalParas)
       }
-      console.log(this.refTest)
     },
     setMultiSelect (selection, row) {
       this.checkedStep = selection
     },
     addStepAfter () {
-      if (this.selectedTest.steps === null) {
-        this.selectedTest.steps = []
+      if (this.currTest.steps === null) {
+        this.currTest.steps = []
       }
       var newStep = {}
-      newStep.index = Object.keys(this.selectedTest.steps).length
+      newStep.index = Object.keys(this.currTest.steps).length
       newStep.actionId = ''
       newStep.stepDesc = 'new step' + newStep.index
       newStep.stepType = 0
@@ -240,8 +198,8 @@ export default {
       this.addNewStepAfter(newStep)
     },
     refPublicTest () {
-      if (this.selectedTest.steps === null) {
-        this.selectedTest.steps = []
+      if (this.currTest.steps === null) {
+        this.currTest.steps = []
       }
       this.toRefTest = {}
       this.searchDlgVisible = true
@@ -250,13 +208,16 @@ export default {
       this.searchDlgVisible = false
       if (Object.keys(this.toRefTest).length !== 0) {
         var newStep = {}
-        newStep.index = Object.keys(this.selectedTest.steps).length
+        newStep.index = Object.keys(this.currTest.steps).length
         newStep.stepType = 2
         newStep.refTestId = this.toRefTest.testId
         newStep.stepDesc = this.toRefTest.testDesc
         newStep.paras = []
         newStep.resParaId = ''
-        await this.API.copyFormalParas(this.toRefTest.testId, this.selectedTest.testId, newStep.index)
+        var newFormalParas = await this.API.copyFormalParas(this.toRefTest.testId, this.currTest.testId, newStep.index)
+        for (var item in newFormalParas) {
+          this.testParas.push(item)
+        }
         this.addNewStepAfter(newStep)
       }
     },
@@ -268,12 +229,12 @@ export default {
     },
     addNewStepAfter (newStep) {
       if (this.checkedStep.length === 1) {
-        this.selectedTest.steps.splice(this.checkedStep[0].index + 1, 0, newStep)
-        for (var i = this.checkedStep[0].index + 1; i < this.selectedTest.steps.length; i++) {
-          this.selectedTest.steps[i].index = i
+        this.currTest.steps.splice(this.checkedStep[0].index + 1, 0, newStep)
+        for (var i = this.checkedStep[0].index + 1; i < this.currTest.steps.length; i++) {
+          this.currTest.steps[i].index = i
         }
       } else if (this.checkedStep.length === 0) {
-        this.selectedTest.steps.push(newStep)
+        this.currTest.steps.push(newStep)
       } else {
         alert('只能选一行')
       }
@@ -290,10 +251,10 @@ export default {
       this.toRefTest = row
     },
     isTestSelected () {
-      return Object.keys(this.selectedTest).length === 0
+      return Object.keys(this.currTest).length === 0
     },
     delSteps () {
-      if (this.selectedTest.steps === null || this.checkedStep.length === 0) {
+      if (this.currTest.steps === null || this.checkedStep.length === 0) {
         return
       }
       // this.API.delRefFormalParas([])
@@ -301,37 +262,37 @@ export default {
         return a.index - b.index
       })
       for (var i = this.checkedStep.length - 1; i >= 0; i--) {
-        this.selectedTest.steps.splice(this.checkedStep[i].index, 1)
+        this.currTest.steps.splice(this.checkedStep[i].index, 1)
       }
       this.checkedStep = []
       this.$refs.stepstable.clearSelection()
-      for (i = 0; i < this.selectedTest.steps.length; i++) {
-        this.selectedTest.steps[i].index = i
+      for (i = 0; i < this.currTest.steps.length; i++) {
+        this.currTest.steps[i].index = i
       }
     },
     moveUpSteps () {
-      if (this.selectedTest.steps === null || this.checkedStep.length !== 1) {
+      if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== 0) {
-        this.selectedTest.steps[this.checkedStep[0].index] = this.selectedTest.steps[this.checkedStep[0].index - 1]
-        this.selectedTest.steps[this.checkedStep[0].index - 1] = this.checkedStep[0]
-        this.selectedTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
+        this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index - 1]
+        this.currTest.steps[this.checkedStep[0].index - 1] = this.checkedStep[0]
+        this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
         this.checkedStep[0].index = this.checkedStep[0].index - 1
-        this.selectedTest.steps = this.selectedTest.steps.slice(0)
+        this.currTest.steps = this.currTest.steps.slice(0)
         this.$nextTick(function () {
           this.$refs.stepstable.toggleRowSelection(this.checkedStep[0], true)
         })
       }
     },
     moveDownSteps () {
-      if (this.selectedTest.steps === null || this.checkedStep.length !== 1) {
+      if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
-      } else if (this.checkedStep[0].index !== this.selectedTest.steps.length - 1) {
-        this.selectedTest.steps[this.checkedStep[0].index] = this.selectedTest.steps[this.checkedStep[0].index + 1]
-        this.selectedTest.steps[this.checkedStep[0].index + 1] = this.checkedStep[0]
-        this.selectedTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
+      } else if (this.checkedStep[0].index !== this.currTest.steps.length - 1) {
+        this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index + 1]
+        this.currTest.steps[this.checkedStep[0].index + 1] = this.checkedStep[0]
+        this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
         this.checkedStep[0].index = this.checkedStep[0].index + 1
-        this.selectedTest.steps = this.selectedTest.steps.slice(0)
+        this.currTest.steps = this.currTest.steps.slice(0)
         // vue是异步渲染，在每个tick开始前会搜集所有的数据变化，放入队列，多次修改仅最后一次生效，然后统一渲染
         // 所以如果要在数据变化后的基础上做修改，需要放在nexttick
         this.$nextTick(function () {
@@ -339,14 +300,21 @@ export default {
         })
       }
     },
+    // 无论展开哪一级步骤，保存值都只保存当前选中的test
     async saveTestValue () {
-      await this.API.updateTest(this.selectedTest)
+      await this.API.updateTest(this.getSelectedTest())
       if (this.getTestParas().length > 0) {
         await this.API.setParasValue(this.getTestParas())
       }
     },
     debug () {
-      console.log(this.selectedTest)
+      console.log(this.getSelectedTest())
+      console.log(this.currTest)
+      console.log(this.refTest)
+      console.log(this.refTestParas)
+      console.log(this.formalParas)
+      console.log(this.testParas)
+      console.log(this.getTestParas())
     }
   }
 }

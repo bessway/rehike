@@ -9,7 +9,7 @@ export {
   getActions,
   getUIObject,
   getAction,
-  getTestParas,
+  getTestParasAll,
   getUIObjectByXpath,
   createUIObject,
   getUIPages,
@@ -22,7 +22,11 @@ export {
   setFormalParas,
   updateTest,
   setParasValue,
-  getRefStepParas
+  getRefStepParas,
+  getAgents,
+  startJob,
+  getTasks,
+  getTaskReport
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -148,8 +152,8 @@ function getTestDetail (testId) {
     }
   )
 }
-function getTestParas (testId) {
-  return getRequest('/paras/test/' + testId).then(
+function getTestParasAll (testId, dataVersion) {
+  return getRequest('/paras/test/' + testId + '/version/' + dataVersion + '/all').then(
     function (data) {
       return data
     }
@@ -278,6 +282,38 @@ function setParasValue (paras) {
 
 function getRefStepParas (testId, stepId) {
   return getRequest('/paras/test/' + testId + '/step/' + stepId).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function getAgents () {
+  return getRequest('/jenkins/agents').then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function startJob (tests) {
+  return postRequest('/jenkins/job', tests).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function getTasks (cnt) {
+  return getRequest('/jenkins/jobs').then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function getTaskReport (jobName, buildId) {
+  return getRequest('/jenkins/jobdetail/' + jobName + '/build/' + buildId).then(
     function (data) {
       return data
     }

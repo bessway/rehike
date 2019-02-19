@@ -19,6 +19,7 @@
           :props="testTreeProp"
           :highlight-current=true
           node-key="testId"
+          @check-change="setCheckedTest"
           @node-click="clickTest"
           ref="testTree">
         </el-tree>
@@ -103,9 +104,6 @@ export default {
       }
     }
   },
-  mounted: function () {
-    this.$router.push('/')
-  },
   computed: {
     isAddTestHere: function () {
       return this.getIsAddNewTest()
@@ -117,7 +115,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages']),
+    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages', 'setAgents']),
     ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages', 'getIsAddNewTest']),
 
     testLabel: function (data, node) {
@@ -143,7 +141,7 @@ export default {
       }
     },
     async loadTestParas (testId) {
-      var res = await this.API.getTestParas(testId)
+      var res = await this.API.getTestParasAll(testId, 'default')
       this.setTestParas(res)
     },
     async clickTest (data, node) {
@@ -193,6 +191,9 @@ export default {
       } else {
         this.$refs.testTree.append(newTest, this.$refs.testTree.getCurrentNode())
       }
+    },
+    setCheckedTest () {
+      this.$refs.testTree.getCheckedNodes()
     },
     debug () {
       console.log(this.getSelectedTest())

@@ -1,7 +1,7 @@
 <template>
   <div class="objects-editor">
     <div class="object">
-      <el-select placeholder="选择页面" :disabled="!editable"
+      <el-select placeholder="选择页面" v-if="editable"
         v-model="keyPage"
         @change="loadObjectsByPage">
         <el-option
@@ -10,7 +10,7 @@
           :value="item">
         </el-option>
       </el-select>
-      <el-select placeholder="选择类型" :disabled="!editable"
+      <el-select placeholder="选择类型" v-if="editable"
         v-model="keyType">
         <el-option
           v-for="item in getUIObjTypes()"
@@ -18,7 +18,7 @@
           :value="item">
         </el-option>
       </el-select>
-      <el-select placeholder="选择名称" :disabled="!editable"
+      <el-select placeholder="选择名称" v-if="editable"
         v-model="keyName"
         @change="setSelectedObj">
         <el-option
@@ -27,7 +27,7 @@
           :value="item">
         </el-option>
       </el-select>
-      <el-autocomplete class="xpath" placeholder="搜索xpath" :disabled="!editable"
+      <el-autocomplete class="xpath" placeholder="搜索xpath" v-if="editable"
         :trigger-on-focus="false"
         :fetch-suggestions="searchUIObjectByXpath">
       </el-autocomplete>
@@ -128,7 +128,6 @@ export default {
   },
   watch: {
     uiobject: function () {
-      console.log(this.uiobject)
       if (this.uiobject === null) {
         this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
       } else {

@@ -53,6 +53,11 @@ public class UiobjectServiceImpl implements UiobjectService{
     public Uiobject getObjectById(String objId){
         return objDao.getObjectById(objId);
     }
+    public List<Uiobject> getPageObjById(String objId){
+        Uiobject obj = objDao.getObjectById(objId);
+        String page = obj.getUiObjectPage();
+        return this.getObjectsByPage(page);
+    }
     private void addToStructObjects(Map<String, Object>ret, Uiobject obj){
         Map<String,Object> temp = ret;
         if(!temp.containsKey(obj.getUiObjectPage())){

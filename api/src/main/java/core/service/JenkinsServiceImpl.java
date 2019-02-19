@@ -68,7 +68,7 @@ public class JenkinsServiceImpl implements JenkinsService {
             throw new Exception("job "+jobName+" is already started");
         }
     }
-    private void findAllExectableTests(Task suite) throws Exception{
+    private void findAllExecutableTests(Task suite) throws Exception{
         //找到所有的case，可能会包含非case的node
         List<String> allTests=new ArrayList<String>();
         allTests = testService.findAllExecutableTests(Lists.newArrayList(suite.getTests().keySet()));
@@ -87,7 +87,7 @@ public class JenkinsServiceImpl implements JenkinsService {
         runningJobNames.add(suite.getJenkinsJobName());
         //设置agent状态
         this.updateAgentStatus(suite.getJenkinsJobName(), 0);
-        this.findAllExectableTests(suite);
+        this.findAllExecutableTests(suite);
 
         MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
         Integer id=job.getNextBuildNumber();

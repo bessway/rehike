@@ -14,4 +14,5 @@ public interface UiobjectService{
     public Map<String, Object> getStructedObjByPage(String page);
     public Set<String> getPages();
     public Uiobject getObjectById(String objId);
+    public List<Uiobject> getPageObjById(String objId);
 }
