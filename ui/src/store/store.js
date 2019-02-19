@@ -34,6 +34,9 @@ export default new Vuex.Store({
     },
     getAgents: state => {
       return state.agents
+    },
+    getCheckedTests: state => {
+      return state.checkedTests
     }
   },
   mutations: {
@@ -58,6 +61,9 @@ export default new Vuex.Store({
     },
     setAgents (state, agents) {
       state.agents = agents
+    },
+    setCheckedTests (state, checkedTests) {
+      state.checkedTests = checkedTests
     }
   }
 })

@@ -16,8 +16,8 @@ import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.MavenBuild;
 import com.offbytwo.jenkins.model.MavenJobWithDetails;
 import com.offbytwo.jenkins.model.TestReport;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ import utils.Utils;
 
 @Service("JenkinsService")
 public class JenkinsServiceImpl implements JenkinsService {
-    private Logger logger=Logger.getLogger(JenkinsServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(JenkinsServiceImpl.class);
     private static String jenkinsConfigFile = "jenkins.properties";
     private static Properties jProperty = null;
     private static JenkinsServer jServer = null;
@@ -42,20 +42,21 @@ public class JenkinsServiceImpl implements JenkinsService {
     public JenkinsServiceImpl(){
         //如果重启则重新从数据库获取状态
         //缓存runningJobNames防止把一个jenkins任务启动多次
-        // if(runningJobNames==null){
-        //     runningJobNames=new Vector<String>();
-        //     List<Task> runningJobs=jenkinsDao.getRunningJobs();
-        //     for(Task item:runningJobs){
-        //         runningJobNames.add(item.getJenkinsJobName());
-        //     }
-        // }
+        if(runningJobNames==null){
+            runningJobNames=new Vector<String>();
+            // List<Task> runningJobs=jenkinsDao.getRunningJobs();
+            // for(Task item:runningJobs){
+            //     runningJobNames.add(item.getJenkinsJobName());
+            // }
+        }
     }
     private JenkinsServer getJenkinsServer() throws Exception{  
         if (jServer == null) {
             try {
                 jProperty = Utils.readPropery(jenkinsConfigFile);
             } catch (Exception e) {
-                logger.debug("cannot find jenkins config file");
+                logger.error("cannot find jenkins config file", e);
+                throw e;
             }
             jServer = new JenkinsServer(new URI(jProperty.getProperty("jenkins.host")),
                     jProperty.getProperty("jenkins.user"), jProperty.getProperty("jenkins.password"));
@@ -69,9 +70,10 @@ public class JenkinsServiceImpl implements JenkinsService {
         }
     }
     private void findAllExecutableTests(Task suite) throws Exception{
-        //找到所有的case，可能会包含非case的node
+        //找到所有的case，因为可能会包含非case的node
         List<String> allTests=new ArrayList<String>();
         allTests = testService.findAllExecutableTests(Lists.newArrayList(suite.getTests().keySet()));
+        //如果没有找到可执行的用例，释放agent
         if(allTests.size()==0){
             runningJobNames.remove(suite.getJenkinsJobName());
             throw new Exception("job "+suite.getJenkinsJobName()+" has no case");
@@ -87,35 +89,41 @@ public class JenkinsServiceImpl implements JenkinsService {
         runningJobNames.add(suite.getJenkinsJobName());
         //设置agent状态
         this.updateAgentStatus(suite.getJenkinsJobName(), 0);
-        this.findAllExecutableTests(suite);
-
-        MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
-        Integer id=job.getNextBuildNumber();
-        suite.setJenkinsBuildId(id);
-        suite.setTaskStatus(Utils.ExecStatus.RUNNING.name());
-        suite.setCreateTime(new Date());
-        suite.setPassedCnt(0);
-        suite.setFailedCnt(0);
-        
-        //存储case供agent调用
-        jenkinsDao.saveExecution(suite);
-        //添加maven参数
-        Map<String,String> mavenPara = new HashMap<String,String>();
-        mavenPara.put("jobName", suite.getJenkinsJobName());
-        mavenPara.put("buildId", String.valueOf(suite.getJenkinsBuildId()));
-        mavenPara.put("logLevel", suite.getLogLevel());
-        mavenPara.put("env", suite.getEnv());
-        mavenPara.put("dataVersion", suite.getDataVersion());
 
         //启动执行
         try{
-            job.build(mavenPara,true);
+            this.findAllExecutableTests(suite);
+
+            //MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
+            //Integer id=job.getNextBuildNumber();
+            //suite.setJenkinsBuildId(id);
+            suite.setTaskStatus(Utils.ExecStatus.RUNNING.name());
+            suite.setCreateTime(new Date());
+            suite.setPassedCnt(0);
+            suite.setFailedCnt(0);
+            String reportUrl = "";
+            //String reportUrl = jProperty.getProperty("jenkins.host")+"/userContent/";
+            //reportUrl = reportUrl+suite.getJenkinsJobName()+String.valueOf(suite.getJenkinsBuildId())+".html";
+            suite.setReportUrl(reportUrl);
+            
+            //存储case供agent调用
+            jenkinsDao.saveExecution(suite);
+            //添加maven参数
+            Map<String,String> mavenPara = new HashMap<String,String>();
+            mavenPara.put("jobName", suite.getJenkinsJobName());
+            mavenPara.put("buildId", String.valueOf(suite.getJenkinsBuildId()));
+            mavenPara.put("logLevel", suite.getLogLevel());
+            mavenPara.put("env", suite.getEnv());
+            mavenPara.put("dataVersion", suite.getDataVersion());
+            //job.build(mavenPara,true);
         }catch(Exception e){
             runningJobNames.remove(suite.getJenkinsJobName());
-            throw new Exception("error when calling jenkins:"+e.getMessage());
+            this.updateAgentStatus(suite.getJenkinsJobName(), 1);
+            logger.error("error when calling jenkins", e);
+            throw new Exception("error when calling jenkins: "+e.getMessage());
         }
         //for debug
-        //runningJob.remove(suite.getJobName());
+        runningJobNames.remove(suite.getJenkinsJobName());
         return suite;
     }
     public List<Task> getAllTasks(){
@@ -139,32 +147,15 @@ public class JenkinsServiceImpl implements JenkinsService {
         }
         return result;
     }
-    public TestReport getTestResult(Task suite) throws Exception{
-        MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
-        MavenBuild build=job.getBuildByNumber(suite.getJenkinsBuildId());
-        TestReport result= build.getTestReport();
+    // public TestReport getTestResult(Task suite) throws Exception{
+    //     MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
+    //     MavenBuild build=job.getBuildByNumber(suite.getJenkinsBuildId());
+    //     TestReport result= build.getTestReport();
         
-        return result;
-    }
-    public String getTestReport(String jobName,Integer buildId) throws Exception{
-        return jProperty.getProperty("jenkins.host")+"/userContent/"+jobName+String.valueOf(buildId)+".html";
-    }
+    //     return result;
+    // }
     public List<Agent> getAllAgents(){
         List<Agent> agents=jenkinsDao.getAllAgents(1);
-/*        //检查是否正在使用中：看是否有正在执行的job
-        //这里agent和job是一对一的
-        List<BuildPojo> runningJobs=jenkinsDao.getRunningJobs();
-        for(AgentPojo item:agents){
-            for(BuildPojo build:runningJobs){
-                if(build.getJobName().equals(item.getJobName())){
-                    item.setStatus(false);
-                    break;
-                }
-            }
-            if(item.getStatus()==null){
-                item.setStatus(true);
-            }
-        }*/
         return agents;
     }
     public Task getExecution(String jobName,Integer buildId){
@@ -186,17 +177,17 @@ public class JenkinsServiceImpl implements JenkinsService {
     public void updateTestStatus(String jobName,Integer taskId,String testId,String status){
         jenkinsDao.updateTestStatus(jobName, taskId, testId, status);
     }
-    public void updateAgentStatus(String jobName,Integer isFree){
-        jenkinsDao.updateAgentStatus(jobName, isFree);
+    public void updateAgentStatus(String jobName,Integer isAvailable){
+        jenkinsDao.updateAgentStatus(jobName, isAvailable);
     }
     public void deleteLogFile(){
         Properties pLog=null;
         try{
-            pLog=Utils.readPropery("log4j.properties");
+            pLog=Utils.readPropery("application.properties");
         }catch(Exception e){
-            logger.debug("cannot find log4j configuration");
+            logger.error("cannot find application configuration", e);
         }
-        String path=pLog.getProperty("log4j.appender.logfile.File");
+        String path=pLog.getProperty("logging.path");
         String dir=System.getenv("user.dir")+"/"+path.split("/")[1];
         File logFolder=new File(dir);
         if(logFolder.exists()){

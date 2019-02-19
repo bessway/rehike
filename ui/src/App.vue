@@ -19,7 +19,7 @@
           :props="testTreeProp"
           :highlight-current=true
           node-key="testId"
-          @check-change="setCheckedTest"
+          @check-change="setCheckedNodes"
           @node-click="clickTest"
           ref="testTree">
         </el-tree>
@@ -115,7 +115,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages', 'setAgents']),
+    ...mapMutations(['setSelectedTest', 'setTestParas', 'setActions', 'setUIObjectPages', 'setCheckedTests']),
     ...mapGetters(['getSelectedTest', 'getActions', 'getUIObjPages', 'getIsAddNewTest']),
 
     testLabel: function (data, node) {
@@ -192,8 +192,8 @@ export default {
         this.$refs.testTree.append(newTest, this.$refs.testTree.getCurrentNode())
       }
     },
-    setCheckedTest () {
-      this.$refs.testTree.getCheckedNodes()
+    setCheckedNodes () {
+      this.setCheckedTests(this.$refs.testTree.getCheckedNodes())
     },
     debug () {
       console.log(this.getSelectedTest())

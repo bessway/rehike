@@ -25,8 +25,7 @@ export {
   getRefStepParas,
   getAgents,
   startJob,
-  getTasks,
-  getTaskReport
+  getTasks
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -306,14 +305,6 @@ function startJob (tests) {
 
 function getTasks (cnt) {
   return getRequest('/jenkins/jobs').then(
-    function (data) {
-      return data
-    }
-  )
-}
-
-function getTaskReport (jobName, buildId) {
-  return getRequest('/jenkins/jobdetail/' + jobName + '/build/' + buildId).then(
     function (data) {
       return data
     }

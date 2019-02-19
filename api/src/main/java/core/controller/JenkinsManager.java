@@ -21,12 +21,8 @@ public class JenkinsManager{
     private JenkinsService jenkinsService=null;
     
     @RequestMapping(value="/job", method=RequestMethod.POST)
-    public Task startJob(@RequestBody Task task){
-        try{
-            return jenkinsService.startJob(task);
-        }catch(Exception e){
-            return null;
-        }
+    public Task startJob(@RequestBody Task task) throws Exception{
+        return jenkinsService.startJob(task);
     }
     @RequestMapping("/jobs")
     public List<Task> getJobStatus(){
@@ -35,14 +31,6 @@ public class JenkinsManager{
     @RequestMapping("/agents")
     public List<Agent> getAllAgents(){
         return jenkinsService.getAllAgents();
-    }
-    @RequestMapping("/jobdetail/{jobName}/build/{buildId}")
-    public String getJobDetail(@PathVariable String jobName,@PathVariable Integer buildId){
-        try{
-            return "{\"url\":\""+jenkinsService.getTestReport(jobName,buildId)+"\"}";
-        }catch(Exception e){
-            return "failed";
-        }
     }
     @RequestMapping("/job/{jobName}")
     public String syncRunningJob(@PathVariable String jobName,@RequestBody Map<String,Integer> task){
@@ -53,7 +41,7 @@ public class JenkinsManager{
     public Task getExecutioin(@PathVariable String jobName,@PathVariable Integer buildId){
         return jenkinsService.getExecution(jobName, buildId);
     }
-    @RequestMapping(value="/jobstatus",method=RequestMethod.PUT)
+    @RequestMapping(value="/taskstatus",method=RequestMethod.PUT)
     public String updateExecStatus(@RequestBody Task suite){
         jenkinsService.updateExecStatus(suite);
         return "success"; 

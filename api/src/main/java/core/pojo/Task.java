@@ -21,6 +21,7 @@ public class Task{
     private String logLevel=null;
     private String dataVersion=null;
     private String env=null;
+    private String reportUrl=null;
 
     public void setLogLevel(String logLevel){
         this.logLevel=logLevel;
@@ -105,5 +106,11 @@ public class Task{
     }
     public String getEnv(){
         return this.env;
+    }
+    public String getReportUrl(){
+        return this.reportUrl;
+    }
+    public void setReportUrl(String reportUrl){
+        this.reportUrl=reportUrl;
     }
 }

@@ -35,9 +35,9 @@ public class JenkinsDaoImpl implements JenkinsDao{
         List<String> inUseStatus=new ArrayList<String>();
         inUseStatus.add(Utils.ExecStatus.READYTOSTART.name());
         inUseStatus.add(Utils.ExecStatus.RUNNING.name());
-        Query query=Query.query(Criteria.where("buildStatus").in(inUseStatus));
+        Query query=Query.query(Criteria.where("taskStatus").in(inUseStatus));
         query.fields().exclude("_id");
-        query.fields().include("jobName");
+        query.fields().include("jenkinsJobName");
         return mongoTemplate.find(query, Task.class);
     }
     public List<Task> getAllTasks(Date startDate){
@@ -47,27 +47,27 @@ public class JenkinsDaoImpl implements JenkinsDao{
         return mongoTemplate.find(query, Task.class);
     }
     public Task getExecution(String jobName,Integer taskId){
-        Query query=Query.query(Criteria.where("jobName").is(jobName).and("buildId").is(taskId));
+        Query query=Query.query(Criteria.where("jenkinsJobName").is(jobName).and("jenkinsBuildId").is(taskId));
         return mongoTemplate.findOne(query, Task.class);
     }
     public void updateExecutionStatus(Task suite){
-        Query query=Query.query(Criteria.where("jobName").is(suite.getJenkinsJobName()).and("buildId").is(suite.getJenkinsBuildId()));
-        Update update=Update.update("buildStatus", suite.getTaskStatus());
+        Query query=Query.query(Criteria.where("jenkinsJobName").is(suite.getJenkinsJobName()).and("jenkinsBuildId").is(suite.getJenkinsBuildId()));
+        Update update=Update.update("taskStatus", suite.getTaskStatus());
         if(suite.getTests()!=null && suite.getTests().size()>0){
-            update.set("cases", suite.getTests());
+            update.set("tests", suite.getTests());
         }
         update.set("forceStop",suite.isFroceStop());
         update.set("endTime",suite.getEndTime());
         mongoTemplate.findAndModify(query, update, Task.class);
     }
     public void updateTestStatus(String jobName,Integer taskId,String caseId,String status){
-        Query query=Query.query(Criteria.where("jobName").is(jobName).and("buildId").is(taskId));
-        Update update=Update.update("cases."+caseId, status);
+        Query query=Query.query(Criteria.where("jenkinsJobName").is(jobName).and("jenkinsBuildId").is(taskId));
+        Update update=Update.update("tests."+caseId, status);
         mongoTemplate.findAndModify(query, update, Task.class);
     }
-    public void updateAgentStatus(String jobName,Integer isFree){
+    public void updateAgentStatus(String jobName,Integer isAvailable){
         Query query=Query.query(Criteria.where("jobName").is(jobName));
-        Update update=Update.update("status", isFree);
+        Update update=Update.update("status", isAvailable);
         mongoTemplate.findAndModify(query, update, Agent.class);
     }
 }
