@@ -27,7 +27,7 @@ if("${JOB_NAME}".contains('auto_')){
 	}
 	
 	//def http = new HTTPBuilder("http://192.168.2.103:8081/1/jenkins/job/${shortName}")
-	def http = new HTTPBuilder("http://118.178.133.96:8080/hike/1/jenkins/job/${shortName}")
+	def http = new HTTPBuilder("http://118.178.133.96:8080/hike/api/v2/jenkins/job/${shortName}")
 	http.request( PUT, JSON ) { req ->
 		body = [isComplete:true] 
 		response.success = { resp, json ->
@@ -40,7 +40,7 @@ if("${JOB_NAME}".contains('auto_')){
 	}
 	println "${BUILD_RESULT}"
 	if("${BUILD_RESULT}"=='FAILURE'){
-		http = new HTTPBuilder("http://118.178.133.96:8080/hike/1/jenkins/jobstatus")
+		http = new HTTPBuilder("http://118.178.133.96:8080/hike/api/v2/jenkins/jobstatus")
 		http.request( PUT, JSON ) { req ->
 			def end=new Date().format('yyyy-MM-dd HH:mm:ss')
 			body = [forceStop:false,endTime:"${end}".toString(),buildStatus:'EXCEPTION',jobName:"${shortName}",buildId:"${BUILD_ID}"] 
@@ -56,7 +56,7 @@ if("${JOB_NAME}".contains('auto_')){
 		def jsonSlurper = new JsonSlurper()
         def map = jsonSlurper.parseText('{"msgtype": "text","text": {"content": "Failed to execute '+"${shortName} "+"${BUILD_ID}"+'"}}')
         println(map)
-        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token=1308705f879bf96928ad6b9e7a49879eceb37517ec9306e595d12460b2303f6c")
+        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token=65ceeb0320ed3828c2508781ff107851fa3bf638031b19f31a5f18150df078c9")
         http.request(POST, JSON){req ->
             body = map
             response.success = { resp, json ->
@@ -67,7 +67,7 @@ if("${JOB_NAME}".contains('auto_')){
 		def jsonSlurper = new JsonSlurper()
         def map = jsonSlurper.parseText('{"msgtype": "text","text": {"content": "http://118.178.133.96:8080/jenkins/userContent/'+"${shortName}"+"${BUILD_ID}"+'.html"}}')
         println(map)
-        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token=1308705f879bf96928ad6b9e7a49879eceb37517ec9306e595d12460b2303f6c")
+        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token=65ceeb0320ed3828c2508781ff107851fa3bf638031b19f31a5f18150df078c9")
         http.request(POST, JSON){req ->
             body = map
             response.success = { resp, json ->

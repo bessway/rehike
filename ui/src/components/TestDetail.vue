@@ -1,0 +1,215 @@
+<template>
+  <div class='test-info'>
+    <div class='test-desc'>
+      <label>用例描述:</label>
+      <el-input v-model="getSelectedTest().testDesc" ></el-input>
+      <el-button :disabled="isTestSelected()" size="mini">刷新</el-button>
+      <el-button :disabled="isTestSelected()" size="mini" @click="addNextTest">下一个</el-button>
+      <el-button :disabled="isTestSelected()" size="mini" @click="copyNextTest">复制</el-button>
+      <el-button :disabled="isTestSelected()" size="mini" @click="debug">预览</el-button>
+    </div>
+    <div class="test-detail">
+      <el-col :span="19" class='steps-wrapper'>
+        <steptable :currTest="getSelectedTest()" :testParas="getTestParas()" :editable="true"/>
+      </el-col>
+      <el-col :span="5" class='paralist'>
+        <el-row>
+          <el-button :disabled="isTestSelected()" @click="toAddPara">添加</el-button>
+          <el-button :disabled="isTestSelected()" @click="delParaFromTest">删除</el-button>
+          <el-button :disabled="isTestSelected()" @click="setParaFormal">置为入参</el-button>
+        </el-row>
+        <el-table
+          :show-header=false
+          :data=testVariables
+          highlight-current-row
+          :cell-style=paraTableCellStyle
+          @row-click="clickPara"
+          @select="setMultiSelect"
+          ref="parastable"
+          style="height: 85%; overflow-y: auto">
+          <el-table-column prop="paraName"/>
+          <el-table-column
+            type="selection"
+            width="15">
+          </el-table-column>
+        </el-table>
+        <el-dialog title="添加参数"
+          :visible.sync="addParaVisible"
+          :close-on-click-modal=false
+          :close-on-press-escape=false
+          :show-close=false>
+          <div class='test-desc'>
+            <label>参数名:</label>
+            <el-input v-model="newPara.paraName" autocomplete="off"></el-input>
+          </div>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="cancelAddPara">取 消</el-button>
+            <el-button type="primary" @click="addParaToTest">确 定</el-button>
+          </div>
+        </el-dialog>
+      </el-col>
+    </div>
+  </div>
+</template>
+
+<style lang="scss">
+// scoped 属性是一个布尔属性。如果使用该属性，则样式仅仅应用到 style 元素的父元素及其子元素
+// https://www.jb51.net/article/129228.htm
+.test-info {
+  height: 100%;
+}
+.steps-wrapper {
+  height: 100%
+}
+.test-desc {
+  display: flex;
+  margin-left: 5px;
+  justify-content: left;
+  align-items: left;
+  .el-input {
+    .el-input__inner {
+      margin-top: 3px;
+      height: 25px;
+    }
+  }
+  label {
+    font-size: 13px;
+    font-weight: bold;
+    width: 80px;
+    height: 30px;
+    margin-top: 5px;
+  }
+}
+.test-detail{
+  height: 100%;
+}
+.paralist {
+  float: right;
+  border-left: 1px solid rgba(236, 234, 234, 0.925);
+  height: 100%;
+  padding-left: 3px;
+  .el-button {
+    margin-right: 3px;
+  }
+}
+.el-input {
+  height: 30px;
+  .el-input__inner {
+    height: 30px;
+    padding: 0px;
+  }
+}
+.el-button {
+  font-size: 12px;
+  padding-right: 1px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  margin-top: 3px;
+  height: 25px;
+}
+.el-button+.el-button {
+  margin-left: 3px;
+}
+.el-table {
+  .cell {
+    padding: 0px;
+  }
+  .el-table-column--selection {
+    width: 16px;
+    .cell {
+      width: 16px;
+    }
+  }
+}
+// 因为App组件限制了scoped，只能在这里改tree的样式
+.el-tree-node__children {
+  overflow: visible !important;
+}
+</style>
+
+<script>
+import { mapMutations, mapGetters } from 'vuex'
+import steptable from './StepTable.vue'
+export default {
+  components: {steptable},
+  data () {
+    return {
+      action: {},
+      addParaVisible: false,
+      newPara: {},
+      checkedParas: []
+    }
+  },
+  computed: {
+    testVariables: function () {
+      return this.getTestParas().filter(this.notFormalFilter())
+    }
+  },
+  methods: {
+    ...mapGetters(['getSelectedTest', 'getTestParas']),
+    ...mapMutations(['setIsAddNewTest', 'setActiveEditor']),
+
+    paraTableCellStyle: function ({row, column, rowIndex, columnIndex}) {
+      if (column.type === 'selection') {
+        return {padding: '0px', margin: '0px', width: '14px'}
+      } else {
+        return {padding: '0px', margin: '0px', width: '100%'}
+      }
+    },
+    notFormalFilter () {
+      return (para) => {
+        return (para.refTestId === undefined || para.refTestId === null)
+      }
+    },
+    addNextTest () {
+      if (this.getSelectedTest().testId !== undefined) {
+        this.setIsAddNewTest(this.getSelectedTest().testId)
+      }
+    },
+    copyNextTest () {
+      if (this.getSelectedTest().testId !== undefined) {
+        this.setIsAddNewTest('copy' + this.getSelectedTest().testId)
+      }
+    },
+    isTestSelected () {
+      return Object.keys(this.getSelectedTest()).length === 0
+    },
+    toAddPara () {
+      this.addParaVisible = true
+      this.newPara = {}
+    },
+    cancelAddPara () {
+      this.addParaVisible = false
+      this.newPara = {}
+    },
+    async addParaToTest () {
+      this.addParaVisible = false
+      this.newPara.testId = this.getSelectedTest().testId
+      this.newPara.isFormalPara = 0
+      this.newPara = await this.API.createTestPara(this.newPara)
+      this.getTestParas().push(this.newPara)
+    },
+    setMultiSelect (selection, row) {
+      this.checkedParas = selection
+    },
+    async delParaFromTest () {
+      // await this.API.delTestParas(this.checkedParas)
+      // this.checkedParas = []
+      // this.$refs.parastable.clearSelection()
+    },
+    async setParaFormal () {
+      await this.API.setFormalParas(this.checkedParas)
+      this.checkedParas.forEach(element => {
+        element.isFormalPara = 1
+      })
+    },
+    clickPara (row, event, column) {
+      this.setActiveEditor(row)
+    },
+    debug () {
+      console.log(this.getTestParas())
+    }
+  }
+}
+</script>
