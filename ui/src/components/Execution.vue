@@ -155,6 +155,7 @@ export default {
       task['logLevel'] = 'info'
       task['env'] = this.selectedEnv
       task['dataVersion'] = this.selectedData
+      task['browserType'] = this.sldBrowser
       task['tests'] = {}
       this.getCheckedTests().forEach(test => {
         task['tests'][test.testId] = ''

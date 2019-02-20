@@ -22,6 +22,7 @@ public class Task{
     private String dataVersion=null;
     private String env=null;
     private String reportUrl=null;
+    private String browserType=null;
 
     public void setLogLevel(String logLevel){
         this.logLevel=logLevel;
@@ -112,5 +113,11 @@ public class Task{
     }
     public void setReportUrl(String reportUrl){
         this.reportUrl=reportUrl;
+    }
+    public String getBrowserType(){
+        return this.browserType;
+    }
+    public void setBrowserType(String browserType){
+        this.browserType=browserType;
     }
 }

@@ -4,4 +4,5 @@ import core.pojo.Action;
 
 public interface ActionService{
     public List<Action> getActions();
+    public Action createAction(Action action);
 }

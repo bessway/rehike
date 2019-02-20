@@ -13,9 +13,7 @@ import java.util.HashMap;
 
 import com.google.common.collect.Lists;
 import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.MavenBuild;
 import com.offbytwo.jenkins.model.MavenJobWithDetails;
-import com.offbytwo.jenkins.model.TestReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +34,20 @@ public class JenkinsServiceImpl implements JenkinsService {
     public static Vector<String> runningJobNames=null;
     @Autowired
     private TestService testService=null;
-    @Autowired
+    
     private JenkinsDao jenkinsDao=null;
     
-    public JenkinsServiceImpl(){
+    @Autowired
+    public JenkinsServiceImpl(JenkinsDao jenkinsDao){
+        this.jenkinsDao=jenkinsDao;
         //如果重启则重新从数据库获取状态
         //缓存runningJobNames防止把一个jenkins任务启动多次
         if(runningJobNames==null){
             runningJobNames=new Vector<String>();
-            // List<Task> runningJobs=jenkinsDao.getRunningJobs();
-            // for(Task item:runningJobs){
-            //     runningJobNames.add(item.getJenkinsJobName());
-            // }
+            List<Task> runningJobs=jenkinsDao.getRunningJobs();
+            for(Task item:runningJobs){
+                runningJobNames.add(item.getJenkinsJobName());
+            }
         }
     }
     private JenkinsServer getJenkinsServer() throws Exception{  
@@ -94,16 +94,16 @@ public class JenkinsServiceImpl implements JenkinsService {
         try{
             this.findAllExecutableTests(suite);
 
-            //MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
-            //Integer id=job.getNextBuildNumber();
-            //suite.setJenkinsBuildId(id);
+            MavenJobWithDetails job=getJenkinsServer().getMavenJob(suite.getJenkinsJobName());
+            Integer id=job.getNextBuildNumber();
+            suite.setJenkinsBuildId(id);
             suite.setTaskStatus(Utils.ExecStatus.RUNNING.name());
             suite.setCreateTime(new Date());
             suite.setPassedCnt(0);
             suite.setFailedCnt(0);
             String reportUrl = "";
-            //String reportUrl = jProperty.getProperty("jenkins.host")+"/userContent/";
-            //reportUrl = reportUrl+suite.getJenkinsJobName()+String.valueOf(suite.getJenkinsBuildId())+".html";
+            reportUrl = jProperty.getProperty("jenkins.host")+"/userContent/";
+            reportUrl = reportUrl+suite.getJenkinsJobName()+String.valueOf(suite.getJenkinsBuildId())+".html";
             suite.setReportUrl(reportUrl);
             
             //存储case供agent调用
@@ -115,7 +115,8 @@ public class JenkinsServiceImpl implements JenkinsService {
             mavenPara.put("logLevel", suite.getLogLevel());
             mavenPara.put("env", suite.getEnv());
             mavenPara.put("dataVersion", suite.getDataVersion());
-            //job.build(mavenPara,true);
+            mavenPara.put("browserType", suite.getBrowserType());
+            job.build(mavenPara,true);
         }catch(Exception e){
             runningJobNames.remove(suite.getJenkinsJobName());
             this.updateAgentStatus(suite.getJenkinsJobName(), 1);
@@ -123,7 +124,7 @@ public class JenkinsServiceImpl implements JenkinsService {
             throw new Exception("error when calling jenkins: "+e.getMessage());
         }
         //for debug
-        runningJobNames.remove(suite.getJenkinsJobName());
+        //runningJobNames.remove(suite.getJenkinsJobName());
         return suite;
     }
     public List<Task> getAllTasks(){

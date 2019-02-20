@@ -11,7 +11,14 @@ import core.dao.ActionDao;
 public class ActionServiceImpl implements ActionService{
     @Autowired
     private ActionDao actionDao = null;
+
     public List<Action> getActions(){
         return actionDao.getActions();
+    }
+    public Action createAction(Action action){
+        //regFunc不能重复
+        //TODO
+        actionDao.createAction(action);
+        return actionDao.getActionByName(action.getActionName());
     }
 }

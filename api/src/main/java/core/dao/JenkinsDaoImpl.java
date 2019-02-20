@@ -3,7 +3,8 @@ package core.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,6 +19,7 @@ import utils.Utils;
 
 @Repository("JenkinsDao")
 public class JenkinsDaoImpl implements JenkinsDao{
+    private Logger logger = LoggerFactory.getLogger(JenkinsDaoImpl.class);
     @Autowired
     private MongoTemplate mongoTemplate=null;
 
@@ -38,6 +40,8 @@ public class JenkinsDaoImpl implements JenkinsDao{
         Query query=Query.query(Criteria.where("taskStatus").in(inUseStatus));
         query.fields().exclude("_id");
         query.fields().include("jenkinsJobName");
+        logger.info("=====================================================");
+        logger.info(String.valueOf(mongoTemplate));
         return mongoTemplate.find(query, Task.class);
     }
     public List<Task> getAllTasks(Date startDate){

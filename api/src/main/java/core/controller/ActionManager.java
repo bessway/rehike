@@ -19,4 +19,8 @@ public class ActionManager{
     public List<Action> getAllActions(){
         return actionService.getActions();
     }
+    @RequestMapping("/action")
+    public Action createAction(Action action){
+        return actionService.createAction(action);
+    }
 }
