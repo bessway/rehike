@@ -6,7 +6,8 @@
       <el-select
         placeholder='操作'
         v-model="step.actionId"
-        :disabled="!editable || step.stepType === 2">
+        :disabled="!editable || step.stepType === 2"
+        @change="changeAction">
         <el-option
           v-for="item in getActions()"
           :key="item.actionId"
@@ -26,6 +27,7 @@
       v-if="step.stepType !== 2"
       :step="step"
       :testParas="testParas"
+      :action="action"
       :editable="editable">
     </paras>
     <div v-if="step.stepType === 2">
@@ -154,6 +156,10 @@ export default {
       return (para) => {
         return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
       }
+    },
+    changeAction () {
+      this.step.paras = []
+      this.step.resParaId = null
     },
     debug () {
       console.log(this.step)

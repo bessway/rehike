@@ -132,6 +132,12 @@ export default {
       searchDlgVisible: false
     }
   },
+  watch: {
+    currTest: function () {
+      this.onlyExpanded = []
+      this.selectedStep = {}
+    }
+  },
   methods: {
     ...mapGetters(['getTestParas', 'getSelectedTest']),
     hideBbutton () {
@@ -140,6 +146,8 @@ export default {
       }
     },
     async showStepDetail (currRow, expandedRows) {
+      console.log(currRow)
+      console.log(this.selectedStep)
       // 重复点击时还原数据
       if (currRow.index === this.selectedStep.index) {
         this.selectedStep = {}
