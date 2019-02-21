@@ -15,10 +15,13 @@ public class ActionServiceImpl implements ActionService{
     public List<Action> getActions(){
         return actionDao.getActions();
     }
-    public Action createAction(Action action){
+    public Action createAction(Action action) throws Exception{
         //regFunc不能重复
-        //TODO
+        Action result = actionDao.getActionByFunc(action.getRegFunc());
+        if(result!=null && result.getRegFunc().equals(action.getRegFunc())){
+            throw new Exception(action.getRegFunc()+"已经存在，不能重复创建");
+        }
         actionDao.createAction(action);
-        return actionDao.getActionByName(action.getActionName());
+        return actionDao.getActionByFunc(action.getRegFunc());
     }
 }

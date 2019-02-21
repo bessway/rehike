@@ -33,7 +33,6 @@ public class AppServlet extends SpringBootServletInitializer {
     }
     public static void main(String[] args) {
         SpringApplication.run(applicationClass, args);
-        
     }
 
     @Override

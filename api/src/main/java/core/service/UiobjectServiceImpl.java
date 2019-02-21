@@ -24,13 +24,19 @@ public class UiobjectServiceImpl implements UiobjectService{
     public List<Uiobject> searchObjByPath(String path){
         return objDao.searchObjectByPath(Utils.escapeExprSpecialWord(path));
     }
-    //TODO xpath和page.type.name都不能重复
-    public Uiobject createObject(Uiobject newObj){
+    // xpath和page.type.name都不能重复
+    public Uiobject createObject(Uiobject newObj) throws Exception{
+        if(this.isObjExist(newObj)){
+            throw new Exception("该对象已经存在，不能重复创建");
+        }
         objDao.createUiobject(newObj);
         return objDao.findObjByName(newObj.getUiObjectPage(), newObj.getUiObjectType(), newObj.getUiObjectName());
     }
-    //TODO xpath和page.type.name都不能重复
-    public void updateObject(Uiobject obj){
+    // xpath和page.type.name都不能重复
+    public void updateObject(Uiobject obj) throws Exception{
+        if(this.isObjExist(obj)){
+            throw new Exception("该对象已经存在，不能重复创建");
+        }
         objDao.updateObject(obj);
     }
     public Map<String, Object> getStructedObjByPage(String page){
@@ -58,6 +64,7 @@ public class UiobjectServiceImpl implements UiobjectService{
         String page = obj.getUiObjectPage();
         return this.getObjectsByPage(page);
     }
+    @SuppressWarnings("unchecked")
     private void addToStructObjects(Map<String, Object>ret, Uiobject obj){
         Map<String,Object> temp = ret;
         if(!temp.containsKey(obj.getUiObjectPage())){
@@ -74,5 +81,16 @@ public class UiobjectServiceImpl implements UiobjectService{
         temp = (Map<String,Object>)temp.get(obj.getUiObjectName());
         temp.put("path",obj.getUiObjectPath());
         temp.put("objId",obj.getUiObjectId());
+    }
+    private Boolean isObjExist(Uiobject obj){
+        Uiobject result = objDao.findObjByName(obj.getUiObjectPage(), obj.getUiObjectType(), obj.getUiObjectName());
+        if(result!=null){
+            return true;
+        }
+        result=objDao.getObjectByPath(obj.getUiObjectPath());
+        if(result!=null && result.getUiObjectPage().equals(obj.getUiObjectPage())){
+            return true;
+        }
+        return false;
     }
 }
