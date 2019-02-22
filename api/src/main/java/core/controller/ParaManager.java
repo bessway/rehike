@@ -20,7 +20,7 @@ public class ParaManager{
     private ParaService paraService = null;
 
     @RequestMapping(value="/para",method=RequestMethod.POST)
-    public Para createTestPara(@RequestBody Para newPara){
+    public Para createTestPara(@RequestBody Para newPara) throws Exception{
         return paraService.createTestPara(newPara);
     }
 

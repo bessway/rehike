@@ -195,6 +195,7 @@ export default {
       this.addParaVisible = false
       this.newPara.testId = this.getSelectedTest().testId
       this.newPara.isFormalPara = 0
+      this.newPara.dataVersion = 'default'
       this.newPara = await this.API.createTestPara(this.newPara)
       this.getTestParas().push(this.newPara)
     },

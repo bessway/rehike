@@ -140,6 +140,7 @@ export default {
     }
   },
   created: function () {
+    console.log(this.testParas)
     this.setLocalParas(this.findParas())
   },
   watch: {
