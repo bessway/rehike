@@ -40,8 +40,6 @@ public class JenkinsDaoImpl implements JenkinsDao{
         Query query=Query.query(Criteria.where("taskStatus").in(inUseStatus));
         query.fields().exclude("_id");
         query.fields().include("jenkinsJobName");
-        logger.info("=====================================================");
-        logger.info(String.valueOf(mongoTemplate));
         return mongoTemplate.find(query, Task.class);
     }
     public List<Task> getAllTasks(Date startDate){

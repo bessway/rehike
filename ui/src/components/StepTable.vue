@@ -223,9 +223,9 @@ export default {
         newStep.paras = []
         newStep.resParaId = ''
         var newFormalParas = await this.API.copyFormalParas(this.toRefTest.testId, this.currTest.testId, newStep.index)
-        for (var item in newFormalParas) {
+        newFormalParas.forEach(item => {
           this.testParas.push(item)
-        }
+        })
         this.addNewStepAfter(newStep)
       }
     },

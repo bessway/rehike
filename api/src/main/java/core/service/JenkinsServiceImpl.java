@@ -112,10 +112,10 @@ public class JenkinsServiceImpl implements JenkinsService {
             Map<String,String> mavenPara = new HashMap<String,String>();
             mavenPara.put("jobName", suite.getJenkinsJobName());
             mavenPara.put("buildId", String.valueOf(suite.getJenkinsBuildId()));
-            mavenPara.put("logLevel", suite.getLogLevel());
-            mavenPara.put("env", suite.getEnv());
             mavenPara.put("dataVersion", suite.getDataVersion());
+            mavenPara.put("env", suite.getEnv());
             mavenPara.put("browserType", suite.getBrowserType());
+            mavenPara.put("logLevel", suite.getLogLevel());
             job.build(mavenPara,true);
         }catch(Exception e){
             runningJobNames.remove(suite.getJenkinsJobName());
