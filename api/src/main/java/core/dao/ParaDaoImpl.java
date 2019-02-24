@@ -79,4 +79,8 @@ public class ParaDaoImpl implements ParaDao{
         Para ret = mongoTemplate.findOne(query, Para.class);
         return ret;
     }
+    public void delStepFormalPara(String testId, List<Integer> stepIds){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").in(stepIds).and("refTestId").ne(null));
+        mongoTemplate.remove(query, Para.class);
+    }
 }

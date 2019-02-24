@@ -75,15 +75,15 @@
         v-model="localParas.p5.paraName" :disabled=!editable>
       </el-input-->
       <label v-if="isParaAvailable(0)">{{this.action.actionParas[0].paraDesc + ": " + localParas.p1.paraName+" = "}}</label>
-      <label v-if="isParaAvailable(0)">{{localParas.p1.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(0) && !isRefFormalPara(0)">{{localParas.p1.paraValue}}</label><br/>
       <label v-if="isParaAvailable(1)">{{this.action.actionParas[1].paraDesc + ": " + localParas.p2.paraName+" = "}}</label>
-      <label v-if="isParaAvailable(1)">{{localParas.p2.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(1) && !isRefFormalPara(1)">{{localParas.p2.paraValue}}</label><br/>
       <label v-if="isParaAvailable(2)">{{this.action.actionParas[2].paraDesc + ": " + localParas.p3.paraName+" = "}}</label>
-      <label v-if="isParaAvailable(2)">{{localParas.p3.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(2) && !isRefFormalPara(2)">{{localParas.p3.paraValue}}</label><br/>
       <label v-if="isParaAvailable(3)">{{this.action.actionParas[3].paraDesc + ": " + localParas.p4.paraName+" = "}}</label>
-      <label v-if="isParaAvailable(3)">{{localParas.p4.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(3) && !isRefFormalPara(3)">{{localParas.p4.paraValue}}</label><br/>
       <label v-if="isParaAvailable(4)">{{this.action.actionParas[4].paraDesc + ": " + localParas.p5.paraName+" = "}}</label>
-      <label v-if="isParaAvailable(4)">{{localParas.p5.paraValue}}</label>
+      <label v-if="isParaAvailable(4) && !isRefFormalPara(4)">{{localParas.p5.paraValue}}</label><br/>
       <label>{{"response: " + localParas.response.paraName}}</label>
     </div>
     <!--div class="para" v-if="!editable">
@@ -125,7 +125,6 @@
 </style>
 
 <script>
-// import { mapGetters } from 'vuex'
 import { Message } from 'element-ui'
 export default {
   props: ['step', 'testParas', 'action', 'editable'],
@@ -160,8 +159,6 @@ export default {
     }
   },
   methods: {
-    // ...mapGetters(['getTestParas']),
-
     paraSearch (queryString, callback) {
       var results = queryString ? this.testParas.filter(this.createFilter(queryString)) : this.testParas
       // 调用 callback 返回建议列表的数据
@@ -203,11 +200,19 @@ export default {
         })
       }
       this.name1 = paras.p1.paraName
+      this.name2 = paras.p2.paraName
+      this.name3 = paras.p3.paraName
+      this.name4 = paras.p4.paraName
+      this.name5 = paras.p5.paraName
       return paras
     },
     setLocalParas (paras) {
       this.localParas = paras
       this.name1 = this.localParas.p1.paraName
+      this.name2 = this.localParas.p2.paraName
+      this.name3 = this.localParas.p3.paraName
+      this.name4 = this.localParas.p4.paraName
+      this.name5 = this.localParas.p5.paraName
     },
     selectP1 (para) {
       this.step.paras[0] = para.paraId
@@ -239,6 +244,14 @@ export default {
         return true
       } else {
         return false
+      }
+    },
+    isRefFormalPara (index) {
+      var nameIndex = index + 1
+      if (this.localParas['p' + nameIndex].isFormalPara === 0) {
+        return false
+      } else {
+        return true
       }
     },
     debug () {

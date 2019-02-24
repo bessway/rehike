@@ -63,4 +63,7 @@ public class ParaServiceImpl implements ParaService {
     public List<Para> getTestParasWithRef(String testId,String dataVersion){
         return paraDao.getParasByTestWithRef(testId, dataVersion);
     }
+    public void delStepFormalPara(String testId, List<Integer> stepIds){
+        paraDao.delStepFormalPara(testId, stepIds);
+    }
 }

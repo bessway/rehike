@@ -25,7 +25,8 @@ export {
   getRefStepParas,
   getAgents,
   startJob,
-  getTasks
+  getTasks,
+  delStepsFormalParas
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -305,6 +306,14 @@ function startJob (tests) {
 
 function getTasks (cnt) {
   return getRequest('/jenkins/jobs').then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function delStepsFormalParas (testId, stepIds) {
+  return postRequest('/paras/test/' + testId, stepIds).then(
     function (data) {
       return data
     }

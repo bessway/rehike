@@ -55,4 +55,10 @@ public class ParaManager{
     public List<Para> getTestParasWithRef(@PathVariable String testId, @PathVariable String dataVersion) {
         return paraService.getTestParasWithRef(testId, dataVersion);
     }
+
+    @RequestMapping(value="/test/{testId}",method=RequestMethod.DELETE)
+    public String delStepsFormalParas( @PathVariable String testId, @RequestBody List<Integer> stepIds){
+        paraService.delStepFormalPara(testId, stepIds);
+        return "success";
+    }
 }
