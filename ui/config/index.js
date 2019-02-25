@@ -56,7 +56,7 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     // 这里是所有的静态资产，其中static的是被直接复制过来的，而assets先处理再拿过来
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/hike/',
 
     /**
      * Source Maps
