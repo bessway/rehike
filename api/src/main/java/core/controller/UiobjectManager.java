@@ -28,7 +28,7 @@ public class UiobjectManager{
     }
 
     @RequestMapping(value="/uiobject",method=RequestMethod.POST)
-    public Uiobject createObj( @RequestBody Uiobject newObj){
+    public Uiobject createObj( @RequestBody Uiobject newObj) throws Exception{
         return uiObjService.createObject(newObj);
     }
 
@@ -38,7 +38,7 @@ public class UiobjectManager{
     }
 
     @RequestMapping(value="/uiobject",method=RequestMethod.PUT)
-    public String updateObj( @RequestBody Uiobject obj){
+    public String updateObj( @RequestBody Uiobject obj) throws Exception{
         uiObjService.updateObject(obj);
         return "success";
     }

@@ -52,4 +52,8 @@ public class UiobjectDaoImpl implements UiobjectDao{
         Query query = Query.query(Criteria.where("_id").is(objId));
         return mongoTemplate.findOne(query, Uiobject.class);
     }
+    public Uiobject getObjectByPath(String path){
+        Query query = new Query(Criteria.where("uiObjectPath").is(path));
+        return mongoTemplate.findOne(query, Uiobject.class);
+    }
 }

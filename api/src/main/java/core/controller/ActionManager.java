@@ -20,7 +20,7 @@ public class ActionManager{
         return actionService.getActions();
     }
     @RequestMapping("/action")
-    public Action createAction(Action action){
+    public Action createAction(Action action) throws Exception{
         return actionService.createAction(action);
     }
 }

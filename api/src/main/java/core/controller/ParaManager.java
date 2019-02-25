@@ -20,7 +20,7 @@ public class ParaManager{
     private ParaService paraService = null;
 
     @RequestMapping(value="/para",method=RequestMethod.POST)
-    public Para createTestPara(@RequestBody Para newPara){
+    public Para createTestPara(@RequestBody Para newPara) throws Exception{
         return paraService.createTestPara(newPara);
     }
 
@@ -54,5 +54,11 @@ public class ParaManager{
     @RequestMapping(value="/test/{testId}/version/{dataVersion}/all", method=RequestMethod.GET)
     public List<Para> getTestParasWithRef(@PathVariable String testId, @PathVariable String dataVersion) {
         return paraService.getTestParasWithRef(testId, dataVersion);
+    }
+
+    @RequestMapping(value="/test/{testId}",method=RequestMethod.DELETE)
+    public String delStepsFormalParas( @PathVariable String testId, @RequestBody List<Integer> stepIds){
+        paraService.delStepFormalPara(testId, stepIds);
+        return "success";
     }
 }

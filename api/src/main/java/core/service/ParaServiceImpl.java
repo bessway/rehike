@@ -17,8 +17,12 @@ public class ParaServiceImpl implements ParaService {
     private ParaDao paraDao = null;
     @Autowired
     private TestService testService = null;
-    //TODO 同一个test内，非引用参数名称不能重复
-    public Para createTestPara(Para newPara){
+    // 同一个test内，非引用参数名称不能重复
+    public Para createTestPara(Para newPara) throws Exception{
+        Para exist = paraDao.findTestParaByName(newPara.getTestId(),newPara.getParaName(), newPara.getDataVersion());
+        if(exist!=null){
+            throw new Exception("同一个用例内参数名称不能重复");
+        }
         newPara.setParaId(new Date().getTime());
         paraDao.createPara(newPara);
         if(newPara.getDataVersion()==null){
@@ -58,5 +62,8 @@ public class ParaServiceImpl implements ParaService {
     }
     public List<Para> getTestParasWithRef(String testId,String dataVersion){
         return paraDao.getParasByTestWithRef(testId, dataVersion);
+    }
+    public void delStepFormalPara(String testId, List<Integer> stepIds){
+        paraDao.delStepFormalPara(testId, stepIds);
     }
 }

@@ -34,10 +34,7 @@
         width="15">
         <stepdetail
           :step="selectedStep"
-          :uiobject="uiobject"
-          :referTest="refTest"
-          :referParas="formalParas"
-          :testParas="refTestParas"
+          :readOnlyParas="testParas"
           :editable="editable">
         </stepdetail>
       </el-table-column>
@@ -121,15 +118,17 @@ export default {
     return {
       onlyExpanded: [],
       selectedStep: {},
-      uiobject: {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''},
-      refTest: {steps: []},
-      formalParas: [],
-      refTestParas: [],
       checkedStep: [],
       searchResult: [],
       toRefTest: {},
       searchKey: '',
       searchDlgVisible: false
+    }
+  },
+  watch: {
+    currTest: function () {
+      this.onlyExpanded = []
+      this.selectedStep = {}
     }
   },
   methods: {
@@ -146,40 +145,11 @@ export default {
         return
       }
       this.selectedStep = currRow
-      await this.loadUIObject(currRow)
-      await this.loadRefTest(currRow)
       // 在递归引用里面不能使用router，因为每次都会push到第一层的地址，导致没法显示子组件
       // this.$router.push({path: '/case/stepdetail'})
       // 必须放在最后，因为这个方法实际是在展开后才调用，展开时stepdetail实例还没有创建
       // 下面这句会重置展开状态
       this.onlyExpanded = [currRow.index]
-    },
-    async loadUIObject (currRow) {
-      if (currRow.uiObjectId !== undefined && currRow.uiObjectId !== null) {
-        var res = await this.API.getUIObject(this.selectedStep.uiObjectId)
-        this.uiobject = res
-      } else {
-        this.uiobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
-      }
-    },
-    async loadRefTest (currRow) {
-      // 如果不是refstep, 则refTest={}
-      if (currRow.stepType !== 2 || currRow.refTestId === undefined || currRow.refTestId === null) {
-        this.refTestParas = this.testParas.slice(0)
-        this.refTest = {}
-      } else {
-        this.formalParas = []
-        this.refTest = await this.API.getTestDetail(currRow.refTestId)
-        this.refTestParas = await this.API.getTestParasAll(currRow.refTestId, 'default')
-        console.log(currRow)
-        console.log(this.testParas)
-        this.testParas.forEach(item => {
-          if (item.stepId === currRow.index && item.refTestId !== undefined && item.refTestId !== null) {
-            this.formalParas.push(item)
-          }
-        })
-        console.log(this.formalParas)
-      }
     },
     setMultiSelect (selection, row) {
       this.checkedStep = selection
@@ -215,9 +185,9 @@ export default {
         newStep.paras = []
         newStep.resParaId = ''
         var newFormalParas = await this.API.copyFormalParas(this.toRefTest.testId, this.currTest.testId, newStep.index)
-        for (var item in newFormalParas) {
+        newFormalParas.forEach(item => {
           this.testParas.push(item)
-        }
+        })
         this.addNewStepAfter(newStep)
       }
     },
@@ -253,11 +223,15 @@ export default {
     isTestSelected () {
       return Object.keys(this.currTest).length === 0
     },
-    delSteps () {
+    async delSteps () {
       if (this.currTest.steps === null || this.checkedStep.length === 0) {
         return
       }
-      // this.API.delRefFormalParas([])
+      var stepIds = []
+      this.checkedStep.forEach(item => {
+        stepIds.push(item.index)
+      })
+      await this.API.delStepsFormalParas(this.currTest.testId, stepIds)
       this.checkedStep.sort(function (a, b) {
         return a.index - b.index
       })
@@ -310,9 +284,6 @@ export default {
     debug () {
       console.log(this.getSelectedTest())
       console.log(this.currTest)
-      console.log(this.refTest)
-      console.log(this.refTestParas)
-      console.log(this.formalParas)
       console.log(this.testParas)
       console.log(this.getTestParas())
     }

@@ -6,7 +6,8 @@
       <el-select
         placeholder='操作'
         v-model="step.actionId"
-        :disabled="!editable || step.stepType === 2">
+        :disabled="!editable || step.stepType === 2"
+        @change="changeAction">
         <el-option
           v-for="item in getActions()"
           :key="item.actionId"
@@ -19,13 +20,14 @@
     <uiobject
       v-if="step.stepType !== 2 && action.hasUIObject === 1"
       :step="step"
-      :uiobject="uiobject"
+      :action="action"
       :editable="editable">
     </uiobject>
     <paras
       v-if="step.stepType !== 2"
       :step="step"
       :testParas="testParas"
+      :action="action"
       :editable="editable">
     </paras>
     <div v-if="step.stepType === 2">
@@ -115,10 +117,28 @@ import { Message } from 'element-ui'
 export default {
   name: 'stepdetail',
   components: {uiobject, paras, maineditor, steptable},
-  props: ['step', 'uiobject', 'referTest', 'referParas', 'testParas', 'editable'],
+  props: ['step', 'readOnlyParas', 'editable'],
+  data () {
+    return {
+      referTest: {steps: []},
+      referParas: [],
+      testParas: []
+    }
+  },
+  created: function () {
+    console.log(this.step)
+    this.loadRefTest()
+  },
   computed: {
     action: function () {
+      console.log(this.step.actionId)
       return this.findAction(this.step.actionId)
+    }
+  },
+  watch: {
+    step: function () {
+      console.log(this.step)
+      this.loadRefTest()
     }
   },
   methods: {
@@ -137,16 +157,25 @@ export default {
       Message.error({message: '找不到' + actionId + '对应的操作!'})
       return defaultAction
     },
-    // async loadRefTest () {
-    //   if (this.step.stepType !== 2 || this.step.refTestId === undefined || this.step.refTestId === '') {
-    //     return {}
-    //   } else {
-    //     var refTestDetail = await this.API.getTestDetail(this.step.refTestId)
-    //     return refTestDetail
-    //   }
-    // },
+    async loadRefTest () {
+      // 如果不是refstep, 则refTest={}
+      if (this.step.stepType !== 2 || this.step.refTestId === undefined || this.step.refTestId === null) {
+        // 为了不改变全局保存的参数
+        this.testParas = this.readOnlyParas.slice(0)
+        this.referTest = {}
+      } else {
+        this.referParas = []
+        this.referTest = await this.API.getTestDetail(this.step.refTestId)
+        this.testParas = await this.API.getTestParasAll(this.step.refTestId, 'default')
+        this.readOnlyParas.forEach(item => {
+          if (item.stepId === this.step.index && item.refTestId !== undefined && item.refTestId !== null) {
+            this.referParas.push(item)
+          }
+        })
+      }
+    },
     paraSearch (queryString, callback) {
-      var results = queryString ? this.testParas.filter(this.createFilter(queryString)) : this.testParas
+      var results = queryString ? this.readOnlyParas.filter(this.createFilter(queryString)) : this.readOnlyParas
       // 调用 callback 返回建议列表的数据
       callback(results)
     },
@@ -154,6 +183,10 @@ export default {
       return (para) => {
         return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0)
       }
+    },
+    changeAction () {
+      this.step.paras = []
+      this.step.resParaId = null
     },
     debug () {
       console.log(this.step)

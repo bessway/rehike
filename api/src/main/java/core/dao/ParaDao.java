@@ -15,4 +15,6 @@ public interface ParaDao{
     public List<Para> getParasByTest(String testId, String dataVersion);
     public List<Para> getRefParasByTest(String testId, Integer stepId, String dataVersion);
     public List<Para> getParasByTestWithRef(String testId, String dataVersion);
+    public Para findTestParaByName(String testId, String paraName, String valueVersion);
+    public void delStepFormalPara(String testId, List<Integer> stepIds);
 }

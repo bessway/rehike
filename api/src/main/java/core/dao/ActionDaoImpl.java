@@ -16,7 +16,7 @@ public class ActionDaoImpl implements ActionDao{
     public List<Action> getActions(){
         return mongoTemplate.findAll(Action.class);
     }
-    public Action getActionByName(String name){
+    public Action getActionByFunc(String name){
         Query query=Query.query(Criteria.where("regFunc").gt(name));
         return mongoTemplate.findOne(query, Action.class);
     }

@@ -115,7 +115,7 @@
 import {mapGetters} from 'vuex'
 import {Message} from 'element-ui'
 export default {
-  props: ['step', 'uiobject', 'editable'],
+  props: ['step', 'action', 'editable'],
   data () {
     return {
       keyPage: '',
@@ -123,16 +123,17 @@ export default {
       keyName: '',
       pageobjects: {},
       pathobjects: [],
-      localUIobject: this.initObject()
+      localUIobject: {}
     }
   },
+  created: function () {
+    console.log(this.action)
+    this.loadUIObject()
+  },
   watch: {
-    uiobject: function () {
-      if (this.uiobject === null) {
-        this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
-      } else {
-        this.localUIobject = this.uiobject
-      }
+    action: function () {
+      console.log(this.action)
+      this.loadUIObject()
     }
   },
   methods: {
@@ -141,13 +142,13 @@ export default {
       // 不能直接修改props
       this.pathobjects = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
     },
-    initObject () {
-      if (this.uiobject === undefined || this.uiobject === null) {
-        return {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
-      } else {
-        return this.uiobject
-      }
-    },
+    // initObject () {
+    //   if (this.uiobject === undefined || this.uiobject === null) {
+    //     return {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
+    //   } else {
+    //     return this.uiobject
+    //   }
+    // },
     async createUIObject () {
       if (this.localUIobject.uiObjectPage === '' ||
       this.localUIobject.uiObjectType === '' ||
@@ -162,15 +163,13 @@ export default {
         this.step.uiObjectId = this.localUIobject.uiObjectId
       }
     },
-    // async loadUIObject () {
-    //   if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== '') {
-    //     var res = await this.API.getUIObject(this.step.uiObjectId)
-    //     console.log(res)
-    //     return res
-    //   } else {
-    //     return {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
-    //   }
-    // },
+    async loadUIObject () {
+      if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== '') {
+        this.localUIobject = await this.API.getUIObject(this.step.uiObjectId)
+      } else {
+        this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
+      }
+    },
     async loadObjectsByPage (val) {
       if (!this.pageobjects[val]) {
         var res = await this.API.getUIObjectsByPage(val)

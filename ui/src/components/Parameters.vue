@@ -2,43 +2,48 @@
   <div class="stepparas">
     <div class="para" v-if="editable">
       <el-autocomplete
-        placeholder="参数1"
+        :placeholder="getPlaceHolder(0)"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p1.paraName"
+        v-model="name1"
+        :disabled="!isParaAvailable(0)"
         @select="selectP1">
       </el-autocomplete>
       <el-autocomplete
-        placeholder="参数2"
+        :placeholder="getPlaceHolder(1)"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p2.paraName"
+        v-model="name2"
+        :disabled="!isParaAvailable(1)"
         @select="selectP2">
       </el-autocomplete>
       <el-autocomplete
-        placeholder="参数3"
+        :placeholder="getPlaceHolder(2)"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p3.paraName"
+        v-model="name3"
+        :disabled="!isParaAvailable(2)"
         @select="selectP3">
       </el-autocomplete>
       <el-autocomplete
-        placeholder="参数4"
+        :placeholder="getPlaceHolder(3)"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p4.paraName"
+        v-model="name4"
+        :disabled="!isParaAvailable(3)"
         @select="selectP4">
       </el-autocomplete>
       <el-autocomplete
-        placeholder="参数5"
+        :placeholder="getPlaceHolder(4)"
         value-key='paraName'
         :fetch-suggestions="paraSearch"
         :trigger-on-focus="false"
-        v-model="localParas.p5.paraName"
+        v-model="name5"
+        :disabled="!isParaAvailable(4)"
         @select="selectP5">
       </el-autocomplete>
     </div>
@@ -53,8 +58,8 @@
       </el-autocomplete>
       <el-button size="small" @click="debug">Debug</el-button>
     </div>
-    <div class="para" v-if="!editable">
-      <el-input
+    <div v-if="!editable">
+      <!--el-input
         v-model="localParas.p1.paraName" :disabled=!editable>
       </el-input>
       <el-input
@@ -68,14 +73,25 @@
       </el-input>
       <el-input
         v-model="localParas.p5.paraName" :disabled=!editable>
-      </el-input>
+      </el-input-->
+      <label v-if="isParaAvailable(0)">{{this.action.actionParas[0].paraDesc + ": " + localParas.p1.paraName+" = "}}</label>
+      <label v-if="isParaAvailable(0) && !isRefFormalPara(0)">{{localParas.p1.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(1)">{{this.action.actionParas[1].paraDesc + ": " + localParas.p2.paraName+" = "}}</label>
+      <label v-if="isParaAvailable(1) && !isRefFormalPara(1)">{{localParas.p2.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(2)">{{this.action.actionParas[2].paraDesc + ": " + localParas.p3.paraName+" = "}}</label>
+      <label v-if="isParaAvailable(2) && !isRefFormalPara(2)">{{localParas.p3.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(3)">{{this.action.actionParas[3].paraDesc + ": " + localParas.p4.paraName+" = "}}</label>
+      <label v-if="isParaAvailable(3) && !isRefFormalPara(3)">{{localParas.p4.paraValue}}</label><br/>
+      <label v-if="isParaAvailable(4)">{{this.action.actionParas[4].paraDesc + ": " + localParas.p5.paraName+" = "}}</label>
+      <label v-if="isParaAvailable(4) && !isRefFormalPara(4)">{{localParas.p5.paraValue}}</label><br/>
+      <label>{{"response: " + localParas.response.paraName}}</label>
     </div>
-    <div class="para" v-if="!editable">
+    <!--div class="para" v-if="!editable">
       <el-input
         v-model="localParas.response.paraName" :disabled=!editable>
       </el-input>
       <el-button size="small" @click="debug">Debug</el-button>
-    </div>
+    </div-->
   </div>
 </template>
 
@@ -109,27 +125,40 @@
 </style>
 
 <script>
-// import { mapGetters } from 'vuex'
 import { Message } from 'element-ui'
 export default {
-  props: ['step', 'testParas', 'editable'],
+  props: ['step', 'testParas', 'action', 'editable'],
   data () {
     return {
-      localParas: this.findParas()
+      name1: '',
+      name2: '',
+      name3: '',
+      name4: '',
+      name5: '',
+      localParas: {p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}}
     }
+  },
+  created: function () {
+    console.log(this.testParas)
+    this.setLocalParas(this.findParas())
   },
   watch: {
     testParas: function () {
       if (this.testParas === undefined || this.testParas.p1 === null) {
-        this.localParas = {p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}}
+        this.setLocalParas({p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}})
       } else {
-        this.localParas = this.findParas()
+        this.setLocalParas(this.findParas())
+      }
+    },
+    action: function () {
+      if (this.testParas === undefined || this.testParas.p1 === null) {
+        this.setLocalParas({p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}})
+      } else {
+        this.setLocalParas(this.findParas())
       }
     }
   },
   methods: {
-    // ...mapGetters(['getTestParas']),
-
     paraSearch (queryString, callback) {
       var results = queryString ? this.testParas.filter(this.createFilter(queryString)) : this.testParas
       // 调用 callback 返回建议列表的数据
@@ -158,7 +187,7 @@ export default {
               break
             }
           }
-          if (temp.length === 0) {
+          if (Object.keys(temp).length === 0 && this.action.actionId !== '') {
             temp = {paraName: '', paraId: ''}
             Message.error({message: '找不到' + paraId + '对应的参数!'})
           }
@@ -170,7 +199,20 @@ export default {
           }
         })
       }
+      this.name1 = paras.p1.paraName
+      this.name2 = paras.p2.paraName
+      this.name3 = paras.p3.paraName
+      this.name4 = paras.p4.paraName
+      this.name5 = paras.p5.paraName
       return paras
+    },
+    setLocalParas (paras) {
+      this.localParas = paras
+      this.name1 = this.localParas.p1.paraName
+      this.name2 = this.localParas.p2.paraName
+      this.name3 = this.localParas.p3.paraName
+      this.name4 = this.localParas.p4.paraName
+      this.name5 = this.localParas.p5.paraName
     },
     selectP1 (para) {
       this.step.paras[0] = para.paraId
@@ -190,9 +232,33 @@ export default {
     selectRes (para) {
       this.step.resParaId = para.paraId
     },
+    getPlaceHolder (index) {
+      if (this.action !== undefined && this.action !== null && this.action.actionParas !== undefined && this.action.actionParas.length > index) {
+        return this.action.actionParas[index].paraDesc
+      } else {
+        return ''
+      }
+    },
+    isParaAvailable (index) {
+      if (this.action !== undefined && this.action !== null && this.action.actionParas !== undefined && this.action.actionParas.length > index) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isRefFormalPara (index) {
+      var nameIndex = index + 1
+      if (this.localParas['p' + nameIndex].isFormalPara === 0) {
+        return false
+      } else {
+        return true
+      }
+    },
     debug () {
       console.log(this.testParas)
       console.log(this.localParas)
+      console.log(this.step.paras)
+      console.log(this.name1)
     }
   }
 }

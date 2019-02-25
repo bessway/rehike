@@ -18,6 +18,9 @@
           <el-button :disabled="isTestSelected()" @click="delParaFromTest">删除</el-button>
           <el-button :disabled="isTestSelected()" @click="setParaFormal">置为入参</el-button>
         </el-row>
+        <el-row>
+          <el-input v-model="manualFilter"  placeholder="请输入关键词"></el-input>
+        </el-row>
         <el-table
           :show-header=false
           :data=testVariables
@@ -138,7 +141,8 @@ export default {
       action: {},
       addParaVisible: false,
       newPara: {},
-      checkedParas: []
+      checkedParas: [],
+      manualFilter: ''
     }
   },
   computed: {
@@ -159,7 +163,11 @@ export default {
     },
     notFormalFilter () {
       return (para) => {
-        return (para.refTestId === undefined || para.refTestId === null)
+        if (this.manualFilter === '' || para.paraName.indexOf(this.manualFilter) !== -1) {
+          return (para.refTestId === undefined || para.refTestId === null)
+        } else {
+          return false
+        }
       }
     },
     addNextTest () {
@@ -187,6 +195,7 @@ export default {
       this.addParaVisible = false
       this.newPara.testId = this.getSelectedTest().testId
       this.newPara.isFormalPara = 0
+      this.newPara.dataVersion = 'default'
       this.newPara = await this.API.createTestPara(this.newPara)
       this.getTestParas().push(this.newPara)
     },
