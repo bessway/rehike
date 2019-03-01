@@ -55,7 +55,7 @@ if("${JOB_NAME}".contains('auto_')){
 		def jsonSlurper = new JsonSlurper()
         def map = jsonSlurper.parseText('{"msgtype": "text","text": {"content": "Failed to execute '+"${shortName} "+"${BUILD_ID}"+'"}}')
         println(map)
-        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token=")
+        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token")
         http.request(POST, JSON){req ->
             body = map
             response.success = { resp, json ->
@@ -64,9 +64,9 @@ if("${JOB_NAME}".contains('auto_')){
         }
 	}else if("${BUILD_RESULT}"=='SUCCESS'){
 		def jsonSlurper = new JsonSlurper()
-        def map = jsonSlurper.parseText('{"msgtype": "text","text": {"content": "http://118.178.133.96:8080/jenkins/userContent/'+"${shortName}"+"${BUILD_ID}"+'.html"}}')
+        def map = jsonSlurper.parseText('{"msgtype": "text","text": {"content": "http://127.0.0.1:8010/jenkins/userContent/'+"${shortName}"+"${BUILD_ID}"+'.html"}}')
         println(map)
-        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token=")
+        http = new HTTPBuilder("https://oapi.dingtalk.com/robot/send?access_token")
         http.request(POST, JSON){req ->
             body = map
             response.success = { resp, json ->
