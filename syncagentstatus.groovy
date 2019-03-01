@@ -26,10 +26,9 @@ if("${JOB_NAME}".contains('auto_')){
 		}
 	}
 	
-	//def http = new HTTPBuilder("http://192.168.2.103:8081/1/jenkins/job/${shortName}")
 	def http = new HTTPBuilder("http://118.178.133.96:8080/hike/api/v2/jenkins/job/${shortName}")
 	http.request( PUT, JSON ) { req ->
-		body = [isComplete:true] 
+		body = [isComplete:1] 
 		response.success = { resp, json ->
 			println "agent status synced! ${resp.status}"
 		}
@@ -40,10 +39,10 @@ if("${JOB_NAME}".contains('auto_')){
 	}
 	println "${BUILD_RESULT}"
 	if("${BUILD_RESULT}"=='FAILURE'){
-		http = new HTTPBuilder("http://118.178.133.96:8080/hike/api/v2/jenkins/jobstatus")
+		http = new HTTPBuilder("http://118.178.133.96:8080/hike/api/v2/jenkins/taskstatus")
 		http.request( PUT, JSON ) { req ->
 			def end=new Date().format('yyyy-MM-dd HH:mm:ss')
-			body = [forceStop:false,endTime:"${end}".toString(),buildStatus:'EXCEPTION',jobName:"${shortName}",buildId:"${BUILD_ID}"] 
+			body = [forceStop:0,endTime:"${end}".toString(),taskStatus:'EXCEPTION',jenkinsJobName:"${shortName}",jenkinsBuildId:"${BUILD_ID}"] 
 			response.success = { resp, json ->
 				println "execution status synced! ${resp.status}"
 			}
