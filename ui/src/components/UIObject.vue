@@ -37,8 +37,8 @@
       <el-input placeholder="类型" v-model="localUIobject.uiObjectType" :disabled="!editable"></el-input>
       <el-input placeholder="名称" v-model="localUIobject.uiObjectName" :disabled="!editable"></el-input>
       <el-input class="xpath" placeholder="xpath" v-model="localUIobject.uiObjectPath" :disabled="!editable"></el-input><br/>
-      <el-button size="mini" @click="createUIObject" :disabled="!editable">添加</el-button><br/>
-      <el-button size="mini" @click="debug" :disabled="!editable">修改</el-button><br/>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="mini" @click="createUIObject" :disabled="!editable">添加</el-button><br/>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="mini" @click="debug" :disabled="!editable">修改</el-button><br/>
     </div>
   </div>
 </template>
@@ -48,10 +48,6 @@
   display: flex;
   justify-content: left;
   align-items: left;
-  .el-button {
-    margin: 0px;
-    padding: 3px;
-  }
   .el-select {
     width: 70%;
     margin-top: 0px;

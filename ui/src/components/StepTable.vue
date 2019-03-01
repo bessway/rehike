@@ -1,25 +1,25 @@
 <template>
-  <el-col :span=24 class='steps'>
-    <el-row class="para" v-if="editable">
-      <el-button :disabled="isTestSelected()" @click="moveUpSteps">上移</el-button>
-      <el-button :disabled="isTestSelected()" @click="moveDownSteps">下移</el-button>
-      <el-button :disabled="isTestSelected()" @click="debug">复制</el-button>
-      <el-button :disabled="isTestSelected()" @click="addStepAfter">添加</el-button>
-      <el-button :disabled="isTestSelected()" @click="delSteps">删除</el-button>
-      <el-button :disabled="isTestSelected()" @click="refPublicTest">引用</el-button>
-      <el-button :disabled="isTestSelected()" @click="saveTestValue">保存用例&参数</el-button>
+  <el-col :span=24 class="steps">
+    <el-row class="test-detail-header" v-if="editable">
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="moveUpSteps">上移</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="moveDownSteps">下移</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="debug">复制</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="addStepAfter">添加</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="delSteps">删除</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="refPublicTest">引用</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="saveTestValue">保存用例&参数</el-button>
       <el-input placeholder="已上传的文件地址" readonly></el-input>
       <el-upload
         class="upload"
         action="https://jsonplaceholder.typicode.com/posts/"
         :limit="1">
-        <el-button size="small" type="primary">上传</el-button>
+        <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="small" type="primary">上传</el-button>
       </el-upload>
     </el-row>
     <el-table
       :show-header=false
       :data="currTest.steps"
-      style="height: 85%; overflow-y: auto"
+      style="height: 85%; overflow-y: auto;margin-right: 60px;"
       @expand-change="showStepDetail"
       row-key="index"
       :expand-row-keys="onlyExpanded"
@@ -38,11 +38,11 @@
           :editable="editable">
         </stepdetail>
       </el-table-column>
-      <el-table-column
+      <el-table-column class-name="main-col"
         prop="stepDesc"
         show-overflow-tooltip>
       </el-table-column>
-      <el-table-column
+      <el-table-column class-name="check-col"
         type="selection"
         :selectable="() => {return editable}"
         width="15">
@@ -55,7 +55,7 @@
       :show-close=false>
       <div class='test-desc'>
         <el-input v-model="searchKey" autocomplete="off"></el-input>
-        <el-button type="text" @click="searchTestByDesc">搜索</el-button>
+        <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" type="text" @click="searchTestByDesc">搜索</el-button>
       </div>
       <el-table
       :show-header=false
@@ -66,37 +66,42 @@
         <el-table-column width="600" prop="testDesc"></el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelRefTest">取 消</el-button>
-        <el-button type="primary" @click="addRefTestStep">确 定</el-button>
+        <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" @click="cancelRefTest">取 消</el-button>
+        <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" type="primary" @click="addRefTestStep">确 定</el-button>
       </div>
     </el-dialog>
   </el-col>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .steps {
   float: left;
   border-right: 1px solid rgba(236, 234, 234, 0.925);
   height: 100%;
   padding-left: 3px;
+  .test-detail-header {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    .el-input {
+      .el-input__inner {
+        margin-top: 3px;
+        height: 25px;
+      }
+    }
+  }
 }
 .el-table {
-  margin-right: 14px;
-  .el-checkbox {
+  .check-col {
+    padding: 0px;
     width: 14px;
   }
-  .cell {
-    padding: 0px;
-  }
-  .el-table-column--selection {
-    width: 16px;
-    .cell {
-      width: 16px;
-    }
+  .main-col {
+    width: 80%;
   }
   .el-table__expanded-cell[class*=cell] {
     padding-left: 20px;
-    padding-right: 16px;
+    padding-right: 0px;
     padding-top: 0px;
     padding-bottom: 10px;
   }

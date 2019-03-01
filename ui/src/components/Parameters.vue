@@ -56,7 +56,7 @@
         v-model="localParas.response.paraName"
         @select="selectRes">
       </el-autocomplete>
-      <el-button size="small" @click="debug">Debug</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="small" @click="debug">Debug</el-button>
     </div>
     <div v-if="!editable">
       <!--el-input
@@ -95,7 +95,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .para {
   display: flex;
   justify-content: left;

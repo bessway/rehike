@@ -2,10 +2,10 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import AppVue from './App'
-import router from './router/routers'
 import store from './store/store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import router from './router/routers'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
@@ -15,7 +15,6 @@ Vue.prototype.API = API
 
 /* eslint-disable no-new */
 new Vue({
-  router,
   // 挂载到入口index.html的id=mountpoint的位置
   el: '#mountpoint',
   /*
@@ -28,7 +27,8 @@ new Vue({
   components: { AppVue },
   // 使用AppVue里的html来替换挂载点的元素div
   template: '<AppVue/>',
-  store
+  store,
+  router
   /*
   // 另外一种写法，createElement是render的核心方法，Vue编译的时候会把模版里面的节点解析成虚拟dom；
   // 虚拟dom不同于真正的dom，它是一个JavaScript对象。当状态发生变化的时候虚拟dom会进行一个diff判断/运算；

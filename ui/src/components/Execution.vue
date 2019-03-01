@@ -38,8 +38,8 @@
           :value="item">
         </el-option>
       </el-select>
-      <el-button size="mini" @click="startJob">执行</el-button>
-      <el-button size="mini" @click="debug">刷新</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="mini" @click="startJob">执行</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="mini" @click="debug">刷新</el-button>
     </div>
     <el-table stripe height="480"
       :data="tasks"
@@ -54,13 +54,13 @@
       <el-table-column label="失败" min-width="40" header-align="center" prop="failedCnt"></el-table-column>
       <el-table-column label="操作" min-width="40" header-align="center">
         <template slot-scope="scope">
-          <el-button size="mini" @click="viewDetail(scope.row)" v-if=isAableToViewReport(scope.row)>详情</el-button>
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="mini" @click="viewDetail(scope.row)" v-if=isAableToViewReport(scope.row)>详情</el-button>
         </template>
       </el-table-column>
     </el-table>
   </div>
 </template>
-<style lang="scss">
+<style scoped lang="scss">
 .env {
   display: flex;
   justify-content: left;
