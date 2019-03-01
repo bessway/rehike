@@ -3,14 +3,14 @@
     <el-col :span="4" class="side">
       <aside :class="{showSidebar:!collapsed}">
         <el-row type="flex" justify="center">
-          <el-button type="info" size="small" icon="el-icon-menu"
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" type="info" size="small" icon="el-icon-menu"
             @click="debug">
           </el-button>
           <el-input v-model="filtertext" placeholder="请输入关键词"></el-input>
         </el-row>
         <el-row>
-          <el-button class="operator" type="info" size="mini">删除</el-button>
-          <el-button class="operator" type="info" size="mini" @click="addChildNode">添加</el-button>
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" class="operator" type="info" size="mini">删除</el-button>
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" class="operator" type="info" size="mini" @click="addChildNode">添加</el-button>
         </el-row>
         <el-tree
           show-checkbox

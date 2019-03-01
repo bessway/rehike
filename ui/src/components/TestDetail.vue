@@ -1,22 +1,22 @@
 <template>
-  <div class='test-info'>
-    <div class='test-desc'>
+  <div class="test-info">
+    <div class="test-desc">
       <label>用例描述:</label>
       <el-input v-model="getSelectedTest().testDesc" ></el-input>
-      <el-button :disabled="isTestSelected()" size="mini">刷新</el-button>
-      <el-button :disabled="isTestSelected()" size="mini" @click="addNextTest">下一个</el-button>
-      <el-button :disabled="isTestSelected()" size="mini" @click="copyNextTest">复制</el-button>
-      <el-button :disabled="isTestSelected()" size="mini" @click="debug">预览</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini">刷新</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="addNextTest">下一个</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="copyNextTest">复制</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="debug">预览</el-button>
     </div>
     <div class="test-detail">
-      <el-col :span="19" class='steps-wrapper'>
+      <el-col :span="19" class="steps-wrapper">
         <steptable :currTest="getSelectedTest()" :testParas="getTestParas()" :editable="true"/>
       </el-col>
       <el-col :span="5" class='paralist'>
         <el-row>
-          <el-button :disabled="isTestSelected()" @click="toAddPara">添加</el-button>
-          <el-button :disabled="isTestSelected()" @click="delParaFromTest">删除</el-button>
-          <el-button :disabled="isTestSelected()" @click="setParaFormal">置为入参</el-button>
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="toAddPara">添加</el-button>
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="delParaFromTest">删除</el-button>
+          <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" @click="setParaFormal">置为入参</el-button>
         </el-row>
         <el-row>
           <el-input v-model="manualFilter"  placeholder="请输入关键词"></el-input>
@@ -41,13 +41,13 @@
           :close-on-click-modal=false
           :close-on-press-escape=false
           :show-close=false>
-          <div class='test-desc'>
+          <div class="test-desc">
             <label>参数名:</label>
             <el-input v-model="newPara.paraName" autocomplete="off"></el-input>
           </div>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="cancelAddPara">取 消</el-button>
-            <el-button type="primary" @click="addParaToTest">确 定</el-button>
+            <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" @click="cancelAddPara">取 消</el-button>
+            <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" type="primary" @click="addParaToTest">确 定</el-button>
           </div>
         </el-dialog>
       </el-col>
@@ -55,18 +55,19 @@
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 // scoped 属性是一个布尔属性。如果使用该属性，则样式仅仅应用到 style 元素的父元素及其子元素
 // https://www.jb51.net/article/129228.htm
 .test-info {
   height: 100%;
 }
 .steps-wrapper {
-  height: 100%
+  height: 100%;
 }
 .test-desc {
   display: flex;
   margin-left: 5px;
+  margin-right: 5px;
   justify-content: left;
   align-items: left;
   .el-input {
@@ -91,9 +92,6 @@
   border-left: 1px solid rgba(236, 234, 234, 0.925);
   height: 100%;
   padding-left: 3px;
-  .el-button {
-    margin-right: 3px;
-  }
 }
 .el-input {
   height: 30px;
@@ -101,18 +99,6 @@
     height: 30px;
     padding: 0px;
   }
-}
-.el-button {
-  font-size: 12px;
-  padding-right: 1px;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
-  margin-top: 3px;
-  height: 25px;
-}
-.el-button+.el-button {
-  margin-left: 3px;
 }
 .el-table {
   .cell {

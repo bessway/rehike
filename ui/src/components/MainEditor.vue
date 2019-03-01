@@ -1,6 +1,6 @@
 <template>
   <div class="main-editor">
-    <el-button ref='topbutton' @click="debug">JSON格式化</el-button><br/>
+    <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" ref='topbutton' @click="debug">JSON格式化</el-button><br/>
     <el-input type="textarea" v-model="content.paraValue"/>
   </div>
 </template>

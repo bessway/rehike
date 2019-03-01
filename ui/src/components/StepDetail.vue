@@ -15,7 +15,7 @@
           :value="item.actionId">
         </el-option>
       </el-select>
-      <el-button size="small" type="primary" @click="debug">debug</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="small" type="primary" @click="debug">debug</el-button>
     </el-row>
     <uiobject
       v-if="step.stepType !== 2 && action.hasUIObject === 1"
@@ -62,7 +62,7 @@
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .test-desc {
   display: flex;
   margin-left: 5px;
