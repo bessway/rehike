@@ -1,2 +1,2 @@
 test/
-resource/*.properties
+main/resources/*.properties
