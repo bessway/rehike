@@ -33,7 +33,7 @@
           <el-table-column prop="paraName"/>
           <el-table-column
             type="selection"
-            width="15">
+            min-width="15">
           </el-table-column>
         </el-table>
         <el-dialog title="添加参数"
@@ -98,17 +98,6 @@
   .el-input__inner {
     height: 30px;
     padding: 0px;
-  }
-}
-.el-table {
-  .cell {
-    padding: 0px;
-  }
-  .el-table-column--selection {
-    width: 16px;
-    .cell {
-      width: 16px;
-    }
   }
 }
 // 因为App组件限制了scoped，只能在这里改tree的样式
@@ -194,6 +183,9 @@ export default {
       // this.$refs.parastable.clearSelection()
     },
     async setParaFormal () {
+      if (this.checkedParas.length === 0) {
+        return
+      }
       await this.API.setFormalParas(this.checkedParas)
       this.checkedParas.forEach(element => {
         element.isFormalPara = 1

@@ -19,7 +19,7 @@
     <el-table
       :show-header=false
       :data="currTest.steps"
-      style="height: 85%; overflow-y: auto;margin-right: 60px;"
+      style="height: 85%; overflow-y: auto;"
       @expand-change="showStepDetail"
       row-key="index"
       :expand-row-keys="onlyExpanded"
@@ -27,25 +27,26 @@
       ref="stepstable">
       <el-table-column
         type="index"
-        width="25">
+        width="40px">
       </el-table-column>
       <el-table-column
         type="expand"
-        width="15">
+        width="15px">
         <stepdetail
           :step="selectedStep"
           :readOnlyParas="testParas"
           :editable="editable">
         </stepdetail>
       </el-table-column>
-      <el-table-column class-name="main-col"
+      <el-table-column
         prop="stepDesc"
-        show-overflow-tooltip>
+        show-overflow-tooltip
+        min-width="500">
       </el-table-column>
-      <el-table-column class-name="check-col"
+      <el-table-column
         type="selection"
         :selectable="() => {return editable}"
-        width="15">
+        min-width="15">
       </el-table-column>
     </el-table>
     <el-dialog title="搜索公共用例"
@@ -92,13 +93,6 @@
   }
 }
 .el-table {
-  .check-col {
-    padding: 0px;
-    width: 14px;
-  }
-  .main-col {
-    width: 80%;
-  }
   .el-table__expanded-cell[class*=cell] {
     padding-left: 20px;
     padding-right: 0px;
