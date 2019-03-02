@@ -19,7 +19,7 @@
     <el-table
       :show-header=false
       :data="currTest.steps"
-      style="height: 85%; overflow-y: auto;margin-right: 60px;"
+      style="height: 85%; overflow-y: auto;"
       @expand-change="showStepDetail"
       row-key="index"
       :expand-row-keys="onlyExpanded"
@@ -27,25 +27,26 @@
       ref="stepstable">
       <el-table-column
         type="index"
-        width="25">
+        width="40px">
       </el-table-column>
       <el-table-column
         type="expand"
-        width="15">
+        width="15px">
         <stepdetail
           :step="selectedStep"
           :readOnlyParas="testParas"
           :editable="editable">
         </stepdetail>
       </el-table-column>
-      <el-table-column class-name="main-col"
+      <el-table-column
         prop="stepDesc"
-        show-overflow-tooltip>
+        show-overflow-tooltip
+        min-width="500">
       </el-table-column>
-      <el-table-column class-name="check-col"
+      <el-table-column
         type="selection"
         :selectable="() => {return editable}"
-        width="15">
+        min-width="15">
       </el-table-column>
     </el-table>
     <el-dialog title="搜索公共用例"
@@ -83,27 +84,6 @@
     display: flex;
     justify-content: left;
     align-items: left;
-    .el-input {
-      .el-input__inner {
-        margin-top: 3px;
-        height: 25px;
-      }
-    }
-  }
-}
-.el-table {
-  .check-col {
-    padding: 0px;
-    width: 14px;
-  }
-  .main-col {
-    width: 80%;
-  }
-  .el-table__expanded-cell[class*=cell] {
-    padding-left: 20px;
-    padding-right: 0px;
-    padding-top: 0px;
-    padding-bottom: 10px;
   }
 }
 </style>
@@ -236,6 +216,7 @@ export default {
       this.checkedStep.forEach(item => {
         stepIds.push(item.index)
       })
+      // 如果是引用步骤，需要删除对应的变量
       await this.API.delStepsFormalParas(this.currTest.testId, stepIds)
       this.checkedStep.sort(function (a, b) {
         return a.index - b.index
@@ -249,10 +230,21 @@ export default {
         this.currTest.steps[i].index = i
       }
     },
+    syncRefParaStepId (oldStepId, upOrDown) {
+      this.testParas.forEach(item => {
+        if (item.refTestId !== undefined && item.refTestId !== null && item.stepId === oldStepId) {
+          item.stepId = item.stepId + upOrDown
+        }
+      })
+    },
+    // 引用步骤的index变了，需要把对应的变量的stepId也更新掉
     moveUpSteps () {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== 0) {
+        if (this.checkedStep[0].stepType === 2) {
+          this.syncRefParaStepId(this.checkedStep[0].index, -1)
+        }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index - 1]
         this.currTest.steps[this.checkedStep[0].index - 1] = this.checkedStep[0]
         this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
@@ -267,6 +259,9 @@ export default {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== this.currTest.steps.length - 1) {
+        if (this.checkedStep[0].stepType === 2) {
+          this.syncRefParaStepId(this.checkedStep[0].index, 1)
+        }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index + 1]
         this.currTest.steps[this.checkedStep[0].index + 1] = this.checkedStep[0]
         this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index

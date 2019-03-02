@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 
 import core.dao.ParaDao;
 import core.pojo.Para;
-
+import core.pojo.Step;
+import core.pojo.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,9 +18,9 @@ public class ParaServiceImpl implements ParaService {
     private ParaDao paraDao = null;
     @Autowired
     private TestService testService = null;
-    // 同一个test内，非引用参数名称不能重复
+    // 同一个test内，非引用参数名称不能重复,只要default存在则算重复
     public Para createTestPara(Para newPara) throws Exception{
-        Para exist = paraDao.findTestParaByName(newPara.getTestId(),newPara.getParaName(), newPara.getDataVersion());
+        Para exist = paraDao.findTestParaByName(newPara.getTestId(),newPara.getParaName(), "default");
         if(exist!=null){
             throw new Exception("同一个用例内参数名称不能重复");
         }
@@ -51,6 +52,7 @@ public class ParaServiceImpl implements ParaService {
         paraDao.bulkSetParasFormal(paras.get(0).getTestId(), ids);
         testService.setTestToRef(paras.get(0).getTestId());
     }
+    //需要按版本设置
     public void setParasValue(List<Para> paras){
         paraDao.bulkSetParasValue(paras);
     }
@@ -63,7 +65,49 @@ public class ParaServiceImpl implements ParaService {
     public List<Para> getTestParasWithRef(String testId,String dataVersion){
         return paraDao.getParasByTestWithRef(testId, dataVersion);
     }
+    //删除步骤时如果是引用步骤，需要删除所有版本的引用变量
     public void delStepFormalPara(String testId, List<Integer> stepIds){
         paraDao.delStepFormalPara(testId, stepIds);
+    }
+    //修改参数名需要修改所有参数值版本
+    public void setParasName(Para newPara) throws Exception{
+        Para exist = paraDao.findTestParaByName(newPara.getTestId(),newPara.getParaName(), newPara.getDataVersion());
+        if(exist!=null){
+            throw new Exception("同一个用例内参数名称不能重复");
+        }
+        paraDao.setParasName(newPara.getTestId(), newPara.getParaId(), newPara.getParaName());
+    }
+    //删除一个test的参数，输入不能包括引用的参数，引用的参数只能跟着步骤删除
+    //需要删除不同参数值版本的参数
+    //如果是形参，需要删除引用这个test的用例的参数
+    public void delParas(List<Para> paras) throws Exception{
+        List<Long> delIds = new ArrayList<Long>();
+        for(Para item:paras){
+            delIds.add(item.getParaId());
+        }
+        Test test=testService.getTestDetail(paras.get(0).getTestId());
+        List<Long> idInuse=new ArrayList<Long>();
+        if(null==test.getSteps()){
+            paraDao.delParas(test.getTestId(), delIds);
+            paraDao.delParasFromRefTest(test.getTestId(), delIds);
+        }
+        for(Step step:test.getSteps()){
+            if(null!=step.getParas()){
+                for(Long id:step.getParas()){
+                    if(delIds.contains(id)){
+                        idInuse.add(id);
+                    }
+                }
+            }
+            if(delIds.contains(step.getResParaId())){
+                idInuse.add(step.getResParaId());
+            }
+        }
+        if(idInuse.size()==0){
+            paraDao.delParas(test.getTestId(), delIds);
+            paraDao.delParasFromRefTest(test.getTestId(), delIds);
+        }else{
+            throw new Exception("正在使用的参数不能删除");
+        }
     }
 }

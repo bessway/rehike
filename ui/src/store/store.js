@@ -47,6 +47,9 @@ export default new Vuex.Store({
     setTestParas (state, paras) {
       state.testParas = paras
     },
+    addTestParas (state, para) {
+      state.testParas.push(para)
+    },
     setActions (state, actions) {
       state.actions = actions
     },

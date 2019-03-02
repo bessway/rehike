@@ -1,9 +1,10 @@
 <template>
   <div>
     <el-row class='test-desc'>
-      <label>步骤描述:</label>
+      <label style="width: 100px;">步骤描述:</label>
       <el-input v-model="step.stepDesc" :disabled="!editable || step.stepType === 2"></el-input>
       <el-select
+        style="width: 200px"
         placeholder='操作'
         v-model="step.actionId"
         :disabled="!editable || step.stepType === 2"
@@ -26,14 +27,15 @@
     <paras
       v-if="step.stepType !== 2"
       :step="step"
-      :testParas="testParas"
+      :testParas="stepParas"
       :action="action"
       :editable="editable">
     </paras>
     <div v-if="step.stepType === 2">
-      <div class="para" :key="index" v-for="(item, index) in referParas">
-        <label v-if="index % 2 === 0">{{referParas[index].paraName+":"}}</label>
+      <div class="refpara" :key="index" v-for="(item, index) in referParas">
+        <label v-if="index % 2 === 0">{{referParas[index].paraName+":&nbsp;"}}</label>
         <el-autocomplete
+          style="width: 30%;"
           :disabled="!editable"
           v-if="index % 2 === 0"
           value-key='paraName'
@@ -43,6 +45,7 @@
         </el-autocomplete>
         <label v-if="index+1 < referParas.length && index % 2 === 0">{{referParas[index+1].paraName+":"}}</label>
         <el-autocomplete
+          style="width: 30%;"
           :disabled="!editable"
           v-if="index+1 < referParas.length && index % 2 === 0"
           value-key='paraName'
@@ -52,11 +55,11 @@
         </el-autocomplete>
       </div>
     </div>
-    <maineditor v-if="step.stepType !== 2 && editable"/>
+    <!--maineditor v-if="step.stepType !== 2 && editable"/-->
     <steptable
       v-if="step.stepType === 2"
       :currTest="referTest"
-      :testParas="testParas"
+      :testParas="stepParas"
       :editable="false">
     </steptable>
   </div>
@@ -74,35 +77,24 @@
       height: 25px;
     }
   }
-}
-.el-select {
-  margin-top: 0px;
-  .el-input--suffix {
-    padding-right: 0px;
-  }
-  .el-input__inner {
-    height: 25px;
-    margin-top: 0px;
-    margin-bottom: 3px;
-    padding: 0px;
+  label {
+    font-size: 12px;
+    height: 30px;
+    margin-top: 5px;
+    font-weight: bold;
   }
 }
-.el-select-dropdown {
-  font-size: 12px;
-  width: 100px;
-  margin: 0px;
-  .el-select-dropdown__item {
-    height: 25px;
+.refpara {
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  label {
+    font-size: 12px;
+    height: 30px;
+    margin-top: 5px;
+    margin-left: 10px;
+    font-weight: bold;
   }
-}
-.el-popper[x-placement^=bottom] {
-  margin: 3px;
-}
-.el-select-dropdown__empty {
-  height: 25px;
-  font-size: 12px;
-  padding: 0px;
-  width: 100px;
 }
 </style>
 
@@ -122,7 +114,7 @@ export default {
     return {
       referTest: {steps: []},
       referParas: [],
-      testParas: []
+      stepParas: []
     }
   },
   created: function () {
@@ -138,6 +130,7 @@ export default {
   watch: {
     step: function () {
       console.log(this.step)
+      // 切换步骤时，如果是引用，需要加载新的test
       this.loadRefTest()
     }
   },
@@ -145,7 +138,7 @@ export default {
     ...mapGetters(['getActions']),
 
     findAction (actionId) {
-      var defaultAction = {actionId: '', actionName: '', hasUIObject: 1, actionType: 1}
+      var defaultAction = {actionId: '', actionName: '', hasUIObject: 1, actionType: 1, hasResponse: 1, actionParas: []}
       if (actionId === undefined || actionId === '') {
         return defaultAction
       }
@@ -161,12 +154,13 @@ export default {
       // 如果不是refstep, 则refTest={}
       if (this.step.stepType !== 2 || this.step.refTestId === undefined || this.step.refTestId === null) {
         // 为了不改变全局保存的参数
-        this.testParas = this.readOnlyParas.slice(0)
+        // this.stepParas = this.readOnlyParas.slice(0)
+        this.stepParas = this.readOnlyParas
         this.referTest = {}
       } else {
         this.referParas = []
         this.referTest = await this.API.getTestDetail(this.step.refTestId)
-        this.testParas = await this.API.getTestParasAll(this.step.refTestId, 'default')
+        this.stepParas = await this.API.getTestParasAll(this.step.refTestId, 'default')
         this.readOnlyParas.forEach(item => {
           if (item.stepId === this.step.index && item.refTestId !== undefined && item.refTestId !== null) {
             this.referParas.push(item)
@@ -192,7 +186,7 @@ export default {
       console.log(this.step)
       console.log(this.referTest)
       console.log(this.referParas)
-      console.log(this.testParas)
+      console.log(this.stepParas)
     }
   }
 }

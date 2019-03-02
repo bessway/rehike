@@ -26,14 +26,25 @@
           :data=testVariables
           highlight-current-row
           :cell-style=paraTableCellStyle
+          @cell-dblclick="setEditable"
           @row-click="clickPara"
           @select="setMultiSelect"
           ref="parastable"
           style="height: 85%; overflow-y: auto">
-          <el-table-column prop="paraName"/>
+          <el-table-column>
+            <el-input slot-scope="scope" v-model=scope.row.paraName
+            :disabled="!isEditable(scope.row)" />
+          </el-table-column>
+          <el-table-column min-width="15" type="operation">
+            <el-button slot-scope="scope"
+              style="font-size: 12px;padding: 3px;height: 18px;"
+              size="mini" icon="el-icon-check"
+              v-if="isEditable(scope.row)"
+              @click="updateParaName(scope.row)"/>
+          </el-table-column>
           <el-table-column
             type="selection"
-            width="15">
+            min-width="15">
           </el-table-column>
         </el-table>
         <el-dialog title="添加参数"
@@ -46,8 +57,8 @@
             <el-input v-model="newPara.paraName" autocomplete="off"></el-input>
           </div>
           <div slot="footer" class="dialog-footer">
-            <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" @click="cancelAddPara">取 消</el-button>
-            <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" type="primary" @click="addParaToTest">确 定</el-button>
+            <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" @click="cancelAddPara">取消</el-button>
+            <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" type="primary" @click="addParaToTest">确定</el-button>
           </div>
         </el-dialog>
       </el-col>
@@ -70,12 +81,6 @@
   margin-right: 5px;
   justify-content: left;
   align-items: left;
-  .el-input {
-    .el-input__inner {
-      margin-top: 3px;
-      height: 25px;
-    }
-  }
   label {
     font-size: 13px;
     font-weight: bold;
@@ -95,25 +100,6 @@
 }
 .el-input {
   height: 30px;
-  .el-input__inner {
-    height: 30px;
-    padding: 0px;
-  }
-}
-.el-table {
-  .cell {
-    padding: 0px;
-  }
-  .el-table-column--selection {
-    width: 16px;
-    .cell {
-      width: 16px;
-    }
-  }
-}
-// 因为App组件限制了scoped，只能在这里改tree的样式
-.el-tree-node__children {
-  overflow: visible !important;
 }
 </style>
 
@@ -128,20 +114,31 @@ export default {
       addParaVisible: false,
       newPara: {},
       checkedParas: [],
-      manualFilter: ''
+      manualFilter: '',
+      toEditId: undefined
     }
   },
   computed: {
     testVariables: function () {
       return this.getTestParas().filter(this.notFormalFilter())
+    },
+    isEditable: function () {
+      return function (row) {
+        return row.paraId === this.toEditId
+      }
+    }
+  },
+  watch: {
+    testVariables: function () {
+      this.toEditId = undefined
     }
   },
   methods: {
     ...mapGetters(['getSelectedTest', 'getTestParas']),
-    ...mapMutations(['setIsAddNewTest', 'setActiveEditor']),
+    ...mapMutations(['setIsAddNewTest', 'setActiveEditor', 'addTestParas']),
 
     paraTableCellStyle: function ({row, column, rowIndex, columnIndex}) {
-      if (column.type === 'selection') {
+      if (column.type === 'selection' || column.type === 'operation') {
         return {padding: '0px', margin: '0px', width: '14px'}
       } else {
         return {padding: '0px', margin: '0px', width: '100%'}
@@ -183,27 +180,45 @@ export default {
       this.newPara.isFormalPara = 0
       this.newPara.dataVersion = 'default'
       this.newPara = await this.API.createTestPara(this.newPara)
-      this.getTestParas().push(this.newPara)
+      // this.getTestParas().push(this.newPara)
+      if (this.newPara !== undefined) {
+        this.addTestParas(this.newPara)
+      } else {
+        this.newPara = {}
+      }
     },
     setMultiSelect (selection, row) {
       this.checkedParas = selection
     },
     async delParaFromTest () {
-      // await this.API.delTestParas(this.checkedParas)
-      // this.checkedParas = []
-      // this.$refs.parastable.clearSelection()
+      var delResult = await this.API.delTestParas(this.checkedParas)
+      if (delResult === undefined) {
+        this.checkedParas = []
+        this.$refs.parastable.clearSelection()
+      }
+    },
+    setEditable (row, column, cell, event) {
+      this.toEditId = row.paraId
+    },
+    async updateParaName (row) {
+      this.toEditId = undefined
+      await this.API.updateParaName(row)
     },
     async setParaFormal () {
+      if (this.checkedParas.length === 0) {
+        return
+      }
       await this.API.setFormalParas(this.checkedParas)
       this.checkedParas.forEach(element => {
         element.isFormalPara = 1
       })
     },
     clickPara (row, event, column) {
-      this.setActiveEditor(row)
+      // this.setActiveEditor(row)
     },
     debug () {
       console.log(this.getTestParas())
+      console.log(this.testVariables)
     }
   }
 }
