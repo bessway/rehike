@@ -216,6 +216,7 @@ export default {
       this.checkedStep.forEach(item => {
         stepIds.push(item.index)
       })
+      // 如果是引用步骤，需要删除对应的变量
       await this.API.delStepsFormalParas(this.currTest.testId, stepIds)
       this.checkedStep.sort(function (a, b) {
         return a.index - b.index
@@ -229,10 +230,21 @@ export default {
         this.currTest.steps[i].index = i
       }
     },
+    syncRefParaStepId (oldStepId, upOrDown) {
+      this.testParas.forEach(item => {
+        if (item.refTestId !== undefined && item.refTestId !== null && item.stepId === oldStepId) {
+          item.stepId = item.stepId + upOrDown
+        }
+      })
+    },
+    // 引用步骤的index变了，需要把对应的变量的stepId也更新掉
     moveUpSteps () {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== 0) {
+        if (this.checkedStep[0].stepType === 2) {
+          this.syncRefParaStepId(this.checkedStep[0].index, -1)
+        }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index - 1]
         this.currTest.steps[this.checkedStep[0].index - 1] = this.checkedStep[0]
         this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
@@ -247,6 +259,9 @@ export default {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== this.currTest.steps.length - 1) {
+        if (this.checkedStep[0].stepType === 2) {
+          this.syncRefParaStepId(this.checkedStep[0].index, 1)
+        }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index + 1]
         this.currTest.steps[this.checkedStep[0].index + 1] = this.checkedStep[0]
         this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index

@@ -68,4 +68,8 @@ public class TestDaoImpl implements TestDao{
         Update update = Update.update("isRefered", 1);
         mongoTemplate.findAndModify(query, update, Test.class);
     }
+    public Test isParaInUse(String testId,List<Long> paraIds){
+        Query query = Query.query(Criteria.where("testId").is(testId).orOperator(Criteria.where("steps.paras").in(paraIds),Criteria.where("steps.resParaId").in(paraIds)));
+        return mongoTemplate.findOne(query, Test.class);
+    }
 }

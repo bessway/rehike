@@ -87,9 +87,6 @@
     height: 30px;
   }
 }
-.el-tree-node__children {
-  overflow: visible !important;
-}
 </style>
 
 <script>

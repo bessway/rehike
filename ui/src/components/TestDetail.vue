@@ -181,22 +181,28 @@ export default {
       this.newPara.dataVersion = 'default'
       this.newPara = await this.API.createTestPara(this.newPara)
       // this.getTestParas().push(this.newPara)
-      this.addTestParas(this.newPara)
+      if (this.newPara !== undefined) {
+        this.addTestParas(this.newPara)
+      } else {
+        this.newPara = {}
+      }
     },
     setMultiSelect (selection, row) {
       this.checkedParas = selection
     },
     async delParaFromTest () {
-      // await this.API.delTestParas(this.checkedParas)
-      // this.checkedParas = []
-      // this.$refs.parastable.clearSelection()
+      var delResult = await this.API.delTestParas(this.checkedParas)
+      if (delResult === undefined) {
+        this.checkedParas = []
+        this.$refs.parastable.clearSelection()
+      }
     },
     setEditable (row, column, cell, event) {
       this.toEditId = row.paraId
     },
-    updateParaName (row) {
+    async updateParaName (row) {
       this.toEditId = undefined
-      this.API.updateParaName(row)
+      await this.API.updateParaName(row)
     },
     async setParaFormal () {
       if (this.checkedParas.length === 0) {

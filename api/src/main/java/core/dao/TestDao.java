@@ -16,4 +16,5 @@ public interface TestDao{
     public List<Test> getTestsById(List<String> testIds);
     public List<Test> searchPublicTest(String key);
     public void setTestToRef(String testId);
+    public Test isParaInUse(String testId,List<Long> paraIds);
 }

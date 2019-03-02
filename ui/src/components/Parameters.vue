@@ -163,8 +163,16 @@
     font-weight: bold;
   }
 }
+.el-table__expanded-cell {
+  padding-left: 30px !important;
+  padding-right: 20px !important;
+}
 .stepparas {
   margin-top: 3px;
+}
+// 因为scoped的原因，需要在这里设置tree的属性
+.el-tree-node__children {
+  overflow: visible !important;
 }
 </style>
 

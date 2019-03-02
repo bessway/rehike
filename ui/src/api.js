@@ -27,7 +27,8 @@ export {
   startJob,
   getTasks,
   delStepsFormalParas,
-  updateParaName
+  updateParaName,
+  delTestParas
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -70,6 +71,9 @@ axios.interceptors.response.use(
       return
     }
     console.log(res.data.data)
+    if (res.data.data === undefined) {
+      return ''
+    }
     return res.data.data
   },
   err => {
@@ -124,13 +128,13 @@ const uploadFileRequest = (path, params) => {
     }
   })
 }
+*/
 const deleteRequest = (path) => {
   return axios({
     method: 'delete',
     url: path
   })
 }
-*/
 const getRequest = (path) => {
   return axios({
     method: 'get',
@@ -323,6 +327,14 @@ function delStepsFormalParas (testId, stepIds) {
 
 function updateParaName (para) {
   return putRequest('/paras/para', para).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function delTestParas (paras) {
+  return deleteRequest('/paras/para', paras).then(
     function (data) {
       return data
     }

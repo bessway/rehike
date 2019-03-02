@@ -49,9 +49,12 @@ public class ParaDaoImpl implements ParaDao{
         paras.forEach(item->{
             Query query = null;
             if(item.getRefTestId()!=null && !"".equals(item.getRefTestId())){
-                query = Query.query(Criteria.where("paraId").is(item.getParaId()).and("testId").is(item.getTestId()).and("stepId").is(item.getStepId()));
+                query = Query.query(Criteria.where("paraId").is(item.getParaId())
+                    .and("testId").is(item.getTestId()).and("stepId").is(item.getStepId())
+                    .and("dataVersion").is(item.getDataVersion()));
             }else{
-                query = Query.query(Criteria.where("paraId").is(item.getParaId()).and("testId").is(item.getTestId()));
+                query = Query.query(Criteria.where("paraId").is(item.getParaId())
+                    .and("testId").is(item.getTestId()).and("dataVersion").is(item.getDataVersion()));
             }
             
             Update update = Update.update("paraValue", item.getParaValue());
@@ -87,5 +90,13 @@ public class ParaDaoImpl implements ParaDao{
         Query query = Query.query(Criteria.where("paraId").is(paraId).and("testId").is(testId));
         Update update = Update.update("paraName", paraName);
         mongoTemplate.updateMulti(query, update, Para.class);
+    }
+    public void delParas(String testId, List<Long> paraIds){
+        Query query = Query.query(Criteria.where("paraId").in(paraIds).and("testId").is(testId));
+        mongoTemplate.remove(query, Para.class);
+    }
+    public void delParasFromRefTest(String testId, List<Long> paraIds){
+        Query query = Query.query(Criteria.where("paraId").in(paraIds).and("refTestId").is(testId));
+        mongoTemplate.remove(query, Para.class);
     }
 }

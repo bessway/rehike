@@ -154,12 +154,15 @@ export default {
         var strUIObj = JSON.stringify(this.localUIobject)
         var newUIObj = JSON.parse(strUIObj)
         delete newUIObj.uiObjectId
-        this.localUIobject = await this.API.createUIObject(newUIObj)
-        this.step.uiObjectId = this.localUIobject.uiObjectId
+        var result = await this.API.createUIObject(newUIObj)
+        if (result !== undefined) {
+          this.localUIobject = result
+          this.step.uiObjectId = this.localUIobject.uiObjectId
+        }
       }
     },
     async loadUIObject () {
-      if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== '') {
+      if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== null) {
         this.localUIobject = await this.API.getUIObject(this.step.uiObjectId)
       } else {
         this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}

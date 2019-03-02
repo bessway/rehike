@@ -66,4 +66,10 @@ public class ParaManager{
         paraService.setParasName(newPara);
         return "success";
     }
+
+    @RequestMapping(value="/para",method=RequestMethod.DELETE)
+    public String delParas(@RequestBody List<Para> paras) throws Exception{
+        paraService.delParas(paras);
+        return "success";
+    }
 }
