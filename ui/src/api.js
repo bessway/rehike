@@ -26,7 +26,8 @@ export {
   getAgents,
   startJob,
   getTasks,
-  delStepsFormalParas
+  delStepsFormalParas,
+  updateParaName
 }
 var loadCount = 0
 axios.defaults.baseURL = process.env.API_BASE + '/api/v2'
@@ -314,6 +315,14 @@ function getTasks (cnt) {
 
 function delStepsFormalParas (testId, stepIds) {
   return postRequest('/paras/test/' + testId, stepIds).then(
+    function (data) {
+      return data
+    }
+  )
+}
+
+function updateParaName (para) {
+  return putRequest('/paras/para', para).then(
     function (data) {
       return data
     }

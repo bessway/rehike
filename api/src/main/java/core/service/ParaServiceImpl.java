@@ -66,4 +66,11 @@ public class ParaServiceImpl implements ParaService {
     public void delStepFormalPara(String testId, List<Integer> stepIds){
         paraDao.delStepFormalPara(testId, stepIds);
     }
+    public void setParasName(Para newPara) throws Exception{
+        Para exist = paraDao.findTestParaByName(newPara.getTestId(),newPara.getParaName(), newPara.getDataVersion());
+        if(exist!=null){
+            throw new Exception("同一个用例内参数名称不能重复");
+        }
+        paraDao.setParasName(newPara.getTestId(), newPara.getParaId(), newPara.getParaName());
+    }
 }

@@ -1,7 +1,6 @@
 package core.controller;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import core.pojo.Para;
 import core.service.ParaService;
 
@@ -36,7 +35,7 @@ public class ParaManager{
     }
 
     @RequestMapping(value="/values",method=RequestMethod.PUT)
-    public String setParasValue(HttpServletResponse res, @RequestBody List<Para> paras){
+    public String setParasValue(@RequestBody List<Para> paras){
         paraService.setParasValue(paras);
         return "success";
     }
@@ -59,6 +58,12 @@ public class ParaManager{
     @RequestMapping(value="/test/{testId}",method=RequestMethod.DELETE)
     public String delStepsFormalParas( @PathVariable String testId, @RequestBody List<Integer> stepIds){
         paraService.delStepFormalPara(testId, stepIds);
+        return "success";
+    }
+
+    @RequestMapping(value="/para",method=RequestMethod.PUT)
+    public String setParaName(@RequestBody Para newPara) throws Exception{
+        paraService.setParasName(newPara);
         return "success";
     }
 }

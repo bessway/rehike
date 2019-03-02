@@ -1,5 +1,6 @@
 <template>
   <div class="objects-editor">
+    <label>页面对象:</label>
     <div class="object">
       <el-select placeholder="选择页面" v-if="editable"
         v-model="keyPage"
@@ -29,7 +30,11 @@
       </el-select>
       <el-autocomplete class="xpath" placeholder="搜索xpath" v-if="editable"
         :trigger-on-focus="false"
-        :fetch-suggestions="searchUIObjectByXpath">
+        :fetch-suggestions="searchUIObjectByXpath"
+        :debounce="1000"
+        @select="selectSearchPath"
+        value-key="uiObjectPath"
+        v-model="searchKey">
       </el-autocomplete>
     </div>
     <div class="object">
@@ -118,8 +123,8 @@ export default {
       keyType: '',
       keyName: '',
       pageobjects: {},
-      pathobjects: [],
-      localUIobject: {}
+      localUIobject: {},
+      searchKey: ''
     }
   },
   created: function () {
@@ -134,17 +139,11 @@ export default {
   },
   methods: {
     ...mapGetters(['getUIObjPages']),
-    async searchUIObjectByXpath () {
-      // 不能直接修改props
-      this.pathobjects = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
+    async searchUIObjectByXpath (queryString, callback) {
+      var results = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
+      // 调用 callback 返回建议列表的数据
+      callback(results)
     },
-    // initObject () {
-    //   if (this.uiobject === undefined || this.uiobject === null) {
-    //     return {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
-    //   } else {
-    //     return this.uiobject
-    //   }
-    // },
     async createUIObject () {
       if (this.localUIobject.uiObjectPage === '' ||
       this.localUIobject.uiObjectType === '' ||
@@ -208,6 +207,10 @@ export default {
       this.localUIobject['uiObjectType'] = this.keyType
       this.localUIobject['uiObjectName'] = val
       this.step.uiObjectId = this.localUIobject.uiObjectId
+    },
+    selectSearchPath (obj) {
+      this.localUIobject = obj
+      this.searchKey = ''
     },
     debug () {
       console.log(this.localUIobject)

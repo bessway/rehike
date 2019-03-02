@@ -83,4 +83,9 @@ public class ParaDaoImpl implements ParaDao{
         Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").in(stepIds).and("refTestId").ne(null));
         mongoTemplate.remove(query, Para.class);
     }
+    public void setParasName(String testId,Long paraId, String paraName){
+        Query query = Query.query(Criteria.where("paraId").is(paraId).and("testId").is(testId));
+        Update update = Update.update("paraName", paraName);
+        mongoTemplate.updateMulti(query, update, Para.class);
+    }
 }

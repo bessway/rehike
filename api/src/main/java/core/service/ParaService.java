@@ -14,4 +14,5 @@ public interface ParaService{
     public List<Para> getTestRefParas(String testId, Integer stepId,String dataVersion);
     public List<Para> getTestParasWithRef(String testId,String dataVersion);
     public void delStepFormalPara(String testId, List<Integer> stepIds);
+    public void setParasName(Para newPara) throws Exception;
 }

@@ -84,20 +84,6 @@
     display: flex;
     justify-content: left;
     align-items: left;
-    .el-input {
-      .el-input__inner {
-        margin-top: 3px;
-        height: 25px;
-      }
-    }
-  }
-}
-.el-table {
-  .el-table__expanded-cell[class*=cell] {
-    padding-left: 20px;
-    padding-right: 0px;
-    padding-top: 0px;
-    padding-bottom: 10px;
   }
 }
 </style>
