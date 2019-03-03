@@ -1,6 +1,6 @@
 <template>
   <div class="objects-editor">
-    <label>页面对象:</label>
+    <label><font color="red">页面对象:</font></label>
     <div class="object">
       <el-select placeholder="选择页面" v-if="editable"
         v-model="keyPage"
@@ -132,7 +132,7 @@ export default {
     this.loadUIObject()
   },
   watch: {
-    action: function () {
+    step: function () {
       console.log(this.action)
       this.loadUIObject()
     }
