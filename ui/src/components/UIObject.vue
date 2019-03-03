@@ -113,7 +113,7 @@
 </style>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapMutations, mapGetters} from 'vuex'
 import {Message} from 'element-ui'
 export default {
   props: ['step', 'action', 'editable'],
@@ -128,12 +128,10 @@ export default {
     }
   },
   created: function () {
-    console.log(this.action)
     this.loadUIObject()
   },
   watch: {
     step: function () {
-      console.log(this.action)
       this.loadUIObject()
     }
   },
@@ -164,7 +162,7 @@ export default {
             this.addUIObjectPage(this.localUIobject.uiObjectPage)
           }
           // 如果已经加载过页面，则把新建的页面对象直接加入缓存
-          if (this.pageobjects[val]) {
+          if (this.pageobjects[result.uiObjectPage]) {
             this.addToStrctureObject(this.pageobjects, result['uiObjectPage'], result['uiObjectType'], result['uiObjectName'], result['uiObjectPath'], result['uiObjectId'])
           }
         }
@@ -172,7 +170,9 @@ export default {
     },
     async loadUIObject () {
       if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== null) {
-        this.localUIobject = await this.API.getUIObject(this.step.uiObjectId)
+        if (this.step.uiObjectId !== this.loadUIObject.uiObjectId) {
+          this.localUIobject = await this.API.getUIObject(this.step.uiObjectId)
+        }
       } else {
         this.localUIobject = {uiObjectId: '', uiObjectPage: '', uiObjectType: '', uiObjectName: '', uiObjectPath: ''}
       }

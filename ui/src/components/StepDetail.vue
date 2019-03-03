@@ -120,18 +120,15 @@ export default {
     }
   },
   created: function () {
-    console.log(this.step)
     this.loadRefTest()
   },
   computed: {
     action: function () {
-      console.log(this.step.actionId)
       return this.findAction(this.step.actionId)
     }
   },
   watch: {
     step: function () {
-      console.log(this.step)
       // 切换步骤时，如果是引用，需要加载新的test
       this.loadRefTest()
     }
@@ -185,9 +182,7 @@ export default {
       this.step.resParaId = null
     },
     debug () {
-      console.log(this.step)
-      console.log(this.referTest)
-      console.log(this.referParas)
+      console.log(this.readOnlyParas)
       console.log(this.stepParas)
     }
   }

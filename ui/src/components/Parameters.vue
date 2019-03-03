@@ -5,7 +5,7 @@
       <div class="para" v-if="isParaAvailable(0)">
         <label>{{getPlaceHolder(0)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p1.paraName"
+          v-model="localParas.p1"
           filterable
           clearable
           @change="selectP1">
@@ -13,7 +13,7 @@
             v-for="item in testParas"
             :key="item.paraId"
             :label="item.paraName"
-            :value="item.paraId">
+            :value="item">
           </el-option>
         </el-select>
         <el-input v-model="localParas.p1.paraValue" />
@@ -21,7 +21,7 @@
       <div class="para" v-if="isParaAvailable(1)">
         <label>{{getPlaceHolder(1)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p2.paraName"
+          v-model="localParas.p2.paraId"
           filterable
           clearable
           @change="selectP2">
@@ -37,7 +37,7 @@
       <div class="para" v-if="isParaAvailable(2)">
         <label>{{getPlaceHolder(2)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p3.paraName"
+          v-model="localParas.p3.paraId"
           filterable
           clearable
           @change="selectP3">
@@ -53,7 +53,7 @@
       <div class="para" v-if="isParaAvailable(3)">
         <label>{{getPlaceHolder(3)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p4.paraName"
+          v-model="localParas.p4.paraId"
           filterable
           clearable
           @change="selectP4">
@@ -69,7 +69,7 @@
       <div class="para" v-if="isParaAvailable(4)">
         <label>{{getPlaceHolder(4)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p5.paraName"
+          v-model="localParas.p5.paraId"
           filterable
           clearable
           @change="selectP5">
@@ -94,7 +94,7 @@
         <label>返回值</label>
         <el-select
           placeholder="返回值"
-          v-model="localParas.response.paraName"
+          v-model="localParas.response.paraId"
           filterable
           clearable
           @change="selectRes">
@@ -105,8 +105,8 @@
             :value="item.paraId">
           </el-option>
         </el-select>
-        <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="small" @click="debug">Debug</el-button>
       </div>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="small" @click="debug">Debug</el-button>
     </div>
     <div v-if="!editable">
       <div v-if="isParaAvailable(0)">
@@ -187,34 +187,32 @@ export default {
   props: ['step', 'testParas', 'action', 'editable'],
   data () {
     return {
-      // name1: '',
-      // name2: '',
-      // name3: '',
-      // name4: '',
-      // name5: '',
-      // res: '',
-      localParas: {p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}}
+      paraId1: '',
+      paraId2: '',
+      paraId3: '',
+      paraId4: '',
+      paraId5: '',
+      res: '',
+      localParas: {p1: {paraName: '', paraId: 0}, p2: {paraName: '', paraId: 1}, p3: {paraName: '', paraId: 2}, p4: {paraName: '', paraId: 3}, p5: {paraName: '', paraId: 4}, response: {paraName: '', paraId: 5}}
     }
   },
   created: function () {
-    console.log(this.testParas)
     this.setLocalParas(this.findParas())
   },
   watch: {
     testParas: function () {
       if (this.testParas === undefined || this.testParas.p1 === null) {
-        this.setLocalParas({p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}})
+        this.setLocalParas({p1: {paraName: '', paraId: 0}, p2: {paraName: '', paraId: 1}, p3: {paraName: '', paraId: 2}, p4: {paraName: '', paraId: 3}, p5: {paraName: '', paraId: 4}, response: {paraName: '', paraId: 5}})
       } else {
         this.setLocalParas(this.findParas())
       }
     },
     step: function () {
       if (this.testParas === undefined || this.testParas.p1 === null) {
-        this.setLocalParas({p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}})
+        this.setLocalParas({p1: {paraName: '', paraId: 0}, p2: {paraName: '', paraId: 1}, p3: {paraName: '', paraId: 2}, p4: {paraName: '', paraId: 3}, p5: {paraName: '', paraId: 4}, response: {paraName: '', paraId: 5}})
       } else {
         this.setLocalParas(this.findParas())
       }
-      console.log(this.localParas)
     }
   },
   methods: {
@@ -241,7 +239,7 @@ export default {
         }
         ids.forEach((paraId, index) => {
           if (paraId === null) {
-            temp = {paraName: '', paraId: ''}
+            temp = {paraName: '', paraId: index}
             paras['p' + (index + 1)] = temp
           } else {
             for (var i = 0; i < this.testParas.length; i++) {
@@ -251,7 +249,7 @@ export default {
               }
             }
             if (Object.keys(temp).length === 0 && this.action.actionId !== '') {
-              temp = {paraName: '', paraId: ''}
+              temp = {paraName: '', paraId: 0}
               Message.error({message: '找不到' + paraId + '对应的参数!'})
             }
             // response放在最后一个
@@ -281,6 +279,7 @@ export default {
       // this.res = this.localParas.response.paraName
     },
     selectP1 (paraId) {
+      console.log(paraId)
       // this.step.paras[0] = para.paraId
       this.step.paras[0] = paraId
     },

@@ -6,7 +6,7 @@
       <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini">刷新</el-button>
       <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="addNextTest">下一个</el-button>
       <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="copyNextTest">复制</el-button>
-      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="debug">预览</el-button>
+      <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="debug">debug</el-button>
     </div>
     <div class="test-detail">
       <el-col :span="19" class="steps-wrapper">
@@ -130,7 +130,6 @@ export default {
     },
     paraColor: function () {
       return function (row) {
-        console.log(row.isFormalPara)
         if (row.isFormalPara === 1) {
           return 'background-color: blue;padding: 1px;'
         } else {
@@ -209,21 +208,28 @@ export default {
         return
       }
       var delResult = await this.API.delTestParas(this.checkedParas)
-      if (delResult === undefined) {
-        // 从全局变量删除变量
-        this.setTestParas(this.getTestParas.filter(this.deletedFilter(this.checkedParas)))
+      if (delResult !== undefined) {
+        // 从全局变量删除变量，只能编辑原数组，否则子组件需要加watch
+        this.getTestParas().forEach((testPara, index) => {
+          this.checkedParas.forEach(delItem => {
+            if (testPara.paraId === delItem.paraId) {
+              this.getTestParas().splice(index, 1)
+            }
+          })
+        })
         this.checkedParas = []
         this.$refs.parastable.clearSelection()
       }
     },
     deletedFilter (deletedItems) {
       return (para) => {
+        var result = true
         deletedItems.forEach(item => {
           if (item.paraId === para.paraId) {
-            return false;
+            result = false
           }
         })
-        return true
+        return result
       }
     },
     setEditable (row, column, cell, event) {

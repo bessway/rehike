@@ -120,11 +120,6 @@ export default {
   },
   methods: {
     ...mapGetters(['getTestParas', 'getSelectedTest']),
-    hideBbutton () {
-      if (this.editable) {
-        return 'display:none'
-      }
-    },
     async showStepDetail (currRow, expandedRows) {
       // 重复点击时还原数据
       if (currRow.index === this.selectedStep.index) {
@@ -284,8 +279,6 @@ export default {
       }
     },
     debug () {
-      console.log(this.getSelectedTest())
-      console.log(this.currTest)
       console.log(this.testParas)
       console.log(this.getTestParas())
     }
