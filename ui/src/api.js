@@ -319,7 +319,7 @@ function getTasks (cnt) {
 }
 
 function delStepsFormalParas (testId, stepIds) {
-  return postRequest('/paras/test/' + testId, stepIds).then(
+  return deleteRequest('/paras/test/' + testId, stepIds).then(
     function (data) {
       return data
     }

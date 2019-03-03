@@ -16,7 +16,7 @@
             :value="item.paraId">
           </el-option>
         </el-select>
-        <el-input v-model=localParas.p1.paraValue />
+        <el-input v-model="localParas.p1.paraValue" />
       </div>
       <div class="para" v-if="isParaAvailable(1)">
         <label>{{getPlaceHolder(1)+":&nbsp;"}}</label>
@@ -32,7 +32,7 @@
             :value="item.paraId">
           </el-option>
         </el-select>
-        <el-input v-model=localParas.p2.paraValue />
+        <el-input v-model="localParas.p2.paraValue" />
       </div>
       <div class="para" v-if="isParaAvailable(2)">
         <label>{{getPlaceHolder(2)+":&nbsp;"}}</label>
@@ -48,7 +48,7 @@
             :value="item.paraId">
           </el-option>
         </el-select>
-        <el-input v-model=localParas.p3.paraValue />
+        <el-input v-model="localParas.p3.paraValue" />
       </div>
       <div class="para" v-if="isParaAvailable(3)">
         <label>{{getPlaceHolder(3)+":&nbsp;"}}</label>
@@ -64,7 +64,7 @@
             :value="item.paraId">
           </el-option>
         </el-select>
-        <el-input v-model=localParas.p4.paraValue />
+        <el-input v-model="localParas.p4.paraValue" />
       </div>
       <div class="para" v-if="isParaAvailable(4)">
         <label>{{getPlaceHolder(4)+":&nbsp;"}}</label>
@@ -80,7 +80,7 @@
             :value="item.paraId">
           </el-option>
         </el-select>
-        <el-input v-model=localParas.p5.paraValue />
+        <el-input v-model="localParas.p5.paraValue" />
       </div>
       <div class="para" v-if="action.hasResponse === 1">
         <!--el-autocomplete
@@ -91,7 +91,7 @@
           v-model="res"
           @select="selectRes">
         </el-autocomplete-->
-        <label style="width: 150px;">返回值</label>
+        <label>返回值</label>
         <el-select
           placeholder="返回值"
           v-model="localParas.response.paraName"

@@ -114,6 +114,8 @@ export default {
     currTest: function () {
       this.onlyExpanded = []
       this.selectedStep = {}
+      this.$refs.stepstable.clearSelection()
+      this.checkedStep = []
     }
   },
   methods: {

@@ -56,6 +56,9 @@ export default new Vuex.Store({
     setUIObjectPages (state, pages) {
       state.uiobjectPages = pages
     },
+    addUIObjectPage (state, page) {
+      state.uiobjectPages.push(page)
+    },
     setActiveEditor (state, editor) {
       state.activeEditor = editor
     },

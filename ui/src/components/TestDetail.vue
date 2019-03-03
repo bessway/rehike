@@ -146,7 +146,7 @@ export default {
   },
   methods: {
     ...mapGetters(['getSelectedTest', 'getTestParas']),
-    ...mapMutations(['setIsAddNewTest', 'setActiveEditor', 'addTestParas']),
+    ...mapMutations(['setIsAddNewTest', 'setActiveEditor', 'addTestParas', 'setTestParas']),
 
     paraTableCellStyle: function ({row, column, rowIndex, columnIndex}) {
       if (column.type === 'selection' || column.type === 'operation') {
@@ -190,6 +190,9 @@ export default {
       this.newPara.testId = this.getSelectedTest().testId
       this.newPara.isFormalPara = 0
       this.newPara.dataVersion = 'default'
+      this.newPara.paraName = this.newPara.paraName.replace('{', '')
+      this.newPara.paraName = this.newPara.paraName.replace('}', '')
+      this.newPara.paraName = '{' + this.newPara.paraName + '}'
       this.newPara = await this.API.createTestPara(this.newPara)
       // this.getTestParas().push(this.newPara)
       if (this.newPara !== undefined) {
@@ -202,10 +205,25 @@ export default {
       this.checkedParas = selection
     },
     async delParaFromTest () {
+      if (this.checkedParas.length === 0) {
+        return
+      }
       var delResult = await this.API.delTestParas(this.checkedParas)
       if (delResult === undefined) {
+        // 从全局变量删除变量
+        this.setTestParas(this.getTestParas.filter(this.deletedFilter(this.checkedParas)))
         this.checkedParas = []
         this.$refs.parastable.clearSelection()
+      }
+    },
+    deletedFilter (deletedItems) {
+      return (para) => {
+        deletedItems.forEach(item => {
+          if (item.paraId === para.paraId) {
+            return false;
+          }
+        })
+        return true
       }
     },
     setEditable (row, column, cell, event) {
@@ -213,6 +231,9 @@ export default {
     },
     async updateParaName (row) {
       this.toEditId = undefined
+      row.paraName = row.paraName.replace('{', '')
+      row.paraName = row.paraName.replace('}', '')
+      row.paraName = '{' + row.paraName + '}'
       await this.API.updateParaName(row)
     },
     async setParaFormal () {

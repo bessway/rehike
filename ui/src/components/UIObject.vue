@@ -139,8 +139,9 @@ export default {
   },
   methods: {
     ...mapGetters(['getUIObjPages']),
+    ...mapMutations(['addUIObjectPage']),
     async searchUIObjectByXpath (queryString, callback) {
-      var results = await this.API.getUIObjectByXpath(this.localUIobject.uiObjectPath)
+      var results = await this.API.getUIObjectByXpath(queryString)
       // 调用 callback 返回建议列表的数据
       callback(results)
     },
@@ -158,6 +159,14 @@ export default {
         if (result !== undefined) {
           this.localUIobject = result
           this.step.uiObjectId = this.localUIobject.uiObjectId
+          // 把page加入到page列表，方便后续按页加载页面对象
+          if (this.getUIObjPages().indexOf(this.localUIobject.uiObjectPage < 0)) {
+            this.addUIObjectPage(this.localUIobject.uiObjectPage)
+          }
+          // 如果已经加载过页面，则把新建的页面对象直接加入缓存
+          if (this.pageobjects[val]) {
+            this.addToStrctureObject(this.pageobjects, result['uiObjectPage'], result['uiObjectType'], result['uiObjectName'], result['uiObjectPath'], result['uiObjectId'])
+          }
         }
       }
     },
