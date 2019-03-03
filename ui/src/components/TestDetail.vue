@@ -1,7 +1,7 @@
 <template>
   <div class="test-info">
     <div class="test-desc">
-      <label>用例描述:</label>
+      <label>用例描述:&nbsp;</label>
       <el-input v-model="getSelectedTest().testDesc" ></el-input>
       <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini">刷新</el-button>
       <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" :disabled="isTestSelected()" size="mini" @click="addNextTest">下一个</el-button>
@@ -84,9 +84,10 @@
   label {
     font-size: 13px;
     font-weight: bold;
-    width: 80px;
     height: 30px;
     margin-top: 5px;
+    text-align: right;
+    white-space:nowrap;
   }
 }
 .test-detail{

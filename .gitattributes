@@ -1,4 +1,5 @@
 .git/* merge=ours
 .vscode/* merge=ours
 ui/config/prod.env.js merge=ours
+api/src/main/resources/* merge=ours
 syncAgentStatus.groovy merge=ours

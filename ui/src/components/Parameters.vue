@@ -1,9 +1,9 @@
 <template>
   <div class="stepparas">
-    <label v-if="action.hasResponse === 1 || action.actionParas.length > 0">参数:</label>
+    <label v-if="action.hasResponse === 1 || action.actionParas.length > 0"><font color="red">参数:</font></label>
     <div v-if="editable">
       <div class="para" v-if="isParaAvailable(0)">
-        <label style="width: 150px;">{{getPlaceHolder(0)}}</label>
+        <label>{{getPlaceHolder(0)+":&nbsp;"}}</label>
         <el-select
           v-model="localParas.p1.paraName"
           filterable
@@ -19,7 +19,7 @@
         <el-input v-model=localParas.p1.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(1)">
-        <label style="width: 150px;">{{getPlaceHolder(1)}}</label>
+        <label>{{getPlaceHolder(1)+":&nbsp;"}}</label>
         <el-select
           v-model="localParas.p2.paraName"
           filterable
@@ -35,7 +35,7 @@
         <el-input v-model=localParas.p2.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(2)">
-        <label style="width: 150px;">{{getPlaceHolder(2)}}</label>
+        <label>{{getPlaceHolder(2)+":&nbsp;"}}</label>
         <el-select
           v-model="localParas.p3.paraName"
           filterable
@@ -51,7 +51,7 @@
         <el-input v-model=localParas.p3.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(3)">
-        <label style="width: 150px;">{{getPlaceHolder(3)}}</label>
+        <label>{{getPlaceHolder(3)+":&nbsp;"}}</label>
         <el-select
           v-model="localParas.p4.paraName"
           filterable
@@ -67,7 +67,7 @@
         <el-input v-model=localParas.p4.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(4)">
-        <label style="width: 150px;">{{getPlaceHolder(4)}}</label>
+        <label>{{getPlaceHolder(4)+":&nbsp;"}}</label>
         <el-select
           v-model="localParas.p5.paraName"
           filterable
@@ -93,6 +93,7 @@
         </el-autocomplete-->
         <label style="width: 150px;">返回值</label>
         <el-select
+          placeholder="返回值"
           v-model="localParas.response.paraName"
           filterable
           clearable
@@ -109,26 +110,26 @@
     </div>
     <div v-if="!editable">
       <div v-if="isParaAvailable(0)">
-        <label>{{this.action.actionParas[0].paraDesc + ": " + localParas.p1.paraName+" = "}}</label>
+        <label>{{this.action.actionParas[0].paraDesc + ":&nbsp;" + localParas.p1.paraName+"&nbsp;=&nbsp;"}}</label>
         <label v-if="!isRefFormalPara(0)">{{localParas.p1.paraValue}}</label>
       </div>
       <div v-if="isParaAvailable(1)">
-        <label>{{this.action.actionParas[1].paraDesc + ": " + localParas.p2.paraName+" = "}}</label>
+        <label>{{this.action.actionParas[1].paraDesc + ":&nbsp;" + localParas.p2.paraName+"&nbsp;=&nbsp;"}}</label>
         <label v-if="!isRefFormalPara(1)">{{localParas.p2.paraValue}}</label>
       </div>
       <div v-if="isParaAvailable(2)">
-        <label>{{this.action.actionParas[2].paraDesc + ": " + localParas.p3.paraName+" = "}}</label>
+        <label>{{this.action.actionParas[2].paraDesc + ":&nbsp;" + localParas.p3.paraName+"&nbsp;=&nbsp;"}}</label>
         <label v-if="!isRefFormalPara(2)">{{localParas.p3.paraValue}}</label>
       </div>
       <div v-if="isParaAvailable(3)">
-        <label>{{this.action.actionParas[3].paraDesc + ": " + localParas.p4.paraName+" = "}}</label>
+        <label>{{this.action.actionParas[3].paraDesc + ":&nbsp;" + localParas.p4.paraName+"&nbsp;=&nbsp;"}}</label>
         <label v-if="!isRefFormalPara(3)">{{localParas.p4.paraValue}}</label>
       </div>
       <div v-if="isParaAvailable(4)">
-        <label>{{this.action.actionParas[4].paraDesc + ": " + localParas.p5.paraName+" = "}}</label>
+        <label>{{this.action.actionParas[4].paraDesc + ":&nbsp;" + localParas.p5.paraName+"&nbsp;=&nbsp;"}}</label>
         <label v-if="!isRefFormalPara(4)">{{localParas.p5.paraValue}}</label>
       </div>
-      <label v-if="this.action.hasResponse === 1">{{"结果变量: " + localParas.response.paraName}}</label>
+      <label v-if="this.action.hasResponse === 1">{{"结果变量:&nbsp;" + localParas.response.paraName}}</label>
     </div>
   </div>
 </template>
@@ -150,11 +151,13 @@
     }
   }
   label {
-    font-size: 12px;
+    font-size: 14px;
     height: 30px;
     margin-top: 5px;
-    margin-left: 10px;
+    margin-left: 0px;
     font-weight: bold;
+    text-align: right;
+    white-space:nowrap;
   }
 }
 .el-table__expanded-cell {
@@ -162,7 +165,15 @@
   padding-right: 20px !important;
 }
 .stepparas {
-  margin-top: 3px;
+  margin-top: 10px;
+  label {
+    font-size: 14px;
+    height: 30px;
+    margin-top: 5px;
+    margin-left: 0px;
+    text-align: right;
+    white-space:nowrap;
+  }
 }
 // 因为scoped的原因，需要在这里设置tree的属性
 .el-tree-node__children {
@@ -197,12 +208,13 @@ export default {
         this.setLocalParas(this.findParas())
       }
     },
-    action: function () {
+    step: function () {
       if (this.testParas === undefined || this.testParas.p1 === null) {
         this.setLocalParas({p1: {paraName: ''}, p2: {paraName: ''}, p3: {paraName: ''}, p4: {paraName: ''}, p5: {paraName: ''}, response: {paraName: ''}})
       } else {
         this.setLocalParas(this.findParas())
       }
+      console.log(this.localParas)
     }
   },
   methods: {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row class='test-desc'>
-      <label style="width: 100px;">步骤描述:</label>
+      <label>步骤描述:&nbsp;</label>
       <el-input v-model="step.stepDesc" :disabled="!editable || step.stepType === 2"></el-input>
       <el-select
         style="width: 200px"
@@ -32,8 +32,9 @@
       :editable="editable">
     </paras>
     <div v-if="step.stepType === 2">
+      <label><font color="red">外部参数:</font></label>
       <div class="refpara" :key="index" v-for="(item, index) in referParas">
-        <label v-if="index % 2 === 0">{{referParas[index].paraName+":&nbsp;"}}</label>
+        <label v-if="index % 2 === 0">{{referParas[index].paraName+"&nbsp;=&nbsp;"}}</label>
         <el-autocomplete
           style="width: 30%;"
           :disabled="!editable"
@@ -43,7 +44,7 @@
           :trigger-on-focus="false"
           v-model="referParas[index].paraValue">
         </el-autocomplete>
-        <label v-if="index+1 < referParas.length && index % 2 === 0">{{referParas[index+1].paraName+":"}}</label>
+        <label v-if="index+1 < referParas.length && index % 2 === 0">{{referParas[index+1].paraName+"&nbsp;=&nbsp;"}}</label>
         <el-autocomplete
           style="width: 30%;"
           :disabled="!editable"
@@ -68,7 +69,6 @@
 <style scoped lang="scss">
 .test-desc {
   display: flex;
-  margin-left: 5px;
   justify-content: left;
   align-items: left;
   .el-input {
@@ -78,10 +78,12 @@
     }
   }
   label {
-    font-size: 12px;
+    font-size: 14px;
     height: 30px;
     margin-top: 5px;
     font-weight: bold;
+    text-align: right;
+    white-space:nowrap;
   }
 }
 .refpara {
@@ -89,7 +91,7 @@
   justify-content: left;
   align-items: left;
   label {
-    font-size: 12px;
+    font-size: 13px;
     height: 30px;
     margin-top: 5px;
     margin-left: 10px;
