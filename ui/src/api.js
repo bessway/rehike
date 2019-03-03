@@ -129,10 +129,11 @@ const uploadFileRequest = (path, params) => {
   })
 }
 */
-const deleteRequest = (path) => {
+const deleteRequest = (path, params) => {
   return axios({
     method: 'delete',
-    url: path
+    url: path,
+    data: params
   })
 }
 const getRequest = (path) => {

@@ -3,9 +3,8 @@
     <label v-if="action.hasResponse === 1 || action.actionParas.length > 0">参数:</label>
     <div v-if="editable">
       <div class="para" v-if="isParaAvailable(0)">
+        <label style="width: 150px;">{{getPlaceHolder(0)}}</label>
         <el-select
-          :placeholder="getPlaceHolder(0)"
-          :disabled="!isParaAvailable(0)"
           v-model="localParas.p1.paraName"
           filterable
           clearable
@@ -20,9 +19,8 @@
         <el-input v-model=localParas.p1.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(1)">
+        <label style="width: 150px;">{{getPlaceHolder(1)}}</label>
         <el-select
-          :placeholder="getPlaceHolder(1)"
-          :disabled="!isParaAvailable(1)"
           v-model="localParas.p2.paraName"
           filterable
           clearable
@@ -37,9 +35,8 @@
         <el-input v-model=localParas.p2.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(2)">
+        <label style="width: 150px;">{{getPlaceHolder(2)}}</label>
         <el-select
-          :placeholder="getPlaceHolder(2)"
-          :disabled="!isParaAvailable(2)"
           v-model="localParas.p3.paraName"
           filterable
           clearable
@@ -54,9 +51,8 @@
         <el-input v-model=localParas.p3.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(3)">
+        <label style="width: 150px;">{{getPlaceHolder(3)}}</label>
         <el-select
-          :placeholder="getPlaceHolder(3)"
-          :disabled="!isParaAvailable(3)"
           v-model="localParas.p4.paraName"
           filterable
           clearable
@@ -71,9 +67,8 @@
         <el-input v-model=localParas.p4.paraValue />
       </div>
       <div class="para" v-if="isParaAvailable(4)">
+        <label style="width: 150px;">{{getPlaceHolder(4)}}</label>
         <el-select
-          :placeholder="getPlaceHolder(4)"
-          :disabled="!isParaAvailable(4)"
           v-model="localParas.p5.paraName"
           filterable
           clearable
@@ -96,9 +91,8 @@
           v-model="res"
           @select="selectRes">
         </el-autocomplete-->
+        <label style="width: 150px;">返回值</label>
         <el-select
-          placeholder="返回值"
-          :disabled="!action.hasResponse"
           v-model="localParas.response.paraName"
           filterable
           clearable
