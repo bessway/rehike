@@ -32,7 +32,7 @@
           ref="parastable"
           style="height: 85%; overflow-y: auto">
           <el-table-column>
-            <el-input slot-scope="scope" v-model=scope.row.paraName
+            <el-input :style="paraColor(scope.row)" slot-scope="scope" v-model=scope.row.paraName
             :disabled="!isEditable(scope.row)" />
           </el-table-column>
           <el-table-column min-width="15" type="operation">
@@ -126,6 +126,16 @@ export default {
     isEditable: function () {
       return function (row) {
         return row.paraId === this.toEditId
+      }
+    },
+    paraColor: function () {
+      return function (row) {
+        console.log(row.isFormalPara)
+        if (row.isFormalPara === 1) {
+          return 'background-color: blue;padding: 1px;'
+        } else {
+          return undefined
+        }
       }
     }
   },
