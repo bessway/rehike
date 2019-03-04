@@ -32,11 +32,18 @@
       <el-table-column
         type="expand"
         width="15px">
+        <!--stepdetail slot-scope="scope"
+          v-if="isShowDetail(scope.row.index)"
+          :step="selectedStep"
+          :readOnlyParas="testParas"
+          :editable="editable">
+        </stepdetail-->
         <stepdetail
           :step="selectedStep"
           :readOnlyParas="testParas"
           :editable="editable">
         </stepdetail>
+        <!--button slot-scope="scope" v-if="isShowDetail(scope.row.index)">test</button-->
       </el-table-column>
       <el-table-column
         prop="stepDesc"
@@ -90,12 +97,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
+// import stepdetail from './StepDetail.vue'
 export default {
-  name: 'steptable',
   props: ['currTest', 'testParas', 'editable'],
+  name: 'steptable',
+  // components: {stepdetail},
   beforeCreate: function () {
-    // 循环调用组件时，组件比vue实例后创建，官方文档里写组件必须先于实例化引入，所以说组件没有正确的引入。
+    // 循环调用组件时，组件在vue实例后创建，官方文档里写组件必须先于实例化引入，所以说组件没有正确的引入。
     // 所以这里异步引入，或者可以在main.js全局引入Vue.component('stepdetail', StepDetail)
     this.$options.components.stepdetail = () => import('./StepDetail.vue')
   },
@@ -107,7 +115,8 @@ export default {
       searchResult: [],
       toRefTest: {},
       searchKey: '',
-      searchDlgVisible: false
+      searchDlgVisible: false,
+      showIndex: 0
     }
   },
   watch: {
@@ -120,9 +129,10 @@ export default {
   },
   methods: {
     ...mapGetters(['getTestParas', 'getSelectedTest']),
-    async showStepDetail (currRow, expandedRows) {
+    showStepDetail (currRow, expandedRows) {
       // 重复点击时还原数据
       if (currRow.index === this.selectedStep.index) {
+        this.onlyExpanded = []
         this.selectedStep = {}
         return
       }
@@ -132,6 +142,12 @@ export default {
       // 必须放在最后，因为这个方法实际是在展开后才调用，展开时stepdetail实例还没有创建
       // 下面这句会重置展开状态
       this.onlyExpanded = [currRow.index]
+    },
+    isShowDetail (stepId) {
+      if (stepId === this.onlyExpanded[0]) {
+        return true
+      }
+      return false
     },
     setMultiSelect (selection, row) {
       this.checkedStep = selection

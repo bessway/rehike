@@ -170,7 +170,7 @@ export default {
     },
     async loadUIObject () {
       if (this.action.hasUIObject === 1 && this.step.uiObjectId !== undefined && this.step.uiObjectId !== null) {
-        if (this.step.uiObjectId !== this.loadUIObject.uiObjectId) {
+        if (this.step.uiObjectId !== this.localUIobject.uiObjectId) {
           this.localUIobject = await this.API.getUIObject(this.step.uiObjectId)
         }
       } else {

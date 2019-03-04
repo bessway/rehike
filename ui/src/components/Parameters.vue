@@ -8,6 +8,7 @@
           v-model="localParas.p1"
           filterable
           clearable
+          value-key="paraName"
           @change="selectP1">
           <el-option
             v-for="item in testParas"
@@ -21,15 +22,16 @@
       <div class="para" v-if="isParaAvailable(1)">
         <label>{{getPlaceHolder(1)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p2.paraId"
+          v-model="localParas.p2"
           filterable
           clearable
+          value-key="paraName"
           @change="selectP2">
           <el-option
             v-for="item in testParas"
             :key="item.paraId"
             :label="item.paraName"
-            :value="item.paraId">
+            :value="item">
           </el-option>
         </el-select>
         <el-input v-model="localParas.p2.paraValue" />
@@ -37,15 +39,16 @@
       <div class="para" v-if="isParaAvailable(2)">
         <label>{{getPlaceHolder(2)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p3.paraId"
+          v-model="localParas.p3"
           filterable
           clearable
+          value-key="paraName"
           @change="selectP3">
           <el-option
             v-for="item in testParas"
             :key="item.paraId"
             :label="item.paraName"
-            :value="item.paraId">
+            :value="item">
           </el-option>
         </el-select>
         <el-input v-model="localParas.p3.paraValue" />
@@ -53,15 +56,16 @@
       <div class="para" v-if="isParaAvailable(3)">
         <label>{{getPlaceHolder(3)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p4.paraId"
+          v-model="localParas.p4"
           filterable
           clearable
+          value-key="paraName"
           @change="selectP4">
           <el-option
             v-for="item in testParas"
             :key="item.paraId"
             :label="item.paraName"
-            :value="item.paraId">
+            :value="item">
           </el-option>
         </el-select>
         <el-input v-model="localParas.p4.paraValue" />
@@ -69,15 +73,16 @@
       <div class="para" v-if="isParaAvailable(4)">
         <label>{{getPlaceHolder(4)+":&nbsp;"}}</label>
         <el-select
-          v-model="localParas.p5.paraId"
+          v-model="localParas.p5"
           filterable
           clearable
+          value-key="paraName"
           @change="selectP5">
           <el-option
             v-for="item in testParas"
             :key="item.paraId"
             :label="item.paraName"
-            :value="item.paraId">
+            :value="item">
           </el-option>
         </el-select>
         <el-input v-model="localParas.p5.paraValue" />
@@ -94,15 +99,16 @@
         <label>返回值</label>
         <el-select
           placeholder="返回值"
-          v-model="localParas.response.paraId"
+          v-model="localParas.response"
           filterable
           clearable
+          value-key="paraName"
           @change="selectRes">
           <el-option
             v-for="item in testParas"
             :key="item.paraId"
             :label="item.paraName"
-            :value="item.paraId">
+            :value="item">
           </el-option>
         </el-select>
       </div>
@@ -187,12 +193,6 @@ export default {
   props: ['step', 'testParas', 'action', 'editable'],
   data () {
     return {
-      paraId1: '',
-      paraId2: '',
-      paraId3: '',
-      paraId4: '',
-      paraId5: '',
-      res: '',
       localParas: {p1: {paraName: '', paraId: 0}, p2: {paraName: '', paraId: 1}, p3: {paraName: '', paraId: 2}, p4: {paraName: '', paraId: 3}, p5: {paraName: '', paraId: 4}, response: {paraName: '', paraId: 5}}
     }
   },
@@ -216,16 +216,6 @@ export default {
     }
   },
   methods: {
-    // paraSearch (queryString, callback) {
-    //   var results = queryString ? this.testParas.filter(this.createFilter(queryString)) : this.testParas
-    //   // 调用 callback 返回建议列表的数据
-    //   callback(results)
-    // },
-    // createFilter (queryString) {
-    //   return (para) => {
-    //     return (para.paraName.toLowerCase().indexOf(queryString.toLowerCase()) > 0 && (para.refTestId === undefined || para.refTestId === null))
-    //   }
-    // },
     findParas () {
       var paras = {p1: {}, p2: {}, p3: {}, p4: {}, p5: {}, response: {}}
       var temp = {}
@@ -261,47 +251,29 @@ export default {
           }
         })
       }
-      // this.name1 = paras.p1.paraName
-      // this.name2 = paras.p2.paraName
-      // this.name3 = paras.p3.paraName
-      // this.name4 = paras.p4.paraName
-      // this.name5 = paras.p5.paraName
-      // this.res = paras.response.paraName
+
       return paras
     },
     setLocalParas (paras) {
       this.localParas = paras
-      // this.name1 = this.localParas.p1.paraName
-      // this.name2 = this.localParas.p2.paraName
-      // this.name3 = this.localParas.p3.paraName
-      // this.name4 = this.localParas.p4.paraName
-      // this.name5 = this.localParas.p5.paraName
-      // this.res = this.localParas.response.paraName
     },
-    selectP1 (paraId) {
-      console.log(paraId)
-      // this.step.paras[0] = para.paraId
-      this.step.paras[0] = paraId
+    selectP1 (para) {
+      this.step.paras[0] = para.paraId
     },
-    selectP2 (paraId) {
-      // this.step.paras[1] = para.paraId
-      this.step.paras[1] = paraId
+    selectP2 (para) {
+      this.step.paras[1] = para.paraId
     },
-    selectP3 (paraId) {
-      // this.step.paras[2] = para.paraId
-      this.step.paras[2] = paraId
+    selectP3 (para) {
+      this.step.paras[2] = para.paraId
     },
-    selectP4 (paraId) {
-      // this.step.paras[3] = para.paraId
-      this.step.paras[3] = paraId
+    selectP4 (para) {
+      this.step.paras[3] = para.paraId
     },
-    selectP5 (paraId) {
-      // this.step.paras[4] = para.paraId
-      this.step.paras[4] = paraId
+    selectP5 (para) {
+      this.step.paras[4] = para.paraId
     },
-    selectRes (paraId) {
-      // this.step.resParaId = para.paraId
-      this.step.resParaId = paraId
+    selectRes (para) {
+      this.step.resParaId = para.paraId
     },
     getPlaceHolder (index) {
       if (this.action !== undefined && this.action !== null && this.action.actionParas !== undefined && this.action.actionParas.length > index) {
@@ -329,7 +301,7 @@ export default {
       console.log(this.testParas)
       console.log(this.localParas)
       console.log(this.step.paras)
-      console.log(this.step.resParaId)
+      console.log(this.sldPara1)
     }
   }
 }

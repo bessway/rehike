@@ -1,8 +1,6 @@
 <template>
   <div>
     <el-row class='test-desc'>
-      <label>步骤描述:&nbsp;</label>
-      <el-input v-model="step.stepDesc" :disabled="!editable || step.stepType === 2"></el-input>
       <el-select
         style="width: 200px"
         placeholder='操作'
@@ -16,6 +14,8 @@
           :value="item.actionId">
         </el-option>
       </el-select>
+      <label>步骤描述:&nbsp;</label>
+      <el-input v-model="step.stepDesc" :disabled="!editable || step.stepType === 2"></el-input>
       <el-button style="font-size: 12px;padding-right: 1px;padding-top: 0px;padding-bottom: 0px;padding-left: 0px;margin-top: 3px;height: 25px;" size="small" type="primary" @click="debug">debug</el-button>
     </el-row>
     <uiobject
@@ -103,15 +103,16 @@
 <script>
 import uiobject from './UIObject.vue'
 import paras from './Parameters.vue'
-import maineditor from './MainEditor.vue'
-import steptable from './StepTable.vue'
+// import maineditor from './MainEditor.vue'
+// import steptable from './StepTable.vue'
 import { mapGetters } from 'vuex'
 import { Message } from 'element-ui'
 
 export default {
-  name: 'stepdetail',
-  components: {uiobject, paras, maineditor, steptable},
+  // components: {uiobject, paras, steptable},
+  components: {uiobject, paras},
   props: ['step', 'readOnlyParas', 'editable'],
+  name: 'stepdetail',
   data () {
     return {
       referTest: {steps: []},
@@ -119,7 +120,10 @@ export default {
       stepParas: []
     }
   },
-  created: function () {
+  beforeCreate: function () {
+    this.$options.components.steptable = () => import('./StepTable.vue')
+  },
+  beforeMount: function () {
     this.loadRefTest()
   },
   computed: {

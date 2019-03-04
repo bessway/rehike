@@ -10,7 +10,7 @@
     </div>
     <div class="test-detail">
       <el-col :span="19" class="steps-wrapper">
-        <steptable :currTest="getSelectedTest()" :testParas="getTestParas()" :editable="true"/>
+        <steptable :currTest="getSelectedTest()" :testParas="getTestParas()" :editable="true" />
       </el-col>
       <el-col :span="5" class='paralist'>
         <el-row>
@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     ...mapGetters(['getSelectedTest', 'getTestParas']),
-    ...mapMutations(['setIsAddNewTest', 'setActiveEditor', 'addTestParas', 'setTestParas']),
+    ...mapMutations(['setIsAddNewTest', 'setActiveEditor', 'addTestParas', 'delTestPara']),
 
     paraTableCellStyle: function ({row, column, rowIndex, columnIndex}) {
       if (column.type === 'selection' || column.type === 'operation') {
@@ -210,26 +210,16 @@ export default {
       var delResult = await this.API.delTestParas(this.checkedParas)
       if (delResult !== undefined) {
         // 从全局变量删除变量，只能编辑原数组，否则子组件需要加watch
-        this.getTestParas().forEach((testPara, index) => {
+        for (var i = 0; i < this.getTestParas().length; i++) {
+          var testPara = this.getTestParas()[i]
           this.checkedParas.forEach(delItem => {
             if (testPara.paraId === delItem.paraId) {
-              this.getTestParas().splice(index, 1)
+              this.delTestPara(i)
             }
           })
-        })
+        }
         this.checkedParas = []
         this.$refs.parastable.clearSelection()
-      }
-    },
-    deletedFilter (deletedItems) {
-      return (para) => {
-        var result = true
-        deletedItems.forEach(item => {
-          if (item.paraId === para.paraId) {
-            result = false
-          }
-        })
-        return result
       }
     },
     setEditable (row, column, cell, event) {

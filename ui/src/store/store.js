@@ -50,6 +50,9 @@ export default new Vuex.Store({
     addTestParas (state, para) {
       state.testParas.push(para)
     },
+    delTestPara (state, index) {
+      state.tesetParas.splice(index, 1)
+    },
     setActions (state, actions) {
       state.actions = actions
     },
