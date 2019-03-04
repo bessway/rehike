@@ -168,7 +168,7 @@ export default {
       var parentId = this.$refs.testTree.getCurrentNode().parentId
       var newTest = {}
       if (selectedTestId.substring(0, 4) === 'copy') {
-        newTest = await this.API.copyTest([{'testId': selectedTestId}])
+        newTest = await this.API.copyTest({'testId': selectedTestId.substring(4)})
       } else {
         newTest = await this.API.createTest({'parentId': parentId})
       }
@@ -178,6 +178,7 @@ export default {
         this.$refs.testTree.insertAfter(newTest, this.$refs.testTree.getCurrentNode())
         this.$refs.testTree.setCurrentKey(newTest.testId)
         this.setSelectedTest(newTest)
+        this.loadTestParas(newTest.testId)
       }
     },
     async addChildNode () {
