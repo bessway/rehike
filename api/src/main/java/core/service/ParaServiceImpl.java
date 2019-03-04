@@ -110,4 +110,22 @@ public class ParaServiceImpl implements ParaService {
             throw new Exception("正在使用的参数不能删除");
         }
     }
+    public void copyAllParas(String oldTestId,String newTestId){
+        List<Para> paras=paraDao.getParasByTestWithRef(oldTestId, "default");
+        if(paras==null||paras.size()<1){
+            return;
+        }
+        for(Para item:paras){
+            item.setTestId(newTestId);
+            // 如果不是引用的参数，需要重置paraId
+            if(item.getRefTestId()==null || "".equals(item.getRefTestId())){
+                item.setParaId(new Date().getTime());
+                try{
+                    Thread.sleep(1);
+                }catch(Exception e){
+                }
+            }
+        }
+        paraDao.bulkCreatePara(paras);
+    }
 }

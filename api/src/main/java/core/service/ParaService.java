@@ -16,4 +16,5 @@ public interface ParaService{
     public void delStepFormalPara(String testId, List<Integer> stepIds);
     public void setParasName(Para newPara) throws Exception;
     public void delParas(List<Para> paras) throws Exception;
+    public void copyAllParas(String oldTestId,String newTestId);
 }

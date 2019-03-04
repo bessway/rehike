@@ -58,4 +58,9 @@ public class TestManager {
         testIds.add("5c637a135eeb2960ac1fcc6b");
         return testService.findAllExecutableTests(testIds) ;
     }
+    
+    @RequestMapping(value="/test/copy",method=RequestMethod.POST)
+    public Test copyTest(@RequestBody Test test){
+        return testService.copyOneTest(test);
+    }
 }

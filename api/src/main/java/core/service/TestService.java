@@ -16,4 +16,5 @@ public interface TestService{
     public void setTestToRef(String testId);
     public List<String> findAllExecutableTests(List<String> nodeIds);
     public List<Test> getTests(List<String> testIds);
+    public Test copyOneTest(Test oldTest);
 }

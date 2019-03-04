@@ -17,6 +17,8 @@ import utils.Utils;
 public class TestServiceImpl implements TestService {
     @Autowired
     private TestDao testDao = null;
+    @Autowired
+    private ParaService paraService = null;
     
     public List<Test> getTestsByParentId(String parentId){
         List<Test> ret = testDao.getTestsByParentId(parentId);
@@ -102,5 +104,15 @@ public class TestServiceImpl implements TestService {
     }
     public List<Test> getTests(List<String> testIds){
         return testDao.getTestsById(testIds);
+    }
+    public Test copyOneTest(Test oldTest){
+        String oldTestId=oldTest.getTestId();
+        Test old = testDao.getTestById(oldTestId);
+        old.setTestId(null);
+        old.setTestDesc("copy from " + old.getTestDesc());
+        testDao.createTest(old);
+        List<Test> newTests = testDao.getTestsByDesc(old.getTestDesc());
+        paraService.copyAllParas(oldTestId, newTests.get(0).getTestId());
+        return testDao.updateTestIndex(newTests.get(0).getTestId(), "index", this.calTestId(newTests.get(0).getTestId()));
     }
 }
