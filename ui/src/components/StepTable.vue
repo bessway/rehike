@@ -231,6 +231,7 @@ export default {
       })
       // 如果是引用步骤，需要删除对应的变量
       await this.API.delStepsFormalParas(this.currTest.testId, stepIds)
+      // 排序勾选的步骤，从后往前删除
       this.checkedStep.sort(function (a, b) {
         return a.index - b.index
       })
@@ -239,7 +240,16 @@ export default {
       }
       this.checkedStep = []
       this.$refs.stepstable.clearSelection()
+      // 更新剩余步骤的index，如果是引用步骤，还需要更新参数的stepId
       for (i = 0; i < this.currTest.steps.length; i++) {
+        if (this.currTest.steps[i].stepType === 2) {
+          this.testParas.forEach(item => {
+            if (item.refTestId !== undefined && item.refTestId !== null
+              && item.stepId === this.currTest.steps[i].index) {
+              item.stepId = i
+            }
+          })
+        }
         this.currTest.steps[i].index = i
       }
     },
@@ -255,8 +265,13 @@ export default {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== 0) {
+        // 更新勾选行的参数stepId
         if (this.checkedStep[0].stepType === 2) {
           this.syncRefParaStepId(this.checkedStep[0].index, -1)
+        }
+        // 更新上面一行的参数stepId
+        if (this.currTest.steps[this.checkedStep[0].index - 1].stepType === 2) {
+          this.syncRefParaStepId(this.checkedStep[0].index - 1, 1)
         }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index - 1]
         this.currTest.steps[this.checkedStep[0].index - 1] = this.checkedStep[0]
@@ -274,6 +289,9 @@ export default {
       } else if (this.checkedStep[0].index !== this.currTest.steps.length - 1) {
         if (this.checkedStep[0].stepType === 2) {
           this.syncRefParaStepId(this.checkedStep[0].index, 1)
+        }
+        if (this.currTest.steps[this.checkedStep[0].index + 1].stepType === 2) {
+          this.syncRefParaStepId(this.checkedStep[0].index - 1, -1)
         }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index + 1]
         this.currTest.steps[this.checkedStep[0].index + 1] = this.checkedStep[0]

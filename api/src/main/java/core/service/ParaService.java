@@ -1,6 +1,7 @@
 package core.service;
 
 import java.util.List;
+import java.util.Map;
 
 import core.pojo.Para;
 
@@ -16,5 +17,5 @@ public interface ParaService{
     public void delStepFormalPara(String testId, List<Integer> stepIds);
     public void setParasName(Para newPara) throws Exception;
     public void delParas(List<Para> paras) throws Exception;
-    public void copyAllParas(String oldTestId,String newTestId);
+    public Map<Long,Long> copyAllParas(String oldTestId,String newTestId);
 }

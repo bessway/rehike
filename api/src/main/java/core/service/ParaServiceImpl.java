@@ -10,7 +10,9 @@ import core.pojo.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("ParaService")
 public class ParaServiceImpl implements ParaService {
@@ -77,7 +79,7 @@ public class ParaServiceImpl implements ParaService {
         }
         paraDao.setParasName(newPara.getTestId(), newPara.getParaId(), newPara.getParaName());
     }
-    //删除一个test的参数，输入不能包括引用的参数，引用的参数只能跟着步骤删除
+    //删除test的部分参数，输入不能包括引用的参数，引用的参数只能跟着步骤删除
     //需要删除不同参数值版本的参数
     //如果是形参，需要删除引用这个test的用例的参数
     public void delParas(List<Para> paras) throws Exception{
@@ -110,10 +112,11 @@ public class ParaServiceImpl implements ParaService {
             throw new Exception("正在使用的参数不能删除");
         }
     }
-    public void copyAllParas(String oldTestId,String newTestId){
+    //返回新老paraId对应表
+    public Map<Long,Long> copyAllParas(String oldTestId,String newTestId){
         List<Para> paras=paraDao.getParasByTestWithRef(oldTestId, "default");
         if(paras==null||paras.size()<1){
-            return;
+            return null;
         }
         for(Para item:paras){
             item.setTestId(newTestId);
@@ -127,5 +130,27 @@ public class ParaServiceImpl implements ParaService {
             }
         }
         paraDao.bulkCreatePara(paras);
+        //匹配新老paraId
+        List<Para> newParas=paraDao.getParasByTestWithRef(newTestId, "default");
+        Map<Long,Long> result=new HashMap<Long,Long>();
+        for(Para oldPara:paras){
+            for(Para newPara:newParas){
+                //非引用参数，根据参数名来匹配新老id
+                if(oldPara.getRefTestId()==null || "".equals(oldPara.getRefTestId())){
+                    if(oldPara.getParaName().equals(newPara.getParaName())){
+                        result.put(oldPara.getParaId(), oldPara.getParaId());
+                        break;
+                    }
+                }else{
+                    //引用参数，使用参数名加stepId匹配
+                    if(oldPara.getParaName().equals(newPara.getParaName()) 
+                        && oldPara.getStepId().equals(newPara.getStepId())){
+                        result.put(oldPara.getParaId(), oldPara.getParaId());
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

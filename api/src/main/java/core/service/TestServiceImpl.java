@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import core.dao.TestDao;
+import core.pojo.Step;
 import core.pojo.Test;
 import core.pojo.TestDetail;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import utils.Utils;
 
@@ -112,7 +114,22 @@ public class TestServiceImpl implements TestService {
         old.setTestDesc("copy from " + old.getTestDesc());
         testDao.createTest(old);
         List<Test> newTests = testDao.getTestsByDesc(old.getTestDesc());
-        paraService.copyAllParas(oldTestId, newTests.get(0).getTestId());
+        //复制参数表
+        Map<Long,Long> idMap = paraService.copyAllParas(oldTestId, newTests.get(0).getTestId());
+        if(idMap==null || newTests.get(0).getSteps()==null || newTests.get(0).getSteps().size()<1){
+            return testDao.updateTestIndex(newTests.get(0).getTestId(), "index", this.calTestId(newTests.get(0).getTestId()));
+        }
+        //替换test中的参数id
+        for(Step step:newTests.get(0).getSteps()){
+            if(step.getParas()==null || step.getParas().size()<1){
+                continue;
+            }else{
+                for(int i=0;i<step.getParas().size();i++){
+                    step.getParas().set(i, idMap.get(step.getParas().get(i)));
+                }
+            }
+        }
+        testDao.updateTest(newTests.get(0));
         return testDao.updateTestIndex(newTests.get(0).getTestId(), "index", this.calTestId(newTests.get(0).getTestId()));
     }
 }
