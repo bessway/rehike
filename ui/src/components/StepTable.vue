@@ -198,7 +198,16 @@ export default {
     addNewStepAfter (newStep) {
       if (this.checkedStep.length === 1) {
         this.currTest.steps.splice(this.checkedStep[0].index + 1, 0, newStep)
+        // 更新步骤的index，还需要更新引用步骤参数的stepId
         for (var i = this.checkedStep[0].index + 1; i < this.currTest.steps.length; i++) {
+          if (this.currTest.steps[i].stepType === 2) {
+            this.testParas.forEach(item => {
+              if (item.refTestId !== undefined && item.refTestId !== null
+                && item.stepId === this.currTest.steps[i].index) {
+                item.stepId = i
+              }
+            })
+          }
           this.currTest.steps[i].index = i
         }
       } else if (this.checkedStep.length === 0) {
