@@ -18,4 +18,5 @@ public interface ParaService{
     public void setParasName(Para newPara) throws Exception;
     public void delParas(List<Para> paras) throws Exception;
     public Map<Long,Long> copyAllParas(String oldTestId,String newTestId);
+    public void delNouseParaInTest(String testId, List<Long> ids);
 }

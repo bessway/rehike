@@ -50,8 +50,19 @@ public class TestServiceImpl implements TestService {
         List<Test> rets = testDao.getTestsByDesc(newTest.getTestDesc());
         return testDao.updateTestIndex(rets.get(0).getTestId(), "index", this.calTestId(rets.get(0).getTestId()));
     }
+    //需要删除多余的参数
     public void saveTest(Test test){
         testDao.updateTest(test);
+        List<Long> ids=new ArrayList<Long>();
+        if(test.getSteps()==null || test.getSteps().size()<1){
+            return;
+        }
+        for(Step step:test.getSteps()){
+            if(step.getParas()!=null && step.getParas().size()>0 && step.getStepType()!=2){
+                ids.addAll(step.getParas());
+            }
+        }
+        paraService.delNouseParaInTest(test.getTestId(), ids);
     }
     public List<Test> searchPublicTest(String key){
         return testDao.searchPublicTest(Utils.escapeExprSpecialWord(key));

@@ -153,4 +153,7 @@ public class ParaServiceImpl implements ParaService {
         }
         return result;
     }
+    public void delNouseParaInTest(String testId, List<Long> ids){
+        paraDao.delNouseParaInTest(testId, ids);
+    }
 }

@@ -99,4 +99,8 @@ public class ParaDaoImpl implements ParaDao{
         Query query = Query.query(Criteria.where("paraId").in(paraIds).and("refTestId").is(testId));
         mongoTemplate.remove(query, Para.class);
     }
+    public void delNouseParaInTest(String testId, List<Long> ids){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("refTestId").is(null).and("paraId").nin(ids));
+        mongoTemplate.remove(query, Para.class);
+    }
 }

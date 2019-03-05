@@ -20,4 +20,5 @@ public interface ParaDao{
     public void setParasName(String testId,Long paraId, String paraName);
     public void delParas(String testId, List<Long> paraIds);
     public void delParasFromRefTest(String testId, List<Long> paraIds);
+    public void delNouseParaInTest(String testId, List<Long> ids);
 }
