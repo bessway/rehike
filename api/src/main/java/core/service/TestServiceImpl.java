@@ -57,11 +57,15 @@ public class TestServiceImpl implements TestService {
         if(test.getSteps()==null || test.getSteps().size()<1){
             return;
         }
+        // for(Step step:test.getSteps()){
+        //     if(step.getParas()!=null && step.getParas().size()>0 && step.getStepType()!=2){
+        //         ids.addAll(step.getParas());
+        //     }
+        // }
         for(Step step:test.getSteps()){
-            if(step.getParas()!=null && step.getParas().size()>0 && step.getStepType()!=2){
-                ids.addAll(step.getParas());
-            }
+            ids.add(step.getUniqueIdInTest());
         }
+        // 删除所有不在当前步骤中的参数
         paraService.delNouseParaInTest(test.getTestId(), ids);
     }
     public List<Test> searchPublicTest(String key){

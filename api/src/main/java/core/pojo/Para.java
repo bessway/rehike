@@ -1,5 +1,7 @@
 package core.pojo;
 
+import java.util.List;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="parameters")
@@ -10,7 +12,7 @@ public class Para{
     private String paraValue = null;
     private String refTestId = null;
     private Integer isFormalPara = null;
-    private Integer stepId = null;
+    private List<Long> stepId = null;
     private String dataVersion = null;
 
     public void setTestId(String testId){
@@ -55,13 +57,13 @@ public class Para{
         return this.isFormalPara;
     }
 
-    public void setStepId(Integer stepId){
+    public void setStepId(List<Long> stepId){
         this.stepId=stepId;
     }
-    public Integer getStepId(){
+    public List<Long> getStepId(){
         return this.stepId;
     }
-    public Para(Long paraId, Integer stepId, String refTestId){
+    public Para(Long paraId, List<Long> stepId, String refTestId){
         this.paraId=paraId;
         /*只有引用的步骤需要记录stepId*/
         if(refTestId!=null && !"".equals(refTestId)){

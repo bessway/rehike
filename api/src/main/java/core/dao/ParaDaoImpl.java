@@ -34,8 +34,8 @@ public class ParaDaoImpl implements ParaDao{
     public void bulkCreatePara(List<Para> paras){
         mongoTemplate.insertAll(paras);
     }
-    public List<Para> findStepParas(String testId, Integer stepId){
-        Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").is(stepId));
+    public List<Para> findStepParas(String testId, List<Long> stepId, String version){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").is(stepId).and("dataVersion").is(version));
         List<Para> ret = mongoTemplate.find(query, Para.class);
         return ret;
     }
@@ -67,8 +67,8 @@ public class ParaDaoImpl implements ParaDao{
         List<Para> ret = mongoTemplate.find(query, Para.class);
         return ret;
     }
-    public List<Para> getRefParasByTest(String testId, Integer stepId ,String dataVersion){
-        Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").is(stepId).and("dataVersion").is(dataVersion));
+    public List<Para> getRefParasByTest(String testId, List<Long> stepId ,String dataVersion){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").in(stepId).and("dataVersion").is(dataVersion));
         List<Para> ret = mongoTemplate.find(query, Para.class);
         return ret;
     }
@@ -82,7 +82,7 @@ public class ParaDaoImpl implements ParaDao{
         Para ret = mongoTemplate.findOne(query, Para.class);
         return ret;
     }
-    public void delStepFormalPara(String testId, List<Integer> stepIds){
+    public void delStepFormalPara(String testId, List<Long> stepIds){
         Query query = Query.query(Criteria.where("testId").is(testId).and("stepId").in(stepIds).and("refTestId").ne(null));
         mongoTemplate.remove(query, Para.class);
     }
@@ -91,16 +91,16 @@ public class ParaDaoImpl implements ParaDao{
         Update update = Update.update("paraName", paraName);
         mongoTemplate.updateMulti(query, update, Para.class);
     }
-    public void delParas(String testId, List<Long> paraIds){
-        Query query = Query.query(Criteria.where("paraId").in(paraIds).and("testId").is(testId));
+    public void delSelfParas(String testId, List<Long> paraIds){
+        Query query = Query.query(Criteria.where("paraId").in(paraIds).and("testId").is(testId).and("refTestId").is(null));
         mongoTemplate.remove(query, Para.class);
     }
-    public void delParasFromRefTest(String testId, List<Long> paraIds){
-        Query query = Query.query(Criteria.where("paraId").in(paraIds).and("refTestId").is(testId));
-        mongoTemplate.remove(query, Para.class);
-    }
-    public void delNouseParaInTest(String testId, List<Long> ids){
-        Query query = Query.query(Criteria.where("testId").is(testId).and("refTestId").is(null).and("paraId").nin(ids));
+    // public void delParasFromRefTest(String testId, List<Long> paraIds){
+    //     Query query = Query.query(Criteria.where("paraId").in(paraIds).and("refTestId").is(testId));
+    //     mongoTemplate.remove(query, Para.class);
+    // }
+    public void delNouseParaInTest(String testId, List<Long> stepIds){
+        Query query = Query.query(Criteria.where("testId").is(testId).and("refTestId").is(null).and("stepId").nin(stepIds));
         mongoTemplate.remove(query, Para.class);
     }
 }

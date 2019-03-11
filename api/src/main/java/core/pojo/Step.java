@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Step{
     private Integer index = null;
+    private Long uniqueIdInTest = null;
     private String actionId = null;
     private String stepDesc = null;
     private String uiObjectId = null;
@@ -69,7 +70,12 @@ public class Step{
     public Integer getStepType(){
         return this.stepType;
     }
-
+    public Long getUniqueIdInTest(){
+        return this.uniqueIdInTest;
+    }
+    public void setUniqueIdInTeset(Long uniqueIdInTest){
+        this.uniqueIdInTest=uniqueIdInTest;
+    }
     // public void setRefParas(List<Long> refParas){
     //     this.refParas=refParas;
     // }

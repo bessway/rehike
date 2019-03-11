@@ -24,7 +24,7 @@ public class ParaManager{
     }
 
     @RequestMapping(value="/{srcTestId}/formalpara/{tarTestId}/step/{stepId}",method=RequestMethod.POST)
-    public List<Para> addRefParasToStep( @PathVariable String srcTestId, @PathVariable String tarTestId, @PathVariable Integer stepId){
+    public List<Para> addRefParasToStep( @PathVariable String srcTestId, @PathVariable String tarTestId, @PathVariable List<Long> stepId){
         return paraService.copyRefParasToStep(srcTestId, tarTestId, stepId);
     }
 
@@ -46,7 +46,7 @@ public class ParaManager{
     }
     
     @RequestMapping(value="/test/{testId}/step/{stepId}/versioin/{dataVersion}", method=RequestMethod.GET)
-    public List<Para> getTestRefParas(@PathVariable String testId, @PathVariable Integer stepId, @PathVariable String dataVersion) {
+    public List<Para> getTestRefParas(@PathVariable String testId, @PathVariable List<Long> stepId, @PathVariable String dataVersion) {
         return paraService.getTestRefParas(testId, stepId, dataVersion);
     }
 
@@ -56,7 +56,7 @@ public class ParaManager{
     }
 
     @RequestMapping(value="/test/{testId}",method=RequestMethod.DELETE)
-    public String delStepsFormalParas( @PathVariable String testId, @RequestBody List<Integer> stepIds){
+    public String delStepsFormalParas( @PathVariable String testId, @RequestBody List<Long> stepIds){
         paraService.delStepFormalPara(testId, stepIds);
         return "success";
     }

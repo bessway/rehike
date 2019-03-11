@@ -45,16 +45,16 @@ public class TestDetail{
         return this.steps;
     }
 
-    public TestDetail(Test test){
-        this.testId=test.getTestId();
-        this.index=test.getIndex();
-        this.parentId=test.getParentId();
-        this.testDesc=test.getTestDesc();
-        if(test.getSteps()==null || test.getSteps().size()==0){
-            steps=new ArrayList<StepDetail>();
-            for(Step item:test.getSteps()){
-                steps.add(new StepDetail(item));
-            }
-        }
-    }
+    // public TestDetail(Test test){
+    //     this.testId=test.getTestId();
+    //     this.index=test.getIndex();
+    //     this.parentId=test.getParentId();
+    //     this.testDesc=test.getTestDesc();
+    //     if(test.getSteps()==null || test.getSteps().size()==0){
+    //         steps=new ArrayList<StepDetail>();
+    //         for(Step item:test.getSteps()){
+    //             steps.add(new StepDetail(item));
+    //         }
+    //     }
+    // }
 }

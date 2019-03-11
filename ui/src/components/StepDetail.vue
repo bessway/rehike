@@ -165,7 +165,7 @@ export default {
         this.referTest = await this.API.getTestDetail(this.step.refTestId)
         this.stepParas = await this.API.getTestParasAll(this.step.refTestId, 'default')
         this.readOnlyParas.forEach(item => {
-          if (item.stepId === this.step.index && item.refTestId !== undefined && item.refTestId !== null) {
+          if (item.stepId.indexOf(this.step.uniqueIdInTest) >= 0 && item.refTestId !== undefined && item.refTestId !== null) {
             this.referParas.push(item)
           }
         })

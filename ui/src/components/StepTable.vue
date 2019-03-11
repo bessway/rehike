@@ -21,7 +21,7 @@
       :data="currTest.steps"
       style="height: 85%; overflow-y: auto;"
       @expand-change="showStepDetail"
-      row-key="index"
+      row-key="uniqueIdInTest"
       :expand-row-keys="onlyExpanded"
       @select="setMultiSelect"
       ref="stepstable">
@@ -33,7 +33,7 @@
         type="expand"
         width="15px">
         <!--stepdetail slot-scope="scope"
-          v-if="isShowDetail(scope.row.index)"
+          v-if="isShowDetail(scope.row.uniqueIdInTest)"
           :step="selectedStep"
           :readOnlyParas="testParas"
           :editable="editable">
@@ -43,7 +43,7 @@
           :readOnlyParas="testParas"
           :editable="editable">
         </stepdetail>
-        <!--button slot-scope="scope" v-if="isShowDetail(scope.row.index)">test</button-->
+        <!--button slot-scope="scope" v-if="isShowDetail(scope.row.uniqueIdInTest)">test</button-->
       </el-table-column>
       <el-table-column
         prop="stepDesc"
@@ -115,8 +115,7 @@ export default {
       searchResult: [],
       toRefTest: {},
       searchKey: '',
-      searchDlgVisible: false,
-      showIndex: 0
+      searchDlgVisible: false
     }
   },
   watch: {
@@ -131,7 +130,7 @@ export default {
     ...mapGetters(['getTestParas', 'getSelectedTest']),
     showStepDetail (currRow, expandedRows) {
       // 重复点击时还原数据
-      if (currRow.index === this.selectedStep.index) {
+      if (currRow.uniqueIdInTest === this.selectedStep.uniqueIdInTest) {
         this.onlyExpanded = []
         this.selectedStep = {}
         return
@@ -141,7 +140,7 @@ export default {
       // this.$router.push({path: '/case/stepdetail'})
       // 必须放在最后，因为这个方法实际是在展开后才调用，展开时stepdetail实例还没有创建
       // 下面这句会重置展开状态
-      this.onlyExpanded = [currRow.index]
+      this.onlyExpanded = [currRow.uniqueIdInTest]
     },
     isShowDetail (stepId) {
       if (stepId === this.onlyExpanded[0]) {
@@ -157,6 +156,7 @@ export default {
         this.currTest.steps = []
       }
       var newStep = {}
+      newStep.uniqueIdInTest = (new Date()).getTime()
       newStep.index = Object.keys(this.currTest.steps).length
       newStep.actionId = ''
       newStep.stepDesc = 'new step' + newStep.index
@@ -176,13 +176,14 @@ export default {
       this.searchDlgVisible = false
       if (Object.keys(this.toRefTest).length !== 0) {
         var newStep = {}
+        newStep.uniqueIdInTest = (new Date()).getTime()
         newStep.index = Object.keys(this.currTest.steps).length
         newStep.stepType = 2
         newStep.refTestId = this.toRefTest.testId
         newStep.stepDesc = this.toRefTest.testDesc
         newStep.paras = []
         newStep.resParaId = ''
-        var newFormalParas = await this.API.copyFormalParas(this.toRefTest.testId, this.currTest.testId, newStep.index)
+        var newFormalParas = await this.API.copyFormalParas(this.toRefTest.testId, this.currTest.testId, newStep.uniqueIdInTest)
         newFormalParas.forEach(item => {
           this.testParas.push(item)
         })
@@ -198,16 +199,16 @@ export default {
     addNewStepAfter (newStep) {
       if (this.checkedStep.length === 1) {
         this.currTest.steps.splice(this.checkedStep[0].index + 1, 0, newStep)
-        // 更新步骤的index，还需要更新引用步骤参数的stepId
+        // 更新步骤的index
         for (var i = this.checkedStep[0].index + 1; i < this.currTest.steps.length; i++) {
-          if (this.currTest.steps[i].stepType === 2) {
-            this.testParas.forEach(item => {
-              if (item.refTestId !== undefined && item.refTestId !== null
-                && item.stepId === this.currTest.steps[i].index) {
-                item.stepId = i
-              }
-            })
-          }
+          // if (this.currTest.steps[i].stepType === 2) {
+          //   this.testParas.forEach(item => {
+          //     if (item.refTestId !== undefined && item.refTestId !== null
+          //       && item.stepId === this.currTest.steps[i].index) {
+          //       item.stepId = i
+          //     }
+          //   })
+          // }
           this.currTest.steps[i].index = i
         }
       } else if (this.checkedStep.length === 0) {
@@ -236,7 +237,7 @@ export default {
       }
       var stepIds = []
       this.checkedStep.forEach(item => {
-        stepIds.push(item.index)
+        stepIds.push(item.uniqueIdInTest)
       })
       // 如果是引用步骤，需要删除对应的变量
       await this.API.delStepsFormalParas(this.currTest.testId, stepIds)
@@ -249,39 +250,39 @@ export default {
       }
       this.checkedStep = []
       this.$refs.stepstable.clearSelection()
-      // 更新剩余步骤的index，如果是引用步骤，还需要更新参数的stepId
+      // 更新剩余步骤的index
       for (i = 0; i < this.currTest.steps.length; i++) {
-        if (this.currTest.steps[i].stepType === 2) {
-          this.testParas.forEach(item => {
-            if (item.refTestId !== undefined && item.refTestId !== null
-              && item.stepId === this.currTest.steps[i].index) {
-              item.stepId = i
-            }
-          })
-        }
+        // if (this.currTest.steps[i].stepType === 2) {
+        //   this.testParas.forEach(item => {
+        //     if (item.refTestId !== undefined && item.refTestId !== null &&
+        //       item.stepId === this.currTest.steps[i].index) {
+        //       item.stepId = i
+        //     }
+        //   })
+        // }
         this.currTest.steps[i].index = i
       }
     },
-    syncRefParaStepId (oldStepId, upOrDown) {
-      this.testParas.forEach(item => {
-        if (item.refTestId !== undefined && item.refTestId !== null && item.stepId === oldStepId) {
-          item.stepId = item.stepId + upOrDown
-        }
-      })
-    },
+    // syncRefParaStepId (oldStepId, upOrDown) {
+    //   this.testParas.forEach(item => {
+    //     if (item.refTestId !== undefined && item.refTestId !== null && item.stepId === oldStepId) {
+    //       item.stepId = item.stepId + upOrDown
+    //     }
+    //   })
+    // },
     // 引用步骤的index变了，需要把对应的变量的stepId也更新掉
     moveUpSteps () {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== 0) {
         // 更新勾选行的参数stepId
-        if (this.checkedStep[0].stepType === 2) {
-          this.syncRefParaStepId(this.checkedStep[0].index, -1)
-        }
+        // if (this.checkedStep[0].stepType === 2) {
+        //   this.syncRefParaStepId(this.checkedStep[0].index, -1)
+        // }
         // 更新上面一行的参数stepId
-        if (this.currTest.steps[this.checkedStep[0].index - 1].stepType === 2) {
-          this.syncRefParaStepId(this.checkedStep[0].index - 1, 1)
-        }
+        // if (this.currTest.steps[this.checkedStep[0].index - 1].stepType === 2) {
+        //   this.syncRefParaStepId(this.checkedStep[0].index - 1, 1)
+        // }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index - 1]
         this.currTest.steps[this.checkedStep[0].index - 1] = this.checkedStep[0]
         this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
@@ -296,12 +297,12 @@ export default {
       if (this.currTest.steps === null || this.checkedStep.length !== 1) {
         alert('只能选一行')
       } else if (this.checkedStep[0].index !== this.currTest.steps.length - 1) {
-        if (this.checkedStep[0].stepType === 2) {
-          this.syncRefParaStepId(this.checkedStep[0].index, 1)
-        }
-        if (this.currTest.steps[this.checkedStep[0].index + 1].stepType === 2) {
-          this.syncRefParaStepId(this.checkedStep[0].index - 1, -1)
-        }
+        // if (this.checkedStep[0].stepType === 2) {
+        //   this.syncRefParaStepId(this.checkedStep[0].index, 1)
+        // }
+        // if (this.currTest.steps[this.checkedStep[0].index + 1].stepType === 2) {
+        //   this.syncRefParaStepId(this.checkedStep[0].index - 1, -1)
+        // }
         this.currTest.steps[this.checkedStep[0].index] = this.currTest.steps[this.checkedStep[0].index + 1]
         this.currTest.steps[this.checkedStep[0].index + 1] = this.checkedStep[0]
         this.currTest.steps[this.checkedStep[0].index].index = this.checkedStep[0].index
@@ -324,6 +325,7 @@ export default {
     debug () {
       console.log(this.testParas)
       console.log(this.getTestParas())
+      console.log(this.checkedStep[0])
     }
   }
 }

@@ -105,6 +105,7 @@
 </style>
 
 <script>
+import { Message } from 'element-ui'
 import { mapMutations, mapGetters } from 'vuex'
 import steptable from './StepTable.vue'
 export default {
@@ -205,6 +206,16 @@ export default {
     },
     async delParaFromTest () {
       if (this.checkedParas.length === 0) {
+        return
+      }
+      var inuseitems = ''
+      this.checkedParas.forEach(item => {
+        if (item.stepId !== undefined && item.stepId !== null && item.stepId.length > 0) {
+          inuseitems = inuseitems + item.paraName
+        }
+      })
+      if (inuseitems !== '') {
+        Message.error({message: '参数' + inuseitems + '正在使用，不能删除!'})
         return
       }
       var delResult = await this.API.delTestParas(this.checkedParas)

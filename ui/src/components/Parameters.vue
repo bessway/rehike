@@ -258,22 +258,40 @@ export default {
       this.localParas = paras
     },
     selectP1 (para) {
+      this.setParaStepId(this.step.paras[0], para)
       this.step.paras[0] = para.paraId
     },
     selectP2 (para) {
+      this.setParaStepId(this.step.paras[1], para)
       this.step.paras[1] = para.paraId
     },
     selectP3 (para) {
+      this.setParaStepId(this.step.paras[2], para)
       this.step.paras[2] = para.paraId
     },
     selectP4 (para) {
+      this.setParaStepId(this.step.paras[3], para)
       this.step.paras[3] = para.paraId
     },
     selectP5 (para) {
+      this.setParaStepId(this.step.paras[4], para)
       this.step.paras[4] = para.paraId
     },
     selectRes (para) {
+      this.setParaStepId(this.step.resParaId, para)
       this.step.resParaId = para.paraId
+    },
+    setParaStepId (oldParaId, newPara) {
+      var oldPara = this.findParaById(oldParaId)
+      oldPara.splice(oldPara.stepId.indexOf(this.step.uniqueIdInTest), 1)
+      newPara.stepId.push(this.step.uniqueIdInTest)
+    },
+    findParaById (paraId) {
+      this.testParas.forEach(item => {
+        if (item.paraId === paraId) {
+          return item
+        }
+      })
     },
     getPlaceHolder (index) {
       if (this.action !== undefined && this.action !== null && this.action.actionParas !== undefined && this.action.actionParas.length > index) {
